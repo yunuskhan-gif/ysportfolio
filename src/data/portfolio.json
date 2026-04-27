@@ -1,0 +1,58 @@
+[
+  {
+    "symbol": "ADANIPOWER.NS",
+    "name": "ADANI POWER",
+    "qty": 100,
+    "avgPrice": 153.65,
+    "app": "AA"
+  },
+  {
+    "symbol": "RELIANCE.NS",
+    "name": "RELIANCE",
+    "qty": 55,
+    "avgPrice": 1392.19,
+    "app": "AA"
+  },
+  {
+    "symbol": "TCS.NS",
+    "name": "TCS",
+    "qty": 10,
+    "avgPrice": 3036.84,
+    "app": "AA"
+  },
+  {
+    "symbol": "BEL.NS",
+    "name": "BEL",
+    "qty": 150,
+    "avgPrice": 409.62,
+    "app": "AA"
+  },
+  {
+    "symbol": "HAL.NS",
+    "name": "HAL",
+    "qty": 17,
+    "avgPrice": 4936.42,
+    "app": "AA"
+  },
+  {
+    "symbol": "ABFRL.NS",
+    "name": "ABFRL",
+    "qty": 112,
+    "avgPrice": 77.6,
+    "app": "MOFS"
+  },
+  {
+    "symbol": "BHARTIARTL.NS",
+    "name": "BHARTIARTL",
+    "qty": 8,
+    "avgPrice": 1843.04,
+    "app": "MOFS"
+  },
+  {
+    "symbol": "CDSL.NS",
+    "name": "CDSL",
+    "qty": 25,
+    "avgPrice": 1585.02,
+    "app": "AA"
+  }
+]

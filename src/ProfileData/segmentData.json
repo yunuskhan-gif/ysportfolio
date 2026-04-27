@@ -1,0 +1,226 @@
+{
+  "F&O": {
+    "metrics": [
+      {
+        "label": "WIN RATE",
+        "value": "68.2%",
+        "trend": {
+          "value": "+2.1% this month",
+          "isPositive": true
+        },
+        "isProfit": true
+      },
+      {
+        "label": "TOTAL TRADES",
+        "value": "420",
+        "context": "Avg: 1.7/day",
+        "isProfit": null
+      },
+      {
+        "label": "AVG P&L",
+        "value": "₹2,360",
+        "isProfit": true
+      },
+      {
+        "label": "TOTAL P&L",
+        "value": "₹9,91,250",
+        "context": "(Last 12 months)",
+        "isProfit": true
+      }
+    ],
+    "recentTrades": [
+      {
+        "symbol": "NIFTY 24500 CE",
+        "action": "BUY",
+        "pl": "+₹2,250",
+        "date": "30 Jan"
+      },
+      {
+        "symbol": "BANKNIFTY 48000 PE",
+        "action": "SELL",
+        "pl": "+₹4,125",
+        "date": "29 Jan"
+      },
+      {
+        "symbol": "NIFTY 24400 PE",
+        "action": "BUY",
+        "pl": "+₹1,800",
+        "date": "28 Jan"
+      },
+      {
+        "symbol": "RELIANCE",
+        "action": "SELL",
+        "pl": "-₹1,200",
+        "date": "27 Jan"
+      }
+    ]
+  },
+  "Crypto": {
+    "metrics": [
+      {
+        "label": "WIN RATE",
+        "value": "62.5%",
+        "trend": {
+          "value": "-1.3% this month",
+          "isPositive": false
+        },
+        "isProfit": false
+      },
+      {
+        "label": "TOTAL TRADES",
+        "value": "240",
+        "context": "Avg: 1.0/day",
+        "isProfit": null
+      },
+      {
+        "label": "AVG P&L",
+        "value": "₹4,920",
+        "isProfit": true
+      },
+      {
+        "label": "TOTAL P&L",
+        "value": "₹11,80,000",
+        "context": "(Last 12 months)",
+        "isProfit": true
+      }
+    ],
+    "recentTrades": [
+      {
+        "symbol": "BTCINR",
+        "action": "SELL",
+        "pl": "-₹3,300",
+        "date": "29 Jan"
+      },
+      {
+        "symbol": "ETHINR",
+        "action": "BUY",
+        "pl": "+₹5,200",
+        "date": "28 Jan"
+      },
+      {
+        "symbol": "SOLINR",
+        "action": "BUY",
+        "pl": "+₹1,800",
+        "date": "27 Jan"
+      },
+      {
+        "symbol": "ADAINR",
+        "action": "SELL",
+        "pl": "-₹900",
+        "date": "26 Jan"
+      }
+    ]
+  },
+  "Forex": {
+    "metrics": [
+      {
+        "label": "WIN RATE",
+        "value": "74.8%",
+        "trend": {
+          "value": "+3.5% this month",
+          "isPositive": true
+        },
+        "isProfit": true
+      },
+      {
+        "label": "TOTAL TRADES",
+        "value": "125",
+        "context": "Avg: 0.5/day",
+        "isProfit": null
+      },
+      {
+        "label": "AVG P&L",
+        "value": "₹1,060",
+        "isProfit": true
+      },
+      {
+        "label": "TOTAL P&L",
+        "value": "₹1,32,600",
+        "context": "(Last 12 months)",
+        "isProfit": true
+      }
+    ],
+    "recentTrades": [
+      {
+        "symbol": "USD/INR",
+        "action": "BUY",
+        "pl": "+₹1,450",
+        "date": "30 Jan"
+      },
+      {
+        "symbol": "EUR/INR",
+        "action": "SELL",
+        "pl": "-₹620",
+        "date": "29 Jan"
+      },
+      {
+        "symbol": "GBP/INR",
+        "action": "BUY",
+        "pl": "+₹920",
+        "date": "28 Jan"
+      },
+      {
+        "symbol": "JPY/INR",
+        "action": "SELL",
+        "pl": "+₹340",
+        "date": "27 Jan"
+      }
+    ]
+  },
+  "Equity": {
+    "metrics": [
+      {
+        "label": "WIN RATE",
+        "value": "71.3%",
+        "trend": {
+          "value": "+1.8% this month",
+          "isPositive": true
+        },
+        "isProfit": true
+      },
+      {
+        "label": "TOTAL TRADES",
+        "value": "320",
+        "context": "Avg: 1.3/day",
+        "isProfit": null
+      },
+      {
+        "label": "AVG P&L",
+        "value": "₹3,150",
+        "isProfit": true
+      },
+      {
+        "label": "TOTAL P&L",
+        "value": "₹10,08,000",
+        "context": "(Last 12 months)",
+        "isProfit": true
+      }
+    ],
+    "recentTrades": [
+      {
+        "symbol": "RELIANCE",
+        "action": "BUY",
+        "pl": "+₹3,250",
+        "date": "30 Jan"
+      },
+      {
+        "symbol": "TCS",
+        "action": "SELL",
+        "pl": "+₹2,180",
+        "date": "29 Jan"
+      },
+      {
+        "symbol": "INFY",
+        "action": "BUY",
+        "pl": "+₹1,920",
+        "date": "28 Jan"
+      },
+      {
+        "symbol": "HDFCBANK",
+        "action": "SELL",
+        "pl": "-₹850",
+        "date": "27 Jan"
+      }
+    ]
+  }
+}

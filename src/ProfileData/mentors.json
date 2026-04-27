@@ -1,0 +1,34 @@
+[
+  {
+    "id": 1,
+    "name": "Priya Sharma",
+    "username": "@PriyaTrades",
+    "winRate": "67%",
+    "trades": "89",
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=priya"
+  },
+  {
+    "id": 2,
+    "name": "Amit Kumar",
+    "username": "@AmitFNO",
+    "winRate": "72%",
+    "trades": "156",
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=amit"
+  },
+  {
+    "id": 3,
+    "name": "Rohit Verma",
+    "username": "@RohitTrades",
+    "winRate": "65%",
+    "trades": "112",
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=rohit"
+  },
+  {
+    "id": 4,
+    "name": "Neha Singh",
+    "username": "@NehaInvests",
+    "winRate": "70%",
+    "trades": "94",
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=neha"
+  }
+]
