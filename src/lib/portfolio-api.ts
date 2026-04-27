@@ -14,6 +14,7 @@ export interface MotilalPrefs {
   apiKey: string;
   apiSecretKey: string;
   vendorinfo: string;
+  totpSecret: string;
 }
 
 export interface MotilalSessionInfo {

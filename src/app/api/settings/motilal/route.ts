@@ -11,6 +11,7 @@ type MotilalPayload = {
   apiKey?: string;
   apiSecretKey?: string;
   vendorinfo?: string;
+  totpSecret?: string;
 };
 
 function serializeConfig(doc: {
@@ -20,6 +21,7 @@ function serializeConfig(doc: {
   apiKey?: string;
   apiSecretKey?: string;
   vendorinfo?: string;
+  totpSecret?: string;
   session?: {
     authorization?: string;
     accessToken?: string;
@@ -33,6 +35,7 @@ function serializeConfig(doc: {
     apiKey: doc?.apiKey || "",
     apiSecretKey: doc?.apiSecretKey || "",
     vendorinfo: doc?.vendorinfo || "",
+    totpSecret: doc?.totpSecret || "",
     session: {
       hasSession: Boolean(doc?.session?.authorization && doc?.session?.accessToken),
       savedAt: doc?.session?.savedAt || "",
@@ -57,6 +60,7 @@ export async function PUT(request: Request) {
     apiKey: body.apiKey || "",
     apiSecretKey: body.apiSecretKey || "",
     vendorinfo: body.vendorinfo || "",
+    totpSecret: body.totpSecret || "",
   };
 
   const config = await MotilalConfigModel.findOneAndUpdate(

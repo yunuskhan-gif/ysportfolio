@@ -36,6 +36,7 @@ interface MotilalFormState {
   apiKey: string;
   apiSecretKey: string;
   vendorinfo: string;
+  totpSecret: string;
 }
 
 interface AddStockDialogProps {
@@ -63,6 +64,7 @@ const INITIAL_MOTILAL_FORM: MotilalFormState = {
   apiKey: "",
   apiSecretKey: "",
   vendorinfo: "",
+  totpSecret: "",
 };
 
 const normalizeSymbol = (symbol: string) => {
@@ -176,6 +178,7 @@ export default function AddStockDialog({
       apiKey: settings.apiKey || "",
       apiSecretKey: settings.apiSecretKey || "",
       vendorinfo: settings.vendorinfo || "",
+      totpSecret: settings.totpSecret || "",
       password: "",
       totp: "",
     }));
@@ -233,6 +236,7 @@ export default function AddStockDialog({
       apiKey: motilalForm.apiKey,
       apiSecretKey: motilalForm.apiSecretKey,
       vendorinfo: motilalForm.vendorinfo,
+      totpSecret: motilalForm.totpSecret,
     });
   }, [
     mode,
@@ -242,6 +246,7 @@ export default function AddStockDialog({
     motilalForm.apiKey,
     motilalForm.apiSecretKey,
     motilalForm.vendorinfo,
+    motilalForm.totpSecret,
   ]);
 
   useEffect(() => {
@@ -336,6 +341,7 @@ export default function AddStockDialog({
         apiKey: motilalForm.apiKey,
         apiSecretKey: motilalForm.apiSecretKey,
         vendorinfo: motilalForm.vendorinfo,
+        totpSecret: motilalForm.totpSecret,
       });
       await queryClient.invalidateQueries({ queryKey: MOTILAL_SETTINGS_QUERY_KEY });
       setMotilalSessionSavedAt(data.session?.savedAt || "");
@@ -539,15 +545,17 @@ export default function AddStockDialog({
                   placeholder="DD/MM/YYYY"
                 />
               </div>
-              <div className="grid gap-1.5 xl:col-span-1">
-                <Label htmlFor="motilal-totp">TOTP</Label>
-                <Input
-                  id="motilal-totp"
-                  value={motilalForm.totp}
-                  onChange={(event) => handleMotilalFieldChange("totp", event.target.value)}
-                  placeholder="6-digit code"
-                />
-              </div>
+              {!motilalForm.totpSecret && (
+                <div className="grid gap-1.5 xl:col-span-1">
+                  <Label htmlFor="motilal-totp">TOTP (Manual)</Label>
+                  <Input
+                    id="motilal-totp"
+                    value={motilalForm.totp}
+                    onChange={(event) => handleMotilalFieldChange("totp", event.target.value)}
+                    placeholder="6-digit code"
+                  />
+                </div>
+              )}
               <div className="grid gap-1.5 xl:col-span-2">
                 <Label htmlFor="motilal-apikey">API Key</Label>
                 <Input
@@ -572,7 +580,17 @@ export default function AddStockDialog({
                   id="motilal-vendor"
                   value={motilalForm.vendorinfo}
                   onChange={(event) => handleMotilalFieldChange("vendorinfo", event.target.value)}
-                  placeholder="Optional vendor short name or client code"
+                  placeholder="Optional vendor"
+                />
+              </div>
+              <div className="grid gap-1.5 xl:col-span-2">
+                <Label htmlFor="motilal-totp-secret">TOTP Secret</Label>
+                <Input
+                  id="motilal-totp-secret"
+                  type="password"
+                  value={motilalForm.totpSecret}
+                  onChange={(event) => handleMotilalFieldChange("totpSecret", event.target.value)}
+                  placeholder="Y7RK..."
                 />
               </div>
               <div className="grid gap-1.5 xl:col-span-2">
@@ -591,8 +609,8 @@ export default function AddStockDialog({
             <div className="rounded-md border bg-muted/20 px-3 py-2 text-xs">
               <p className="text-muted-foreground">
                 We save your Motilal configuration and session in MongoDB and auto-fetch
-                holdings when the saved session is still valid. Usually you only need
-                password + current TOTP again after the saved session expires.
+                holdings when the saved session is still valid. If you provide the{" "}
+                <strong>TOTP Secret</strong>, login will be fully automatic!
               </p>
             </div>
 

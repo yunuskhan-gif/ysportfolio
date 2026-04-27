@@ -59,6 +59,11 @@ const MotilalConfigSchema = new Schema(
       default: "",
       trim: true,
     },
+    totpSecret: {
+      type: String,
+      default: "",
+      trim: true,
+    },
     session: {
       type: MotilalSessionSchema,
       default: () => ({

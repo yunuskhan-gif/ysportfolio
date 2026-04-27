@@ -20,6 +20,7 @@ type SettingsFormState = {
   apiKey: string;
   apiSecretKey: string;
   vendorinfo: string;
+  totpSecret: string;
 };
 
 const EMPTY_FORM: SettingsFormState = {
@@ -29,6 +30,7 @@ const EMPTY_FORM: SettingsFormState = {
   apiKey: "",
   apiSecretKey: "",
   vendorinfo: "",
+  totpSecret: "",
 };
 
 const MotilalSettings = () => {
@@ -49,6 +51,7 @@ const MotilalSettings = () => {
       apiKey: settings.apiKey || "",
       apiSecretKey: settings.apiSecretKey || "",
       vendorinfo: settings.vendorinfo || "",
+      totpSecret: settings.totpSecret || "",
     });
   }, [settings]);
 
@@ -142,13 +145,18 @@ const MotilalSettings = () => {
             </div>
             <div className="grid gap-1.5">
               <Label htmlFor="mot-settings-vendor">Vendor Info</Label>
-              <Input id="mot-settings-vendor" value={form.vendorinfo} onChange={(event) => handleChange("vendorinfo", event.target.value)} placeholder="Optional vendor short name or client code" disabled={isLoading} />
+              <Input id="mot-settings-vendor" value={form.vendorinfo} onChange={(event) => handleChange("vendorinfo", event.target.value)} placeholder="Optional vendor short name" disabled={isLoading} />
+            </div>
+            <div className="grid gap-1.5">
+              <Label htmlFor="mot-settings-totp-secret">TOTP Secret (32 chars)</Label>
+              <Input id="mot-settings-totp-secret" type="password" value={form.totpSecret} onChange={(event) => handleChange("totpSecret", event.target.value)} placeholder="Y7RK..." disabled={isLoading} />
             </div>
           </div>
 
           <div className="rounded-md border bg-muted/20 px-3 py-2 text-xs text-muted-foreground">
-            Password and TOTP are not saved. If Motilal expires your saved session, you only
-            need to enter password + current TOTP again from the Add Stock Motilal flow.
+            Password is not saved. If you provide the <strong>TOTP Secret</strong>, the app can
+            automatically generate login codes for you. Otherwise, you'll need to enter
+            the 6-digit TOTP manually from your authenticator app during login.
           </div>
 
           {sessionSavedAt ? (

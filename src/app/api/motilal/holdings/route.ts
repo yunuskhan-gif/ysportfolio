@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import axios from "axios";
 import crypto from "crypto";
 import { connectToDatabase } from "@/lib/mongodb";
+import * as OTPAuth from "otpauth";
 import HoldingModel from "@/lib/models/Holding";
 import MotilalConfigModel from "@/lib/models/MotilalConfig";
 
@@ -46,9 +47,27 @@ export async function POST(request: Request) {
       apiKey: body.apiKey || config?.apiKey || "",
       apiSecretKey: body.apiSecretKey || config?.apiSecretKey || "",
       vendorinfo: body.vendorinfo || config?.vendorinfo || "TRADYLYTICS",
+      totpSecret: config?.totpSecret || "",
       savedAuthorization: config?.session?.authorization || "",
       savedAccessToken: config?.session?.accessToken || "",
     };
+
+    // Auto-generate TOTP if not provided but secret is available
+    if (!payload.totp && payload.totpSecret) {
+      try {
+        const totp = new OTPAuth.TOTP({
+          issuer: "Motilal",
+          label: payload.userid,
+          algorithm: "SHA1",
+          digits: 6,
+          period: 30,
+          secret: payload.totpSecret.replace(/\s+/g, ""),
+        });
+        payload.totp = totp.generate();
+      } catch (e) {
+        console.error("Failed to auto-generate TOTP", e);
+      }
+    }
 
     if (!payload.userid || !payload.apiKey || !payload.apiSecretKey) {
       return NextResponse.json(
@@ -243,6 +262,7 @@ export async function POST(request: Request) {
           apiKey: payload.apiKey,
           apiSecretKey: payload.apiSecretKey,
           vendorinfo: payload.vendorinfo,
+          totpSecret: payload.totpSecret,
           session: {
             authorization,
             accessToken,

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import NextAppShell from "@/components/layout/NextAppShell";
 import Providers from "@/app/providers";
+import PasswordGate from "@/components/auth/PasswordGate";
 
 export const metadata: Metadata = {
   title: "YS Portfolio",
@@ -17,7 +18,9 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Providers>
-          <NextAppShell>{children}</NextAppShell>
+          <PasswordGate>
+            <NextAppShell>{children}</NextAppShell>
+          </PasswordGate>
         </Providers>
       </body>
     </html>
