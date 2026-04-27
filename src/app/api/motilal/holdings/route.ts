@@ -86,7 +86,7 @@ export async function POST(request: Request) {
     const fetchHoldings = async (authorization: string, accessToken: string) =>
       axios.post(
         "https://openapi.motilaloswal.com/rest/report/v3/getdpholding",
-        payload.clientcode ? { clientcode: payload.clientcode } : {},
+        {},
         {
           headers: {
             Accept: "application/json",
@@ -251,12 +251,27 @@ export async function POST(request: Request) {
         reusedSession = false;
         response = await fetchHoldings(authorization, accessToken);
       } catch (error: any) {
-        console.error("Motilal API Error (fetchHoldings):", {
+        const errorDetails = {
+          timestamp: new Date().toISOString(),
           status: error.response?.status,
           data: error.response?.data,
           message: error.message,
-          headers: error.config?.headers
-        });
+          requestedUrl: error.config?.url,
+          sentHeaders: {
+            ...error.config?.headers,
+            Authorization: error.config?.headers?.Authorization ? "REDACTED" : undefined,
+            ApiKey: error.config?.headers?.ApiKey ? "REDACTED" : undefined,
+            apisecretkey: error.config?.headers?.apisecretkey ? "REDACTED" : undefined,
+            accesstoken: error.config?.headers?.accesstoken ? "REDACTED" : undefined,
+          }
+        };
+
+        console.error("Motilal API Error (fetchHoldings):", errorDetails);
+        
+        try {
+          const fs = require('fs');
+          fs.writeFileSync('motilal_error.json', JSON.stringify(errorDetails, null, 2));
+        } catch (e) {}
 
         const isReauthNeeded =
           error.response?.status === 401 ||
