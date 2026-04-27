@@ -248,6 +248,42 @@ const Portfolio = () => {
   const [selectedHoldingId, setSelectedHoldingId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [isSavingSnapshot, setIsSavingSnapshot] = useState(false);
+
+  const handleSaveSnapshot = async () => {
+    try {
+      setIsSavingSnapshot(true);
+      const snapshotPayload = {
+        totalInvested: totalInvestment,
+        currentValue: totalCurrentValue,
+        totalPnL: totalPnl,
+        pnlPercentage: totalPnlPercent,
+        holdings: enrichedHoldings.map((h) => ({
+          symbol: h.symbol,
+          name: h.name,
+          qty: h.qty,
+          avgPrice: h.avgPrice,
+          ltp: h.ltp ?? 0,
+          currentValue: h.currentValue ?? 0,
+          pnl: h.pnl ?? 0,
+          pnlPercentage: h.pnlPercent ?? 0,
+        })),
+      };
+
+      const response = await fetch("/api/portfolio/history", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(snapshotPayload),
+      });
+
+      if (!response.ok) throw new Error("Failed to save snapshot");
+      alert("Snapshot saved successfully! History page coming soon.");
+    } catch (e: any) {
+      alert("Failed to save snapshot: " + e.message);
+    } finally {
+      setIsSavingSnapshot(false);
+    }
+  };
 
   const { data: holdings = [], isLoading: loading } = useQuery({
     queryKey: HOLDINGS_QUERY_KEY,
@@ -622,9 +658,17 @@ const Portfolio = () => {
               type="button"
               onClick={() => void handleDeleteSelected()}
               disabled={selectedIds.length === 0 || replaceHoldingsMutation.isPending}
-              className="rounded-md border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground disabled:opacity-50 disabled:cursor-not-allowed hover:bg-red-500/10 hover:text-red-500"
+              className="rounded-md border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground disabled:opacity-50 disabled:cursor-not-allowed hover:bg-red-500/10 hover:text-red-500 whitespace-nowrap"
             >
               Delete Selected
+            </button>
+            <button
+              type="button"
+              onClick={handleSaveSnapshot}
+              disabled={isSavingSnapshot || enrichedHoldings.length === 0}
+              className="rounded-md border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/10 hover:text-primary whitespace-nowrap"
+            >
+              {isSavingSnapshot ? "Saving..." : "Save Snapshot"}
             </button>
             <button
               type="button"
@@ -709,17 +753,31 @@ const Portfolio = () => {
                         {stock.pnl !== null ? `${stock.pnl >= 0 ? "+" : ""}${formatINR(stock.pnl)}` : "--"}
                       </td>
                       <td className="px-3 py-2 text-right">
-                        <button
-                          type="button"
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            void handleDeleteHolding(stock.id);
-                          }}
-                          className="rounded-md border border-border p-1.5 text-muted-foreground hover:bg-red-500/10 hover:text-red-500"
-                          title="Delete holding"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
+                        <div className="flex items-center justify-end gap-1">
+                          <button
+                            type="button"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              queryClient.invalidateQueries({ queryKey: ["livePrices"] });
+                              toast.success(`Refreshing prices...`);
+                            }}
+                            className="rounded-md border border-border p-1.5 text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors"
+                            title="Refresh price"
+                          >
+                            <RefreshCw className="h-3.5 w-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              void handleDeleteHolding(stock.id);
+                            }}
+                            className="rounded-md border border-border p-1.5 text-muted-foreground hover:bg-red-500/10 hover:text-red-500 transition-colors"
+                            title="Delete holding"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))

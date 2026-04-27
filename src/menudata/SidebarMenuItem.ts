@@ -1,5 +1,5 @@
 // src/menudata/SidebarMenuItem.ts
-import { Home, Wallet, KeyRound } from "lucide-react";
+import { Home, Wallet, KeyRound, History as HistoryIcon } from "lucide-react";
 
 export const items = [
     {
@@ -16,5 +16,10 @@ export const items = [
       title: "Motilal Settings",
       url: "/settings",
       icon: KeyRound,
+    },
+    {
+      title: "History",
+      url: "/history",
+      icon: HistoryIcon,
     },
 ]

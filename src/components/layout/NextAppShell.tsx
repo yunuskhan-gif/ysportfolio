@@ -29,6 +29,7 @@ export default function NextAppShell({ children }: { children: React.ReactNode }
     if (pathname.includes("/portfolio")) return "Portfolio";
     if (pathname.includes("/dashboard")) return "Dashboard";
     if (pathname.includes("/settings")) return "Motilal Settings";
+    if (pathname.includes("/history")) return "Portfolio History";
     return "Dashboard";
   };
 
