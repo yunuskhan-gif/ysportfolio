@@ -38,6 +38,13 @@ export async function POST(request: Request) {
     const body = (await request.json()) as MotilalRequestBody;
     const config = await MotilalConfigModel.findOne({ key: DEFAULT_KEY });
 
+    console.log("Holdings API Config Check:", {
+      hasConfig: !!config,
+      hasSession: !!config?.session,
+      savedAt: config?.session?.savedAt,
+      clientcode: config?.clientcode
+    });
+
     const payload = {
       clientcode: body.clientcode || config?.clientcode || "",
       userid: body.userid || config?.userid || "",
@@ -96,7 +103,7 @@ export async function POST(request: Request) {
             osversion: "10.0.19041",
             devicemodel: "Desktop",
             manufacturer: "Generic",
-            productname: "ys portfolio",
+            productname: "ysportfolio",
             productversion: "1.1.0",
             browsername: "Chrome",
             browserversion: "110.0.5481.178",
@@ -131,7 +138,7 @@ export async function POST(request: Request) {
         osversion: "10.0.19041",
         devicemodel: "Desktop",
         manufacturer: "Generic",
-        productname: "ys portfolio",
+        productname: "ysportfolio",
         productversion: "1.1.0",
         browsername: "Chrome",
         browserversion: "110.0.5481.178",
@@ -177,7 +184,7 @@ export async function POST(request: Request) {
             osversion: "10.0.19041",
             devicemodel: "Desktop",
             manufacturer: "Generic",
-            productname: "ys portfolio",
+            productname: "ysportfolio",
             productversion: "1.1.0",
             browsername: "Chrome",
             browserversion: "110.0.5481.178",
@@ -228,20 +235,53 @@ export async function POST(request: Request) {
         response = await fetchHoldings(authorization, accessToken);
       }
     } else {
-      const session = await loginAndCreateSession();
-      if (!session) {
+      try {
+        const session = await loginAndCreateSession();
+        if (!session) {
+          return NextResponse.json(
+            { 
+              message: "Motilal session missing or expired. Please login via Portal or provide credentials.", 
+              requiresReauth: true 
+            },
+            { status: 401 }
+          );
+        }
+        authorization = session.authorization;
+        accessToken = session.accessToken;
+        reusedSession = false;
+        response = await fetchHoldings(authorization, accessToken);
+      } catch (error: any) {
+        console.error("Motilal API Error (fetchHoldings):", {
+          status: error.response?.status,
+          data: error.response?.data,
+          message: error.message,
+          headers: error.config?.headers
+        });
+
+        const isReauthNeeded =
+          error.response?.status === 401 ||
+          error.response?.data?.message?.toLowerCase().includes("session") ||
+          error.response?.data?.message?.toLowerCase().includes("token") ||
+          error.response?.data?.message?.toLowerCase().includes("credential") ||
+          error.response?.data?.errorcode === "MO8001" ||
+          error.response?.data?.errorcode === "MO8002";
+
+        if (isReauthNeeded) {
+          return NextResponse.json(
+            { 
+              message: "Motilal session expired. Please re-authenticate in Settings or Add Stock dialog.", 
+              requiresReauth: true,
+              motilalError: error.response?.data?.message 
+            },
+            { status: 401 }
+          );
+        }
+
         return NextResponse.json(
-          { 
-            message: "Motilal session missing or expired. Please login via Portal or provide credentials.", 
-            requiresReauth: true 
-          },
-          { status: 401 }
+          { message: error.response?.data?.message || error.message || "Motilal API request failed." },
+          { status: error.response?.status || 500 }
         );
       }
-      authorization = session.authorization;
-      accessToken = session.accessToken;
-      reusedSession = false;
-      response = await fetchHoldings(authorization, accessToken);
     }
 
     if (response.data?.status !== "SUCCESS" || !Array.isArray(response.data?.data)) {

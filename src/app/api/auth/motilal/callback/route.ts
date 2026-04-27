@@ -47,7 +47,7 @@ export async function GET(request: Request) {
           osversion: "10.0.19041",
           devicemodel: "Desktop",
           manufacturer: "Generic",
-          productname: "ys portfolio",
+          productname: "ysportfolio",
           productversion: "1.1.0",
           browsername: "Chrome",
           browserversion: "110.0.5481.178",
@@ -62,6 +62,12 @@ export async function GET(request: Request) {
     }
 
     const accessToken = String(response.data.accesstoken);
+
+    console.log("Saving Motilal Session:", {
+      authtoken,
+      accessToken: accessToken.substring(0, 5) + "...",
+      nextPath
+    });
 
     // Save session to DB
     await MotilalConfigModel.findOneAndUpdate(
