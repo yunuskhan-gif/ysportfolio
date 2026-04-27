@@ -59,71 +59,45 @@ const scrapePriceFromScreener = async (symbol: string) => {
   }
 };
 
-// Removed unreliable Yahoo scraper
-
-const fetchMotilalLtp = async (
-  symbol: string,
-  scripCode: number,
-  config: any
-) => {
+const scrapePriceFromGoogleFinance = async (symbol: string) => {
   try {
-    const response = await axios.post(
-      "https://openapi.motilaloswal.com/rest/report/v3/getltpdata",
-      {
-        clientcode: config.clientcode || "",
-        exchange: "NSE",
-        scripcode: scripCode,
+    const cleanSymbol = sanitizeSymbol(symbol);
+    const url = `https://www.google.com/finance/quote/${cleanSymbol}:NSE`;
+    const response = await axios.get(url, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)",
       },
-      {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          "User-Agent": "MOSL/V.1.1.0",
-          Authorization: config.session.authorization,
-          ApiKey: config.apiKey,
-          ClientLocalIp: "192.168.1.1",
-          ClientPublicIp: "59.178.203.152",
-          MacAddress: "00:00:00:00:00:00",
-          SourceId: "WEB",
-          vendorinfo: config.vendorinfo || config.clientcode || "BTRN2627",
-          osname: "Windows",
-          osversion: "10.0.19041",
-          devicemodel: "Desktop",
-          manufacturer: "Generic",
-          productname: "ysportfolio",
-          productversion: "1.1.0",
-          browsername: "Chrome",
-          browserversion: "110.0.5481.178",
-          apisecretkey: config.apiSecretKey,
-          accesstoken: config.session.accessToken,
-        },
-        timeout: 5000,
-      }
-    );
-
-    if (response.data?.status === "SUCCESS" && response.data?.data) {
-      const ltpData = response.data.data;
-      let price = Number(ltpData.ltp);
-      // Some versions of API return LTP in paisa
-      if (price > 1000000) price = price / 100;
-
+      timeout: 5000,
+    });
+    const $ = cheerio.load(response.data);
+    const priceStr = $(".YMlKec.fxKbKc").first().text().replace(/,/g, "").replace("₹", "").trim();
+    const price = parseFloat(priceStr);
+    
+    if (!isNaN(price)) {
       return {
         symbol,
         price,
         change: 0,
         changePercent: 0,
-        source: "Motilal API",
+        source: "Google Finance",
       };
     }
     return null;
-  } catch (error) {
+  } catch (error: any) {
+    console.warn(`Google Finance scrape failed for ${symbol}:`, error.message);
     return null;
   }
 };
 
+// Removed unreliable Yahoo scraper
+
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const symbolsStr = searchParams.get("symbols");
+
+  if (!symbolsStr) {
+    return NextResponse.json({ message: "Symbols are required" }, { status: 400 });
+  }
 
   const symbols = symbolsStr.split(",");
 
@@ -145,60 +119,53 @@ export async function GET(request: NextRequest) {
   });
 
   try {
-    await connectToDatabase();
-
-    // 1. Try Yahoo Finance API (Most reliable for Indian stocks with .NS)
+    let validResults: any[] = [];
+    
+    // 1. Try Yahoo Finance API (Primary)
     try {
-      const mappedSymbolsStr = mappedSymbols.join(',');
+      const mappedSymbolsStr = mappedSymbols.join(',').toUpperCase();
       const yahooUrl = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${mappedSymbolsStr}`;
       const yahooRes = await axios.get(yahooUrl, {
         headers: {
-          "User-Agent":
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         },
-        timeout: 5000,
+        timeout: 10000,
       });
 
       const quotes = yahooRes.data?.quoteResponse?.result;
       if (quotes && quotes.length > 0) {
-        const prices = quotes
+        validResults = quotes
           .map((quote: any) => ({
-            symbol: quote.symbol,
+            symbol: quote.symbol.toUpperCase(),
             price: quote.regularMarketPrice,
             change: quote.regularMarketChange,
             changePercent: quote.regularMarketChangePercent,
             source: "Yahoo API",
           }))
           .filter((quote: any) => typeof quote.price === "number" && !isNaN(quote.price));
-
-        if (prices.length === symbols.length) {
-          return NextResponse.json(prices);
-        }
-
-        // Handle missing symbols
-        const missingSymbols = mappedSymbols.filter(
-          (symbol) => !prices.some((price: any) => price.symbol === symbol)
-        );
-        const screenerMissing = await Promise.all(
-          missingSymbols.map((symbol) => scrapePriceFromScreener(symbol))
-        );
-        const combined = [
-          ...prices,
-          ...screenerMissing.filter((result) => result !== null),
-        ];
-
-        return NextResponse.json(combined);
       }
     } catch (err: any) {
-      console.warn("Yahoo API failed, falling back to Screener...", err.message);
+      console.warn("Yahoo API failed:", err.message);
     }
 
-    // 2. Fallback: Scrape Screener
-    const screenerResults = await Promise.all(mappedSymbols.map((symbol) => scrapePriceFromScreener(symbol)));
-    const validResults = screenerResults.filter((result) => result !== null);
+    // 2. Supplement missing symbols with Google Finance & Screener
+    const fetchedSymbols = new Set(validResults.map(p => p.symbol.toUpperCase()));
+    const missingSymbols = mappedSymbols.filter(s => !fetchedSymbols.has(s.toUpperCase()));
 
-    if (validResults.length === mappedSymbols.length) {
-      return NextResponse.json(validResults);
+    if (missingSymbols.length > 0) {
+      const fallbackResults = await Promise.all(
+        missingSymbols.map(async (symbol) => {
+          let result = await scrapePriceFromGoogleFinance(symbol);
+          if (!result) {
+            result = await scrapePriceFromScreener(symbol);
+          }
+          return result;
+        })
+      );
+      
+      fallbackResults.forEach(r => {
+        if (r) validResults.push(r);
+      });
     }
 
     // Map results back to original requested symbols
@@ -211,24 +178,18 @@ export async function GET(request: NextRequest) {
       if (found) {
         return {
           ...found,
-          symbol: originalSymbol // Return the symbol the frontend is expecting
+          symbol: originalSymbol
         };
       }
       return null;
     }).filter(r => r !== null);
 
     if (finalResults.length === 0) {
-      return NextResponse.json(
-        { message: "All price sources failed." },
-        { status: 503 }
-      );
+      return NextResponse.json({ message: "All price sources failed." }, { status: 503 });
     }
 
     return NextResponse.json(finalResults);
   } catch (error: any) {
-    return NextResponse.json(
-      { message: "Internal server error", error: error.message },
-      { status: 500 }
-    );
+    return NextResponse.json({ message: "Internal error", error: error.message }, { status: 500 });
   }
 }
