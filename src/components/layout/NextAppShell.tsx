@@ -40,9 +40,14 @@ export default function NextAppShell({ children }: { children: React.ReactNode }
     let cancelled = false;
 
     const syncMotilalOnLoad = async () => {
+      // Prevent syncing on every navigation. Only once per session or if manually triggered.
+      const hasSyncedThisSession = sessionStorage.getItem("motilal_synced_this_session");
+      if (hasSyncedThisSession) return;
+
       try {
         const response = await fetchMotilalHoldings({ persistHoldings: true });
         if (!cancelled && !response.skipped) {
+          sessionStorage.setItem("motilal_synced_this_session", "true");
           await queryClient.invalidateQueries({ queryKey: HOLDINGS_QUERY_KEY });
           window.dispatchEvent(new CustomEvent(MOTILAL_SYNC_EVENT));
         }
@@ -52,10 +57,10 @@ export default function NextAppShell({ children }: { children: React.ReactNode }
           if (message.includes("session") || message.includes("Credentials")) {
             toast.error("Motilal session expired. Please re-authenticate in Settings or Add Stock dialog.", { id: "motilal-sync-error" });
           } else {
-            toast.error(message);
+            // Silently fail if it's not a session error to avoid annoying the user
+            console.warn("Motilal background sync failed:", message);
           }
         }
-        // Keep existing database holdings if broker sync is unavailable.
       }
     };
 
@@ -64,7 +69,7 @@ export default function NextAppShell({ children }: { children: React.ReactNode }
     return () => {
       cancelled = true;
     };
-  }, [pathname, queryClient]);
+  }, [queryClient]); // Removed pathname to prevent re-syncing on every page change
 
   const handleDataUploaded = async () => {
     await queryClient.invalidateQueries({ queryKey: HOLDINGS_QUERY_KEY });

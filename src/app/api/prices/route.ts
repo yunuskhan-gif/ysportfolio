@@ -117,19 +117,19 @@ const fetchMotilalLtp = async (
           "User-Agent": "MOSL/V.1.1.0",
           Authorization: config.session.authorization,
           ApiKey: config.apiKey,
-          ClientLocalIp: "127.0.0.1",
-          ClientPublicIp: "127.0.0.1",
+          ClientLocalIp: "192.168.1.1",
+          ClientPublicIp: "59.178.203.152",
           MacAddress: "00:00:00:00:00:00",
           SourceId: "WEB",
-          vendorinfo: config.vendorinfo || "TRADYLYTICS",
+          vendorinfo: config.vendorinfo || config.clientcode || "BTRN2627",
           osname: "Windows",
-          osversion: "10",
+          osversion: "10.0.19041",
           devicemodel: "Desktop",
           manufacturer: "Generic",
-          productname: "Tradylytics",
-          productversion: "1.0.0",
+          productname: "ysportfolio",
+          productversion: "1.1.0",
           browsername: "Chrome",
-          browserversion: "1.0",
+          browserversion: "110.0.5481.178",
           apisecretkey: config.apiSecretKey,
           accesstoken: config.session.accessToken,
         },
@@ -202,7 +202,8 @@ export async function GET(request: NextRequest) {
 
     // 2. Try Yahoo Finance API
     try {
-      const yahooUrl = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbolsStr}`;
+      const yahooSymbols = symbols.map(s => s.includes('.') ? s : `${s}.NS`).join(',');
+      const yahooUrl = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${yahooSymbols}`;
       const yahooRes = await axios.get(yahooUrl, {
         headers: {
           "User-Agent":
