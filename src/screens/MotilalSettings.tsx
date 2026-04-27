@@ -129,7 +129,21 @@ const MotilalSettings = () => {
             </div>
             <div className="grid gap-1.5">
               <Label htmlFor="mot-settings-userid">User ID</Label>
-              <Input id="mot-settings-userid" value={form.userid} onChange={(event) => handleChange("userid", event.target.value)} placeholder="AA020" disabled={isLoading} />
+              <Input
+                id="mot-settings-userid"
+                value={form.userid}
+                onChange={(event) => {
+                  const val = event.target.value;
+                  setForm((prev) => ({
+                    ...prev,
+                    userid: val,
+                    // Auto-fill clientcode if it was empty or matches old userid
+                    clientcode: !prev.clientcode || prev.clientcode === prev.userid ? val : prev.clientcode,
+                  }));
+                }}
+                placeholder="AA020"
+                disabled={isLoading}
+              />
             </div>
             <div className="grid gap-1.5">
               <Label htmlFor="mot-settings-dob">DOB</Label>
@@ -170,6 +184,19 @@ const MotilalSettings = () => {
           <div className="flex flex-wrap gap-2">
             <Button type="button" onClick={() => void handleSave()} disabled={saveMutation.isPending}>
               {saveMutation.isPending ? "Saving..." : "Save Settings"}
+            </Button>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => {
+                if (!form.apiKey) {
+                  toast.error("Please save your API Key first.");
+                  return;
+                }
+                window.location.href = "/api/auth/motilal/login";
+              }}
+            >
+              Login via Portal
             </Button>
             <Button type="button" variant="outline" onClick={() => void handleClearSession()} disabled={clearSessionMutation.isPending}>
               {clearSessionMutation.isPending ? "Clearing..." : "Clear Session"}

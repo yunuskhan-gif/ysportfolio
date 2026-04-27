@@ -1,6 +1,6 @@
 "use client";
 
-import { Moon, Sun, Plus, Palette } from "lucide-react";
+import { Moon, Sun, Plus, Palette, LogOut } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -130,6 +130,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   {state !== "collapsed" && <span className="ml-2">{getButtonText()}</span>}
                 </>
               )}
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              onClick={async () => {
+                await fetch("/api/auth/logout", { method: "POST" });
+                window.location.reload();
+              }}
+              className="w-full justify-start cursor-pointer group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:ml-1 transition-all text-destructive hover:text-destructive hover:bg-destructive/10"
+            >
+              <LogOut className="h-4 w-4 transition-all" />
+              {state !== "collapsed" && <span className="ml-2">Logout</span>}
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
