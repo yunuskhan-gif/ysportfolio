@@ -63,10 +63,13 @@ export async function GET(request: Request) {
 
     const accessToken = String(response.data.accesstoken);
 
+    const nextPath = request.headers.get("cookie")?.split("; ").find(c => c.startsWith("motilal_next="))?.split("=")[1] || "/settings";
+    const decodedPath = decodeURIComponent(nextPath);
+
     console.log("Saving Motilal Session:", {
-      authtoken,
+      authtoken: authtoken.substring(0, 5) + "...",
       accessToken: accessToken.substring(0, 5) + "...",
-      nextPath
+      nextPath: decodedPath
     });
 
     // Save session to DB
@@ -84,8 +87,7 @@ export async function GET(request: Request) {
       { upsert: true }
     );
 
-    const nextPath = request.headers.get("cookie")?.split("; ").find(c => c.startsWith("motilal_next="))?.split("=")[1] || "/settings";
-    const redirectUrl = new URL(decodeURIComponent(nextPath), request.url);
+    const redirectUrl = new URL(decodedPath, request.url);
 
     // Redirect back to settings or original page
     const redirectResponse = NextResponse.redirect(redirectUrl);

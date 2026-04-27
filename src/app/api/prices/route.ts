@@ -161,11 +161,25 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const symbolsStr = searchParams.get("symbols");
 
-  if (!symbolsStr) {
-    return NextResponse.json({ message: "Symbols are required" }, { status: 400 });
-  }
-
   const symbols = symbolsStr.split(",");
+
+  // Smart Mapping for Motilal-specific scrip names to actual listed symbols
+  const SCRIP_MAPPING: Record<string, string> = {
+    "TMPV": "TATAMOTORS",
+    "TMCV": "TATAMOTORS",
+    "GVT&D": "GET&D",
+    "TATACAP": "TATAINVEST", // Tata Investment Corp is often used as a proxy or it might be unlisted
+    "ITCHOTELS": "ITC",      // Currently ITC is the parent
+    "IOLCP": "IOLCPOT",      // IOL Chemicals full symbol
+  };
+
+  const mappedSymbols = symbols.map(s => {
+    const base = s.replace(".NS", "").toUpperCase();
+    if (SCRIP_MAPPING[base]) {
+      return `${SCRIP_MAPPING[base]}.NS`;
+    }
+    return s.includes(".") ? s : `${s}.NS`;
+  });
 
   try {
     await connectToDatabase();
@@ -177,7 +191,7 @@ export async function GET(request: NextRequest) {
 
       if (hasSession) {
         const scripMappings = await MotilalScripModel.find({
-          symbol: { $in: symbols },
+          symbol: { $in: mappedSymbols },
           exchange: "NSE",
         });
 
@@ -202,8 +216,8 @@ export async function GET(request: NextRequest) {
 
     // 2. Try Yahoo Finance API
     try {
-      const yahooSymbols = symbols.map(s => s.includes('.') ? s : `${s}.NS`).join(',');
-      const yahooUrl = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${yahooSymbols}`;
+      const mappedSymbolsStr = mappedSymbols.join(',');
+      const yahooUrl = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${mappedSymbolsStr}`;
       const yahooRes = await axios.get(yahooUrl, {
         headers: {
           "User-Agent":
@@ -229,7 +243,7 @@ export async function GET(request: NextRequest) {
         }
 
         // Handle missing symbols
-        const missingSymbols = symbols.filter(
+        const missingSymbols = mappedSymbols.filter(
           (symbol) => !prices.some((price: any) => price.symbol === symbol)
         );
         const screenerMissing = await Promise.all(
@@ -255,32 +269,48 @@ export async function GET(request: NextRequest) {
     }
 
     // 3. Fallback: Scrape Screener and Yahoo
-    const screenerResults = await Promise.all(symbols.map((symbol) => scrapePriceFromScreener(symbol)));
+    const screenerResults = await Promise.all(mappedSymbols.map((symbol) => scrapePriceFromScreener(symbol)));
     const validScreenerResults = screenerResults.filter((result) => result !== null);
 
     if (validScreenerResults.length === symbols.length) {
       return NextResponse.json(validScreenerResults);
     }
 
-    const missingSymbols = symbols.filter(
+    const missingSymbolsFinal = mappedSymbols.filter(
       (symbol) => !validScreenerResults.some((result) => result?.symbol === symbol)
     );
     const yahooScrapeResults = await Promise.all(
-      missingSymbols.map((symbol) => scrapePriceFromYahooPage(symbol))
+      missingSymbolsFinal.map((symbol) => scrapePriceFromYahooPage(symbol))
     );
     const validResults = [
       ...validScreenerResults,
       ...yahooScrapeResults.filter((result) => result !== null),
     ];
 
-    if (validResults.length === 0) {
+    // Map results back to original requested symbols
+    const finalResults = symbols.map(originalSymbol => {
+      const base = originalSymbol.replace(".NS", "").toUpperCase();
+      const lookupSymbol = SCRIP_MAPPING[base] ? `${SCRIP_MAPPING[base]}.NS` : (originalSymbol.includes(".") ? originalSymbol : `${originalSymbol}.NS`);
+      
+      const found = validResults.find(r => r.symbol.toUpperCase() === lookupSymbol.toUpperCase() || r.symbol.toUpperCase() === lookupSymbol.replace(".NS", "").toUpperCase());
+      
+      if (found) {
+        return {
+          ...found,
+          symbol: originalSymbol // Return the symbol the frontend is expecting
+        };
+      }
+      return null;
+    }).filter(r => r !== null);
+
+    if (finalResults.length === 0) {
       return NextResponse.json(
         { message: "All price sources failed." },
         { status: 503 }
       );
     }
 
-    return NextResponse.json(validResults);
+    return NextResponse.json(finalResults);
   } catch (error: any) {
     return NextResponse.json(
       { message: "Internal server error", error: error.message },

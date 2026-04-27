@@ -40,9 +40,10 @@ export async function POST(request: Request) {
 
     console.log("Holdings API Config Check:", {
       hasConfig: !!config,
-      hasSession: !!config?.session,
-      savedAt: config?.session?.savedAt,
-      clientcode: config?.clientcode
+      clientcode: config?.clientcode || "EMPTY",
+      hasApiKey: !!config?.apiKey,
+      hasSession: !!config?.session?.authorization,
+      savedAt: config?.session?.savedAt || "NONE"
     });
 
     const payload = {
