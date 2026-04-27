@@ -158,8 +158,11 @@ const MotilalSettings = () => {
               <Input id="mot-settings-secret" type="password" value={form.apiSecretKey} onChange={(event) => handleChange("apiSecretKey", event.target.value)} placeholder="Your API secret key" disabled={isLoading} />
             </div>
             <div className="grid gap-1.5">
-              <Label htmlFor="mot-settings-vendor">Vendor Info</Label>
-              <Input id="mot-settings-vendor" value={form.vendorinfo} onChange={(event) => handleChange("vendorinfo", event.target.value)} placeholder="Optional vendor short name" disabled={isLoading} />
+              <Label htmlFor="mot-settings-vendor">Vendor Info (Optional)</Label>
+              <Input id="mot-settings-vendor" value={form.vendorinfo} onChange={(event) => handleChange("vendorinfo", event.target.value)} placeholder="Use Client Code if not a vendor" disabled={isLoading} />
+              <p className="text-[10px] text-muted-foreground mt-1">
+                If you are a retail client, leave this blank or use your <strong>Client Code</strong>.
+              </p>
             </div>
             <div className="grid gap-1.5">
               <Label htmlFor="mot-settings-totp-secret">TOTP Secret (32 chars)</Label>

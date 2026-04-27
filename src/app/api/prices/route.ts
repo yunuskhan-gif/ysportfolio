@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 import * as cheerio from "cheerio";
+import { connectToDatabase } from "@/lib/mongodb";
+import MotilalConfigModel from "@/lib/models/MotilalConfig";
+import MotilalScripModel from "@/lib/models/MotilalScrip";
 
 const sanitizeSymbol = (symbol: string) => symbol.replace(".NS", "").replace(".BO", "");
 
@@ -94,6 +97,66 @@ const scrapePriceFromYahooPage = async (symbol: string) => {
   }
 };
 
+const fetchMotilalLtp = async (
+  symbol: string,
+  scripCode: number,
+  config: any
+) => {
+  try {
+    const response = await axios.post(
+      "https://openapi.motilaloswal.com/rest/report/v3/getltpdata",
+      {
+        clientcode: config.clientcode || "",
+        exchange: "NSE",
+        scripcode: scripCode,
+      },
+      {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "User-Agent": "MOSL/V.1.1.0",
+          Authorization: config.session.authorization,
+          ApiKey: config.apiKey,
+          ClientLocalIp: "127.0.0.1",
+          ClientPublicIp: "127.0.0.1",
+          MacAddress: "00:00:00:00:00:00",
+          SourceId: "WEB",
+          vendorinfo: config.vendorinfo || "TRADYLYTICS",
+          osname: "Windows",
+          osversion: "10",
+          devicemodel: "Desktop",
+          manufacturer: "Generic",
+          productname: "Tradylytics",
+          productversion: "1.0.0",
+          browsername: "Chrome",
+          browserversion: "1.0",
+          apisecretkey: config.apiSecretKey,
+          accesstoken: config.session.accessToken,
+        },
+        timeout: 5000,
+      }
+    );
+
+    if (response.data?.status === "SUCCESS" && response.data?.data) {
+      const ltpData = response.data.data;
+      let price = Number(ltpData.ltp);
+      // Some versions of API return LTP in paisa
+      if (price > 1000000) price = price / 100;
+
+      return {
+        symbol,
+        price,
+        change: 0,
+        changePercent: 0,
+        source: "Motilal API",
+      };
+    }
+    return null;
+  } catch (error) {
+    return null;
+  }
+};
+
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const symbolsStr = searchParams.get("symbols");
@@ -105,7 +168,39 @@ export async function GET(request: NextRequest) {
   const symbols = symbolsStr.split(",");
 
   try {
-    // 1. Try Yahoo Finance API first
+    await connectToDatabase();
+
+    // 1. Try Motilal API if session is available
+    try {
+      const config = await MotilalConfigModel.findOne({ key: "default" });
+      const hasSession = config?.session?.authorization && config?.session?.accessToken;
+
+      if (hasSession) {
+        const scripMappings = await MotilalScripModel.find({
+          symbol: { $in: symbols },
+          exchange: "NSE",
+        });
+
+        if (scripMappings.length > 0) {
+          const motilalResults = await Promise.all(
+            scripMappings.map((mapping) =>
+              fetchMotilalLtp(mapping.symbol, mapping.scripCode, config)
+            )
+          );
+
+          const validMotilal = motilalResults.filter((r) => r !== null);
+          if (validMotilal.length === symbols.length) {
+            return NextResponse.json(validMotilal);
+          }
+
+          // If partial, we continue to others
+        }
+      }
+    } catch (err: any) {
+      console.warn("Motilal Price API failed, falling back...", err.message);
+    }
+
+    // 2. Try Yahoo Finance API
     try {
       const yahooUrl = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbolsStr}`;
       const yahooRes = await axios.get(yahooUrl, {
@@ -158,7 +253,7 @@ export async function GET(request: NextRequest) {
       console.warn("Yahoo API failed, falling back to scraping...", err.message);
     }
 
-    // 2. Fallback: Scrape Screener and Yahoo
+    // 3. Fallback: Scrape Screener and Yahoo
     const screenerResults = await Promise.all(symbols.map((symbol) => scrapePriceFromScreener(symbol)));
     const validScreenerResults = screenerResults.filter((result) => result !== null);
 

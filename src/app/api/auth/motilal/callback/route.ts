@@ -38,19 +38,19 @@ export async function GET(request: Request) {
           "User-Agent": "MOSL/V.1.1.0",
           Authorization: authtoken,
           ApiKey: config.apiKey,
-          ClientLocalIp: "127.0.0.1",
-          ClientPublicIp: "127.0.0.1",
-          MacAddress: "00:00:00:00:00:00",
+          ClientLocalIp: "192.168.1.1",
+          ClientPublicIp: "59.178.203.152",
+          MacAddress: "00-1B-63-84-45-E6",
           SourceId: "WEB",
-          vendorinfo: config.vendorinfo || "TRADYLYTICS",
-          osname: "Windows",
-          osversion: "10",
+          vendorinfo: config.vendorinfo || config.clientcode || "",
+          osname: "Windows 10",
+          osversion: "10.0.19041",
           devicemodel: "Desktop",
           manufacturer: "Generic",
-          productname: "Tradylytics",
-          productversion: "1.0.0",
+          productname: "ys portfolio",
+          productversion: "1.1.0",
           browsername: "Chrome",
-          browserversion: "1.0",
+          browserversion: "110.0.5481.178",
           apisecretkey: config.apiSecretKey,
         },
         timeout: 15000,
@@ -78,8 +78,13 @@ export async function GET(request: Request) {
       { upsert: true }
     );
 
-    // Redirect back to settings
-    return NextResponse.redirect(new URL("/settings", request.url));
+    const nextPath = request.headers.get("cookie")?.split("; ").find(c => c.startsWith("motilal_next="))?.split("=")[1] || "/settings";
+    const redirectUrl = new URL(decodeURIComponent(nextPath), request.url);
+
+    // Redirect back to settings or original page
+    const redirectResponse = NextResponse.redirect(redirectUrl);
+    redirectResponse.cookies.delete("motilal_next");
+    return redirectResponse;
   } catch (error: any) {
     console.error("Motilal Callback Error:", error.response?.data || error.message);
     return NextResponse.json(

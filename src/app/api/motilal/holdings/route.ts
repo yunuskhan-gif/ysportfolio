@@ -46,7 +46,7 @@ export async function POST(request: Request) {
       totp: body.totp || "",
       apiKey: body.apiKey || config?.apiKey || "",
       apiSecretKey: body.apiSecretKey || config?.apiSecretKey || "",
-      vendorinfo: body.vendorinfo || config?.vendorinfo || "TRADYLYTICS",
+      vendorinfo: body.vendorinfo || config?.vendorinfo || body.clientcode || config?.clientcode || "",
       totpSecret: config?.totpSecret || "",
       savedAuthorization: config?.session?.authorization || "",
       savedAccessToken: config?.session?.accessToken || "",
@@ -87,19 +87,19 @@ export async function POST(request: Request) {
             "User-Agent": "MOSL/V.1.1.0",
             Authorization: authorization,
             ApiKey: payload.apiKey,
-            ClientLocalIp: "127.0.0.1",
-            ClientPublicIp: "127.0.0.1",
-            MacAddress: "00:00:00:00:00:00",
+            ClientLocalIp: "192.168.1.1",
+            ClientPublicIp: "59.178.203.152",
+            MacAddress: "00-1B-63-84-45-E6",
             SourceId: "WEB",
             vendorinfo: payload.vendorinfo,
-            osname: "Windows",
-            osversion: "10",
+            osname: "Windows 10",
+            osversion: "10.0.19041",
             devicemodel: "Desktop",
             manufacturer: "Generic",
-            productname: "Tradylytics",
-            productversion: "1.0.0",
+            productname: "ys portfolio",
+            productversion: "1.1.0",
             browsername: "Chrome",
-            browserversion: "1.0",
+            browserversion: "110.0.5481.178",
             apisecretkey: payload.apiSecretKey,
             accesstoken: accessToken,
           },
@@ -117,6 +117,27 @@ export async function POST(request: Request) {
         .update(`${payload.password}${payload.apiKey}`)
         .digest("hex");
 
+      const headers = {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "User-Agent": "MOSL/V.1.1.0",
+        ApiKey: payload.apiKey,
+        vendorinfo: payload.vendorinfo,
+        SourceId: "WEB",
+        ClientLocalIp: "192.168.1.1",
+        ClientPublicIp: "59.178.203.152",
+        MacAddress: "00-1B-63-84-45-E6",
+        osname: "Windows 10",
+        osversion: "10.0.19041",
+        devicemodel: "Desktop",
+        manufacturer: "Generic",
+        productname: "ys portfolio",
+        productversion: "1.1.0",
+        browsername: "Chrome",
+        browserversion: "110.0.5481.178",
+        apisecretkey: payload.apiSecretKey,
+      };
+
       const authResponse = await axios.post(
         "https://openapi.motilaloswal.com/rest/login/v7/authdirectapi",
         {
@@ -126,12 +147,7 @@ export async function POST(request: Request) {
           ...(payload.totp ? { totp: payload.totp } : {}),
         },
         {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            "User-Agent": "MOSL/V.1.1.0",
-            ApiKey: payload.apiKey,
-          },
+          headers,
           timeout: 15000,
         }
       );
@@ -152,19 +168,19 @@ export async function POST(request: Request) {
             "User-Agent": "MOSL/V.1.1.0",
             Authorization: authorization,
             ApiKey: payload.apiKey,
-            ClientLocalIp: "127.0.0.1",
-            ClientPublicIp: "127.0.0.1",
-            MacAddress: "00:00:00:00:00:00",
+            ClientLocalIp: "192.168.1.1",
+            ClientPublicIp: "59.178.203.152",
+            MacAddress: "00-1B-63-84-45-E6",
             SourceId: "WEB",
             vendorinfo: payload.vendorinfo,
-            osname: "Windows",
-            osversion: "10",
+            osname: "Windows 10",
+            osversion: "10.0.19041",
             devicemodel: "Desktop",
             manufacturer: "Generic",
-            productname: "Tradylytics",
-            productversion: "1.0.0",
+            productname: "ys portfolio",
+            productversion: "1.1.0",
             browsername: "Chrome",
-            browserversion: "1.0",
+            browserversion: "110.0.5481.178",
             apisecretkey: payload.apiSecretKey,
           },
           timeout: 15000,
@@ -215,8 +231,11 @@ export async function POST(request: Request) {
       const session = await loginAndCreateSession();
       if (!session) {
         return NextResponse.json(
-          { message: "Credentials required.", requiresReauth: true },
-          { status: 400 }
+          { 
+            message: "Motilal session missing or expired. Please login via Portal or provide credentials.", 
+            requiresReauth: true 
+          },
+          { status: 401 }
         );
       }
       authorization = session.authorization;

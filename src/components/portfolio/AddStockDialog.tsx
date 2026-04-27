@@ -593,17 +593,31 @@ export default function AddStockDialog({
                   placeholder="Y7RK..."
                 />
               </div>
-              <div className="grid gap-1.5 xl:col-span-2">
-                <Label className="opacity-0">Action</Label>
-                <Button
-                  type="button"
-                  onClick={() => void handleImportMotilalHoldings()}
-                  disabled={fetchMotilalMutation.isPending}
-                  className="w-full min-w-[180px]"
-                >
-                  {fetchMotilalMutation.isPending ? "Importing..." : "Fetch Holdings"}
-                </Button>
-              </div>
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    onClick={() => void handleImportMotilalHoldings()}
+                    disabled={fetchMotilalMutation.isPending}
+                    className="flex-1"
+                  >
+                    {fetchMotilalMutation.isPending ? "Importing..." : "Fetch Holdings"}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      if (!motilalForm.apiKey) {
+                        toast.error("API Key is required to login via portal.");
+                        return;
+                      }
+                      const next = encodeURIComponent(window.location.pathname);
+                      window.location.href = `/api/auth/motilal/login?next=${next}`;
+                    }}
+                    className="gap-2"
+                  >
+                    Login via Portal
+                  </Button>
+                </div>
             </div>
 
             <div className="rounded-md border bg-muted/20 px-3 py-2 text-xs">
@@ -620,7 +634,16 @@ export default function AddStockDialog({
               </p>
             ) : null}
 
-            {motilalError ? <p className="text-sm text-red-500">{motilalError}</p> : null}
+            {motilalError ? (
+              <div className="flex flex-col gap-2 p-3 rounded-md bg-destructive/10 border border-destructive/20">
+                <p className="text-sm text-destructive">{motilalError}</p>
+                {motilalError.toLowerCase().includes("re-auth") || motilalError.toLowerCase().includes("credentials") ? (
+                  <p className="text-xs text-muted-foreground">
+                    Your session might have expired. Try logging in via the portal button above.
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
 
             {motilalPreview.length > 0 ? (
               <div className="space-y-3">

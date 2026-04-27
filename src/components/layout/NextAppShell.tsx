@@ -48,9 +48,12 @@ export default function NextAppShell({ children }: { children: React.ReactNode }
         }
       } catch (error) {
         if (!cancelled && pathname.includes("/portfolio")) {
-          toast.error(
-            error instanceof Error ? error.message : "Motilal sync failed."
-          );
+          const message = error instanceof Error ? error.message : "Motilal sync failed.";
+          if (message.includes("session") || message.includes("Credentials")) {
+            toast.error("Motilal session expired. Please re-authenticate in Settings or Add Stock dialog.", { id: "motilal-sync-error" });
+          } else {
+            toast.error(message);
+          }
         }
         // Keep existing database holdings if broker sync is unavailable.
       }
