@@ -202,54 +202,103 @@ const scrapePriceFromYahooPage = async (symbol: string): Promise<CachedPrice | n
 };
 
 // ═══════════════════════════════════════════════════════════
-// SCRAPER 4: Moneycontrol — Another major Indian finance site
+// SCRAPER 4: Moneycontrol Price API — Fast JSON endpoint
+// Uses search to find sc_id, then hits the price API directly
 // ═══════════════════════════════════════════════════════════
-const scrapePriceFromMoneycontrol = async (symbol: string): Promise<CachedPrice | null> => {
+
+// Cache sc_id lookups so we only search once per symbol
+const SCID_CACHE = new Map<string, { scId: string; ts: number }>();
+const SCID_TTL = 24 * 60 * 60 * 1000; // 24 hours
+
+function extractNSESymbolFromMC(pdtDisNm: string | undefined): string | null {
+  if (!pdtDisNm) return null;
+  const spanMatch = pdtDisNm.match(/<span>([^<]+)<\/span>/);
+  if (!spanMatch) return null;
+  const parts = spanMatch[1].split(",").map((s: string) => s.trim());
+  if (parts.length >= 2 && parts[1] && !/^\d+$/.test(parts[1])) return parts[1];
+  return null;
+}
+
+const findMoneycontrolScId = async (symbol: string): Promise<string | null> => {
+  const cleanSymbol = sanitizeSymbol(symbol);
+  const cacheKey = cleanSymbol.toUpperCase();
+
+  // Check sc_id cache
+  const cached = SCID_CACHE.get(cacheKey);
+  if (cached && Date.now() - cached.ts < SCID_TTL) return cached.scId;
+
   try {
-    const cleanSymbol = sanitizeSymbol(symbol);
-    // Search for the stock on Moneycontrol
-    const searchUrl = `https://www.moneycontrol.com/mccode/common/autosuggestion_solr.php?classic=true&query=${cleanSymbol}&type=1&format=json`;
+    const searchUrl = `https://www.moneycontrol.com/mccode/common/autosuggestion_solr.php?classic=true&query=${encodeURIComponent(cleanSymbol)}&type=1&format=json`;
     const searchRes = await axios.get(searchUrl, {
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-      },
+      headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" },
       timeout: 4000,
     });
 
-    if (!searchRes.data || searchRes.data.length === 0) return null;
+    if (!Array.isArray(searchRes.data) || searchRes.data.length === 0) return null;
 
-    // Find best match
-    const match = searchRes.data.find((item: any) =>
-      item.nse_scrip_code?.toUpperCase() === cleanSymbol.toUpperCase() ||
-      item.sc_id?.toUpperCase() === cleanSymbol.toUpperCase()
-    ) || searchRes.data[0];
+    // Find exact NSE symbol match
+    const match = searchRes.data.find((item: any) => {
+      const nse = extractNSESymbolFromMC(item.pdt_dis_nm);
+      return nse?.toUpperCase() === cleanSymbol.toUpperCase();
+    }) || searchRes.data[0];
 
-    if (!match?.link_src) return null;
+    if (!match?.sc_id) return null;
 
-    // Fetch the stock page
-    const pageUrl = `https://www.moneycontrol.com${match.link_src}`;
-    const pageRes = await axios.get(pageUrl, {
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-      },
-      timeout: 5000,
+    SCID_CACHE.set(cacheKey, { scId: match.sc_id, ts: Date.now() });
+    return match.sc_id;
+  } catch {
+    return null;
+  }
+};
+
+const scrapePriceFromMoneycontrol = async (symbol: string): Promise<CachedPrice | null> => {
+  try {
+    const scId = await findMoneycontrolScId(symbol);
+    if (!scId) return null;
+
+    const priceUrl = `https://priceapi.moneycontrol.com/pricefeed/nse/equitycash/${scId}`;
+    const res = await axios.get(priceUrl, {
+      headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" },
+      timeout: 4000,
     });
 
-    const $ = cheerio.load(pageRes.data);
-    let price = NaN;
+    const d = res.data?.data;
+    if (!d?.pricecurrent) return null;
 
-    // Method 1: NSE price element
-    const priceText = $("#secStockVal, #nseMainPrice, .nseMainPrice .nsePrice, .pcstkspr .nseprice span, #nsemainprice .nsecp").first().text().replace(/,/g, "").trim();
-    if (priceText) price = parseFloat(priceText);
-
-    // Method 2: Broader search
-    if (!isValidPrice(price)) {
-      const raw = $(".inprice1 .nsecp, .nse_prc_adj .nsePrice").first().text().replace(/,/g, "").trim();
-      if (raw) price = parseFloat(raw);
-    }
+    const price = parseFloat(String(d.pricecurrent).replace(/,/g, ""));
+    const change = parseFloat(d.pricechange || "0");
+    const changePercent = parseFloat(d.pricepercentchange || "0");
 
     if (isValidPrice(price)) {
-      return { symbol, price, change: 0, changePercent: 0, source: "Moneycontrol", fetchedAt: Date.now() };
+      return { symbol, price, change, changePercent, source: "Moneycontrol", fetchedAt: Date.now() };
+    }
+    return null;
+  } catch {
+    return null;
+  }
+};
+
+// ═══════════════════════════════════════════════════════════
+// SCRAPER 4b: Moneycontrol Mutual Fund API — For NAV fetching
+// ═══════════════════════════════════════════════════════════
+const scrapePriceFromMoneycontrolMF = async (symbol: string): Promise<CachedPrice | null> => {
+  try {
+    // For MFs, the symbol is usually the scheme code (e.g., MSA031)
+    const priceUrl = `https://priceapi.moneycontrol.com/pricefeed/mutualfund/nav/${symbol}`;
+    const res = await axios.get(priceUrl, {
+      headers: { "User-Agent": "Mozilla/5.0" },
+      timeout: 4000,
+    });
+
+    const d = res.data?.data;
+    if (!d?.nav) return null;
+
+    const price = parseFloat(String(d.nav).replace(/,/g, ""));
+    const change = parseFloat(d.navChange || "0");
+    const changePercent = parseFloat(d.navPChange || "0");
+
+    if (isValidPrice(price)) {
+      return { symbol, price, change, changePercent, source: "Moneycontrol MF", fetchedAt: Date.now() };
     }
     return null;
   } catch {
@@ -290,55 +339,76 @@ const scrapePriceFromNSE = async (symbol: string): Promise<CachedPrice | null> =
 
 // ═══════════════════════════════════════════════════════════
 // MASTER FETCHER — Race all scrapers, first valid result wins
-// Uses Promise.any for speed, with sequential fallback
+// Moneycontrol Price API is now a primary scraper since it
+// handles special symbols (GVT&D, etc.) and returns change%.
 // ═══════════════════════════════════════════════════════════
-const fetchPriceForSymbol = async (symbol: string): Promise<CachedPrice | null> => {
+const fetchPriceForSymbol = async (symbol: string, retryCount = 0): Promise<CachedPrice | null> => {
+  const cleanSymbol = sanitizeSymbol(symbol);
+  
   // 1. Check fresh cache first
   const cached = getCachedPrice(symbol);
   if (cached) {
-    console.log(`⚡ Cache hit: ${sanitizeSymbol(symbol)} = ₹${cached.price}`);
     return cached;
   }
 
-  // 2. Race the top 2 scrapers (Screener + Google) for speed
+  // 2. Detect and route Mutual Funds (MF symbols are usually alphanumeric codes like MSA031)
+  const isMF = /^[A-Z]{2,}[0-9]+$/.test(cleanSymbol);
+  
+  if (isMF) {
+    try {
+      const result = await scrapePriceFromMoneycontrolMF(symbol);
+      if (result) {
+        setCachedPrice(symbol, result);
+        return result;
+      }
+    } catch { /* fallback to normal scrapers just in case */ }
+  }
+
+  // 3. Race the top 3 scrapers for speed
   try {
     const raceResult = await Promise.any([
+      scrapePriceFromMoneycontrol(symbol).then(r => { if (!r) throw new Error("no result"); return r; }),
       scrapePriceFromScreener(symbol).then(r => { if (!r) throw new Error("no result"); return r; }),
       scrapePriceFromGoogleFinance(symbol).then(r => { if (!r) throw new Error("no result"); return r; }),
     ]);
 
     if (raceResult) {
-      console.log(`✅ ${raceResult.source}: ${sanitizeSymbol(symbol)} = ₹${raceResult.price}`);
       setCachedPrice(symbol, raceResult);
       return raceResult;
     }
   } catch {
-    // All primary scrapers failed, continue to fallbacks
+    // All primary scrapers failed
   }
 
-  // 3. Try secondary scrapers sequentially
-  const fallbackScrapers = [scrapePriceFromYahooPage, scrapePriceFromMoneycontrol, scrapePriceFromNSE];
+  // 4. Sequential Fallback
+  const fallbackScrapers = [scrapePriceFromYahooPage, scrapePriceFromNSE];
   for (const scraper of fallbackScrapers) {
     try {
       const result = await scraper(symbol);
       if (result) {
-        console.log(`✅ ${result.source}: ${sanitizeSymbol(symbol)} = ₹${result.price}`);
         setCachedPrice(symbol, result);
         return result;
       }
-    } catch {
-      continue;
+    } catch { continue; }
+  }
+
+  // 5. DEEP SEARCH FALLBACK (For Excel/Broker names that don't match tickers)
+  if (retryCount === 0) {
+    const scId = await findMoneycontrolScId(cleanSymbol);
+    if (scId) {
+      const res = await scrapePriceFromMoneycontrol(symbol); 
+      if (res) {
+        setCachedPrice(symbol, res);
+        return res;
+      }
     }
   }
 
-  // 4. Last resort: return stale cached price
+  // 6. Last resort: return stale cached price
   const stale = getStaleCachedPrice(symbol);
-  if (stale) {
-    console.warn(`⏰ Stale cache: ${sanitizeSymbol(symbol)} = ₹${stale.price} (from ${stale.source})`);
-    return stale;
-  }
+  if (stale) return stale;
 
-  console.error(`🚫 ALL SOURCES FAILED for ${sanitizeSymbol(symbol)}`);
+  console.error(`🚫 ALL SOURCES FAILED for ${cleanSymbol}`);
   return null;
 };
 
@@ -355,19 +425,30 @@ export async function GET(request: NextRequest) {
 
   const symbols = symbolsStr.split(",");
 
-  // Motilal scrip code → actual NSE ticker mapping
+  // ═══════════════════════════════════════════════════════════
+  // SCRIP MAPPING — Correct common broker/excel mismatches
+  // ═══════════════════════════════════════════════════════════
   const SCRIP_MAPPING: Record<string, string> = {
-    "TMPV": "TMCV",        // Tata Motors Passenger Vehicles scrip → Tata Motors Commercial Vehicles ticker
-    "GVT&D": "GET&D",
+    "TMPV": "TMCV",          // Motilal uses TMPV, NSE uses TMCV
+    "GE VERNOVA": "GVT&D",
+    "GVT&D": "GVT&D",
     "TATACAP": "TATAINVEST",
     "ITCHOTELS": "ITC",
+    "BAJAJHFL": "BAJAJHFL",  // Bajaj Housing
+    "RELIANCE IND": "RELIANCE",
+    "TATA MOTORS": "TMCV",
+    "HDFC BANK": "HDFCBANK",
   };
 
   const mappedSymbols = symbols.map(s => {
-    const base = s.replace(".NS", "").toUpperCase();
+    let base = s.replace(".NS", "").toUpperCase().trim();
+    
+    // Check direct mapping
     if (SCRIP_MAPPING[base]) {
       return `${SCRIP_MAPPING[base]}.NS`;
     }
+
+    // Handle names that might be passed as symbols from Excel
     return s.includes(".") ? s : `${s}.NS`;
   });
 

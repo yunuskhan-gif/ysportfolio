@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -6,6 +6,28 @@ import { Button } from "@/components/ui/button";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { EQUITY_SYMBOLS } from "@/constants/symbols";
+import { Loader2, Globe } from "lucide-react";
+
+interface LiveSearchResult {
+  symbol: string;
+  name: string;
+  sector: string;
+  type: "stock" | "mf";
+  ltp?: number;
+  change?: number;
+  changePercent?: number;
+}
+
+/** Merged search result used by both dropdowns */
+interface StockOption {
+  symbol: string;
+  name: string;
+  sector: string;
+  source: "live" | "local";
+  type: "stock" | "mf";
+  ltp?: number;
+  changePercent?: number;
+}
 import {
   appendHoldings,
   fetchMotilalHoldings,
@@ -101,6 +123,67 @@ export default function AddStockDialog({
   const [motilalError, setMotilalError] = useState<string | null>(null);
   const [motilalSessionSavedAt, setMotilalSessionSavedAt] = useState("");
   const [autoFetchedMotilal, setAutoFetchedMotilal] = useState(false);
+
+  // ── Live search state ──────────────────────────────────────
+  const [liveResults, setLiveResults] = useState<LiveSearchResult[]>([]);
+  const [liveLoading, setLiveLoading] = useState(false);
+  const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
+
+  const fetchLiveSearch = useCallback(async (query: string) => {
+    if (query.length < 2) {
+      setLiveResults([]);
+      setLiveLoading(false);
+      return;
+    }
+
+    // Abort any in-flight request
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    setLiveLoading(true);
+    try {
+      const res = await fetch(`/api/search-stocks?q=${encodeURIComponent(query)}`, {
+        signal: controller.signal,
+      });
+      if (!res.ok) throw new Error("search failed");
+      const data: LiveSearchResult[] = await res.json();
+      if (!controller.signal.aborted) {
+        setLiveResults(data);
+      }
+    } catch {
+      // Ignore abort errors
+    } finally {
+      if (!controller.signal.aborted) {
+        setLiveLoading(false);
+      }
+    }
+  }, []);
+
+  const debouncedSearch = useCallback(
+    (query: string) => {
+      if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+      if (query.length < 2) {
+        setLiveResults([]);
+        setLiveLoading(false);
+        return;
+      }
+      setLiveLoading(true);
+      searchTimerRef.current = setTimeout(() => void fetchLiveSearch(query), 350);
+    },
+    [fetchLiveSearch]
+  );
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+      abortRef.current?.abort();
+    };
+  }, []);
+  // ── End live search ────────────────────────────────────────
+
   const { data: motilalSettings } = useQuery({
     queryKey: MOTILAL_SETTINGS_QUERY_KEY,
     queryFn: fetchMotilalSettings,
@@ -120,30 +203,70 @@ export default function AddStockDialog({
     mutationFn: appendHoldings,
   });
 
-  const stockMatches = useMemo(() => {
-    const query = formState.name.trim().toLowerCase();
-    if (!query) return EQUITY_SYMBOLS.slice(0, 8);
+  // ── Merged search: live results on top, static fallback ───
+  const buildMergedOptions = (query: string, field: "name" | "symbol"): StockOption[] => {
+    const q = query.trim().toLowerCase().replace(/\.ns$/i, "");
 
-    return EQUITY_SYMBOLS.filter((stock) => {
-      const name = stock.n.toLowerCase();
-      const symbol = stock.s.toLowerCase();
-      return name.includes(query) || symbol.includes(query);
-    }).slice(0, 8);
-  }, [formState.name]);
+    // Live results first (from API)
+    const liveOptions: StockOption[] = liveResults.map((r) => ({
+      symbol: r.symbol,
+      name: r.name,
+      sector: r.sector,
+      source: "live" as const,
+      type: r.type,
+      ltp: r.ltp,
+      changePercent: r.changePercent,
+    }));
 
-  const symbolMatches = useMemo(() => {
-    const query = formState.symbol.trim().toLowerCase().replace(".ns", "");
-    if (!query) return EQUITY_SYMBOLS.slice(0, 8);
+    // Local fallback from static list
+    const localMatches = q
+      ? EQUITY_SYMBOLS.filter((s) => {
+          const n = s.n.toLowerCase();
+          const sym = s.s.toLowerCase();
+          return field === "name"
+            ? n.includes(q) || sym.includes(q)
+            : sym.includes(q) || n.includes(q);
+        }).slice(0, 6)
+      : EQUITY_SYMBOLS.slice(0, 6);
 
-    return EQUITY_SYMBOLS.filter((stock) => {
-      const name = stock.n.toLowerCase();
-      const symbol = stock.s.toLowerCase();
-      return symbol.includes(query) || name.includes(query);
-    }).slice(0, 8);
-  }, [formState.symbol]);
+    const localOptions: StockOption[] = localMatches.map((s) => ({
+      symbol: s.s,
+      name: s.n,
+      sector: "",
+      source: "local" as const,
+      type: "stock" as const,
+    }));
+
+    // Deduplicate: prefer live results, then append local ones not already present
+    const seen = new Set(liveOptions.map((o) => o.symbol.toUpperCase()));
+    const merged = [...liveOptions];
+    for (const opt of localOptions) {
+      if (!seen.has(opt.symbol.toUpperCase())) {
+        merged.push(opt);
+        seen.add(opt.symbol.toUpperCase());
+      }
+    }
+
+    return merged.slice(0, 12);
+  };
+
+  const stockMatches = useMemo(
+    () => buildMergedOptions(formState.name, "name"),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [formState.name, liveResults]
+  );
+
+  const symbolMatches = useMemo(
+    () => buildMergedOptions(formState.symbol, "symbol"),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [formState.symbol, liveResults]
+  );
 
   const handleFormChange = (field: keyof StockFormState, value: string) => {
     if (field === "name") {
+      // Kick off live search
+      debouncedSearch(value);
+
       const exactMatch = EQUITY_SYMBOLS.find(
         (stock) => stock.n.toLowerCase() === value.trim().toLowerCase()
       );
@@ -156,6 +279,11 @@ export default function AddStockDialog({
       return;
     }
 
+    if (field === "symbol") {
+      // Also trigger live search for symbol field
+      debouncedSearch(value.replace(/\.NS$/i, ""));
+    }
+
     setFormState((current) => ({ ...current, [field]: value }));
   };
 
@@ -166,6 +294,9 @@ export default function AddStockDialog({
       symbol: formatSymbol(symbol),
     }));
     setActiveSelector(null);
+    setLiveResults([]);
+    setLiveLoading(false);
+    if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
   };
 
   const loadSavedMotilalState = (settings = motilalSettings) => {
@@ -406,27 +537,67 @@ export default function AddStockDialog({
             <div className="grid gap-6 md:grid-cols-2">
               <div className="relative grid gap-1.5">
                 <Label htmlFor="stock-name">Stock Name</Label>
-                <Input
-                  id="stock-name"
-                  value={formState.name}
-                  onChange={(event) => {
-                    handleFormChange("name", event.target.value);
-                    setActiveSelector(event.target.value.trim() ? "name" : null);
-                  }}
-                  placeholder="Reliance"
-                />
+                <div className="relative">
+                  <Input
+                    id="stock-name"
+                    value={formState.name}
+                    onChange={(event) => {
+                      handleFormChange("name", event.target.value);
+                      setActiveSelector(event.target.value.trim() ? "name" : null);
+                    }}
+                    onBlur={() => setTimeout(() => setActiveSelector(null), 200)}
+                    placeholder="Search stocks — e.g. Reliance, HDFC, Tata Motors"
+                    className="pr-8"
+                  />
+                  {liveLoading && activeSelector === "name" && (
+                    <Loader2 className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 animate-spin text-muted-foreground" />
+                  )}
+                </div>
                 {activeSelector === "name" && stockMatches.length > 0 && (
-                  <div className="absolute top-full z-50 mt-1 max-h-56 w-full overflow-y-auto rounded-md border bg-popover p-1 shadow-lg">
+                  <div className="absolute top-full z-50 mt-1 max-h-72 w-full overflow-y-auto rounded-md border bg-popover p-1 shadow-lg">
+                    {liveResults.length > 0 && (
+                      <div className="flex items-center gap-1.5 px-2 py-1 text-[10px] text-muted-foreground border-b border-border/50 mb-1">
+                        <Globe className="h-3 w-3" />
+                        <span>Live results from NSE</span>
+                      </div>
+                    )}
                     {stockMatches.map((stock) => (
                       <button
-                        key={stock.s}
+                        key={`${stock.symbol}-${stock.source}`}
                         type="button"
                         onMouseDown={(event) => event.preventDefault()}
-                        onClick={() => handleStockSelect(stock.n, stock.s)}
-                        className="flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm hover:bg-accent"
+                        onClick={() => handleStockSelect(stock.name, stock.symbol)}
+                        className="flex w-full items-center justify-between gap-2 rounded-sm px-2 py-1.5 text-left text-sm hover:bg-accent"
                       >
-                        <span className="truncate pr-3">{stock.n}</span>
-                        <span className="text-xs text-muted-foreground">{stock.s}</span>
+                        <div className="flex flex-col min-w-0 flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className="truncate font-medium">{stock.name}</span>
+                            {stock.type === "mf" && (
+                              <span className="text-[9px] bg-blue-500/15 text-blue-600 px-1 rounded font-bold uppercase tracking-wider">MF</span>
+                            )}
+                          </div>
+                          {stock.sector && (
+                            <span className="text-[10px] text-muted-foreground truncate">{stock.sector}</span>
+                          )}
+                        </div>
+                        <div className="flex flex-col items-end shrink-0">
+                          <div className="flex items-center gap-1.5">
+                            {stock.ltp && (
+                              <span className="text-xs font-bold">₹{stock.ltp.toLocaleString('en-IN')}</span>
+                            )}
+                            <span className="text-xs font-semibold text-primary/80">{stock.symbol}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            {stock.changePercent !== undefined && (
+                              <span className={`text-[10px] font-medium ${stock.changePercent >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                                {stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%
+                              </span>
+                            )}
+                            {stock.source === "live" && (
+                              <span className="text-[8px] bg-emerald-500/15 text-emerald-600 px-1 py-0.5 rounded font-medium">LIVE</span>
+                            )}
+                          </div>
+                        </div>
                       </button>
                     ))}
                   </div>
@@ -435,28 +606,55 @@ export default function AddStockDialog({
 
               <div className="relative grid gap-1.5">
                 <Label htmlFor="stock-symbol">Symbol</Label>
-                <Input
-                  id="stock-symbol"
-                  value={formState.symbol}
-                  onFocus={() => setActiveSelector("symbol")}
-                  onChange={(event) => {
-                    handleFormChange("symbol", event.target.value);
-                    setActiveSelector("symbol");
-                  }}
-                  placeholder="RELIANCE.NS"
-                />
+                <div className="relative">
+                  <Input
+                    id="stock-symbol"
+                    value={formState.symbol}
+                    onFocus={() => {
+                      setActiveSelector("symbol");
+                      const q = formState.symbol.replace(/\.NS$/i, "").trim();
+                      if (q.length >= 2) debouncedSearch(q);
+                    }}
+                    onChange={(event) => {
+                      handleFormChange("symbol", event.target.value);
+                      setActiveSelector("symbol");
+                    }}
+                    onBlur={() => setTimeout(() => setActiveSelector(null), 200)}
+                    placeholder="RELIANCE.NS"
+                    className="pr-8"
+                  />
+                  {liveLoading && activeSelector === "symbol" && (
+                    <Loader2 className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 animate-spin text-muted-foreground" />
+                  )}
+                </div>
                 {activeSelector === "symbol" && symbolMatches.length > 0 && (
-                  <div className="absolute top-full z-50 mt-1 max-h-56 w-full overflow-y-auto rounded-md border bg-popover p-1 shadow-lg">
+                  <div className="absolute top-full z-50 mt-1 max-h-72 w-full overflow-y-auto rounded-md border bg-popover p-1 shadow-lg">
+                    {liveResults.length > 0 && (
+                      <div className="flex items-center gap-1.5 px-2 py-1 text-[10px] text-muted-foreground border-b border-border/50 mb-1">
+                        <Globe className="h-3 w-3" />
+                        <span>Live results from NSE</span>
+                      </div>
+                    )}
                     {symbolMatches.map((stock) => (
                       <button
-                        key={`${stock.s}-symbol`}
+                        key={`${stock.symbol}-symbol-${stock.source}`}
                         type="button"
                         onMouseDown={(event) => event.preventDefault()}
-                        onClick={() => handleStockSelect(stock.n, stock.s)}
-                        className="flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm hover:bg-accent"
+                        onClick={() => handleStockSelect(stock.name, stock.symbol)}
+                        className="flex w-full items-center justify-between gap-2 rounded-sm px-2 py-1.5 text-left text-sm hover:bg-accent"
                       >
-                        <span className="font-medium">{stock.s}</span>
-                        <span className="truncate pl-3 text-xs text-muted-foreground">{stock.n}</span>
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-semibold text-primary/80">{stock.symbol}</span>
+                          {stock.source === "live" && (
+                            <span className="text-[8px] bg-emerald-500/15 text-emerald-600 px-1 py-0.5 rounded font-medium">LIVE</span>
+                          )}
+                        </div>
+                        <div className="flex flex-col items-end min-w-0">
+                          <span className="truncate text-xs text-muted-foreground">{stock.name}</span>
+                          {stock.sector && (
+                            <span className="text-[10px] text-muted-foreground/60 truncate">{stock.sector}</span>
+                          )}
+                        </div>
                       </button>
                     ))}
                   </div>

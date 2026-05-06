@@ -82,9 +82,9 @@ const formatCompact = (value: number) => {
 
 const PortfolioShimmer = () => (
   <div className="w-full space-y-2 animate-in fade-in duration-500">
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-2">
-      {Array.from({ length: 3 }).map((_, i) => (
-        <Card key={i} className="shadow-none">
+    <div className="flex flex-nowrap overflow-x-auto gap-2 md:grid md:grid-cols-2 lg:grid-cols-4 no-scrollbar">
+      {Array.from({ length: 4 }).map((_, i) => (
+        <Card key={i} className="shadow-none min-w-[280px] md:min-w-0">
           <CardContent className="p-3 space-y-2">
             <Skeleton className="h-3 w-20" />
             <Skeleton className="h-6 w-28" />
@@ -146,7 +146,7 @@ const PortfolioTrendCard = ({
   changeText: string;
   changePositive?: boolean;
 }) => (
-  <Card className="h-[150px] max-sm:h-[135px] shadow-none border-border !p-0 !gap-0 flex flex-col overflow-hidden">
+  <Card className="h-[150px] max-sm:h-[135px] shadow-none border-border !p-0 !gap-0 flex flex-col overflow-hidden snap-center min-w-[280px] md:min-w-0">
     <div className="flex-none pt-1 px-2 py-1 pb-0 space-y-0 max-sm:pt-0.5">
       <div className="flex items-center justify-between gap-2">
         <p className="text-xs font-normal text-muted-foreground truncate max-sm:text-[10px]">
@@ -277,9 +277,9 @@ const Portfolio = () => {
       });
 
       if (!response.ok) throw new Error("Failed to save snapshot");
-      alert("Snapshot saved successfully! History page coming soon.");
+      toast.success("Snapshot saved successfully!");
     } catch (e: any) {
-      alert("Failed to save snapshot: " + e.message);
+      toast.error("Failed to save snapshot: " + e.message);
     } finally {
       setIsSavingSnapshot(false);
     }
@@ -289,8 +289,6 @@ const Portfolio = () => {
     queryKey: HOLDINGS_QUERY_KEY,
     queryFn: fetchHoldings,
   });
-
-
 
   const uniqueSymbols = useMemo(
     () => [...new Set(holdings.map((holding) => holding.symbol).filter(Boolean))],
@@ -330,6 +328,7 @@ const Portfolio = () => {
 
       return nextPrices;
     },
+    refetchInterval: 60000, // Auto-refresh every minute
   });
 
   const prices = priceQueryData ?? {};
@@ -553,39 +552,44 @@ const Portfolio = () => {
   }
 
   return (
-    <div className="w-full space-y-2">
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-2">
-        <Card className="shadow-none border-border !py-0 !gap-0">
+    <div className="w-full space-y-2 pb-20">
+      {/* Mini Stats Row */}
+      <div className="flex flex-nowrap overflow-x-auto gap-2 no-scrollbar md:grid md:grid-cols-2 lg:grid-cols-4">
+        <Card className="shadow-none border-border !py-0 !gap-0 min-w-[140px] md:min-w-0">
           <CardContent className="px-3 py-2">
-            <p className="text-xs font-medium">{holdings.length} stocks across your portfolio</p>
+            <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tight">Stocks</p>
+            <p className="text-sm font-semibold">{holdings.length}</p>
           </CardContent>
         </Card>
-        <Card className="shadow-none border-border !py-0 !gap-0">
+        <Card className="shadow-none border-border !py-0 !gap-0 min-w-[140px] md:min-w-0">
           <CardContent className="px-3 py-2">
-            <p className="text-xs font-medium">{totalQuantity.toLocaleString("en-IN")} total quantity</p>
+            <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tight">Quantity</p>
+            <p className="text-sm font-semibold">{totalQuantity.toLocaleString("en-IN")}</p>
           </CardContent>
         </Card>
-        <Card className="shadow-none border-border !py-0 !gap-0">
+        <Card className="shadow-none border-border !py-0 !gap-0 min-w-[140px] md:min-w-0">
           <CardContent className="px-3 py-2">
-            <p className="text-xs font-medium">{pricedHoldings.length}/{holdings.length} stocks with live prices</p>
+            <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tight">Live Prices</p>
+            <p className="text-sm font-semibold">{pricedHoldings.length}/{holdings.length}</p>
           </CardContent>
         </Card>
-        <Card className="shadow-none border-border !py-0 !gap-0">
+        <Card className="shadow-none border-border !py-0 !gap-0 min-w-[140px] md:min-w-0">
           <CardContent className="px-3 py-2">
-            <p className="text-xs font-medium">
-              {pricedHoldings.length > 0 ? `${totalPnl >= 0 ? "+" : ""}${totalPnlPercent.toFixed(2)}% overall` : "Live prices pending"}
+            <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tight">Overall Return</p>
+            <p className={`text-sm font-semibold ${totalPnl >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+              {pricedHoldings.length > 0 ? `${totalPnl >= 0 ? "+" : ""}${totalPnlPercent.toFixed(2)}%` : "Pending"}
             </p>
           </CardContent>
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-2">
+      {/* Main Charts Carousel */}
+      <div className="flex flex-nowrap overflow-x-auto snap-x snap-mandatory gap-2 no-scrollbar md:grid md:grid-cols-2 xl:grid-cols-4">
         <PortfolioTrendCard
           title="Total Invested"
           value={formatCompact(totalInvestment)}
           subtitle=""
           chartData={investmentTrendData}
-          emptyLabel=""
           changeText={`${holdings.length > 0 ? holdings.length : 0}.0%`}
           changePositive
         />
@@ -595,7 +599,6 @@ const Portfolio = () => {
           value={holdings.length.toString()}
           subtitle=""
           chartData={holdingsTrendData}
-          emptyLabel=""
           formatter={(metricValue) => metricValue.toLocaleString("en-IN")}
           changeText="0.0%"
           changePositive
@@ -606,7 +609,6 @@ const Portfolio = () => {
           value={pricedHoldings.length > 0 ? formatCompact(totalCurrentValue) : "--"}
           subtitle=""
           chartData={currentValueTrendData}
-          emptyLabel=""
           changeText={`${priceCoveragePercent.toFixed(1)}%`}
           changePositive={pricedHoldings.length > 0}
         />
@@ -616,7 +618,6 @@ const Portfolio = () => {
           value={pricedHoldings.length > 0 ? `${totalPnl >= 0 ? "+" : ""}${formatCompact(totalPnl)}` : "--"}
           subtitle=""
           chartData={pnlTrendData}
-          emptyLabel=""
           valueClassName={totalPnl >= 0 ? "text-emerald-500" : "text-red-500"}
           accentColor={totalPnl >= 0 ? "hsl(142 76% 36%)" : "hsl(0 84% 60%)"}
           changeText={`${Math.abs(totalPnlPercent).toFixed(1)}%`}
@@ -624,10 +625,11 @@ const Portfolio = () => {
         />
       </div>
 
+      {/* Holdings Table */}
       <Card className="shadow-none border-border">
-        <div className="px-2 py-0">
-          <div className="flex items-center justify-between mb-2 gap-2">
-            <div className="relative max-w-xs flex-1">
+        <div className="px-2 py-2">
+          <div className="flex flex-wrap items-center justify-between mb-2 gap-2">
+            <div className="relative max-w-xs flex-1 min-w-[200px]">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
               <input
                 type="text"
@@ -637,51 +639,36 @@ const Portfolio = () => {
                 className="w-full pl-8 pr-3 py-1.5 text-xs bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary/40"
               />
             </div>
-            <button
-              type="button"
-              className="rounded-md border border-border p-1.5 text-muted-foreground"
-              onClick={() => void refetchPrices()}
-              title={
-                priceError
-                  ? `Live price sync failed: ${priceError instanceof Error ? priceError.message : "Unknown error"}`
-                  : lastUpdated
-                    ? `Live prices updated ${lastUpdated.toLocaleTimeString("en-IN", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}`
-                    : "Fetch live prices"
-              }
-            >
-              <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
-            </button>
-            <button
-              type="button"
-              onClick={() => void handleDeleteSelected()}
-              disabled={selectedIds.length === 0 || replaceHoldingsMutation.isPending}
-              className="rounded-md border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground disabled:opacity-50 disabled:cursor-not-allowed hover:bg-red-500/10 hover:text-red-500 whitespace-nowrap"
-            >
-              Delete Selected
-            </button>
-            <button
-              type="button"
-              onClick={handleSaveSnapshot}
-              disabled={isSavingSnapshot || enrichedHoldings.length === 0}
-              className="rounded-md border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/10 hover:text-primary whitespace-nowrap"
-            >
-              {isSavingSnapshot ? "Saving..." : "Save Snapshot"}
-            </button>
-            <button
-              type="button"
-              onClick={() => void handleDeleteAll()}
-              disabled={holdings.length === 0 || replaceHoldingsMutation.isPending}
-              className="rounded-md border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground disabled:opacity-50 disabled:cursor-not-allowed hover:bg-red-500/10 hover:text-red-500"
-            >
-              Delete All
-            </button>
+            <div className="flex items-center gap-1.5 ml-auto">
+              <button
+                type="button"
+                className="rounded-md border border-border p-1.5 text-muted-foreground hover:bg-muted"
+                onClick={() => void refetchPrices()}
+                title="Refresh Prices"
+              >
+                <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
+              </button>
+              <button
+                type="button"
+                onClick={() => void handleDeleteSelected()}
+                disabled={selectedIds.length === 0 || replaceHoldingsMutation.isPending}
+                className="rounded-md border border-border px-3 py-1.5 text-[10px] font-medium text-muted-foreground disabled:opacity-50 hover:bg-red-500/10 hover:text-red-500 whitespace-nowrap"
+              >
+                Delete Selected
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveSnapshot}
+                disabled={isSavingSnapshot || enrichedHoldings.length === 0}
+                className="rounded-md border border-border px-3 py-1.5 text-[10px] font-medium text-muted-foreground disabled:opacity-50 hover:bg-primary/10 hover:text-primary whitespace-nowrap"
+              >
+                {isSavingSnapshot ? "Saving..." : "Save Snapshot"}
+              </button>
+            </div>
           </div>
 
-          <div className="rounded-md border bg-muted/5 overflow-x-auto">
-            <table className="w-full text-xs">
+          <div className="rounded-md border bg-muted/5 overflow-x-auto no-scrollbar">
+            <table className="w-full text-xs min-w-[1000px]">
               <thead>
                 <tr className="border-b border-border bg-secondary/20">
                   <th className="px-3 py-2 w-8">
@@ -724,11 +711,12 @@ const Portfolio = () => {
                 {paginatedHoldings.length > 0 ? (
                   paginatedHoldings.map((stock, index) => (
                     <tr
-                      key={`${stock.id || stock.symbol}-${index}`}
-                      className="border-b border-border/40 hover:bg-secondary/30 transition-colors cursor-pointer"
-                      onClick={() => handleEditHolding(stock)}
+                      key={stock.id ?? `stock-${index}`}
+                      className={`border-b border-border transition-colors hover:bg-muted/50 ${
+                        selectedIds.includes(stock.id ?? "") ? "bg-primary/5" : ""
+                      }`}
                     >
-                      <td className="px-3 py-2" onClick={(event) => event.stopPropagation()}>
+                      <td className="px-3 py-2">
                         <input
                           type="checkbox"
                           checked={stock.id ? selectedIds.includes(stock.id) : false}
@@ -736,44 +724,58 @@ const Portfolio = () => {
                           className="h-3.5 w-3.5 accent-primary"
                         />
                       </td>
-                      <td className="px-3 py-2 text-muted-foreground tabular-nums">{(currentPage - 1) * pageSize + index + 1}</td>
+                      <td className="px-3 py-2 text-muted-foreground/60">{(currentPage - 1) * pageSize + index + 1}</td>
                       <td className="px-3 py-2">
                         <div className="flex flex-col">
-                          <span className="font-semibold text-foreground leading-none">{stock.name}</span>
-                          <span className="text-[8px] text-muted-foreground mt-1 font-medium">{stock.symbol.replace(".NS", "")}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold text-primary/90">{stock.name}</span>
+                            {/^[A-Z]{2,}[0-9]+$/.test(stock.symbol) ? (
+                              <span className="text-[8px] bg-blue-500/15 text-blue-600 px-1 rounded font-bold uppercase">MF</span>
+                            ) : (
+                              <span className="text-[8px] bg-emerald-500/15 text-emerald-600 px-1 rounded font-bold uppercase">Stock</span>
+                            )}
+                          </div>
+                          <span className="text-[9px] text-muted-foreground uppercase">{stock.symbol}</span>
                         </div>
                       </td>
-                      <td className="px-3 py-2"><span className="text-[10px] font-bold text-primary/70">{stock.app || "NSE"}</span></td>
-                      <td className="px-3 py-2 text-right tabular-nums font-medium">{stock.qty}</td>
-                      <td className="px-3 py-2 text-right tabular-nums text-muted-foreground">{formatINR(stock.avgPrice)}</td>
-                      <td className="px-3 py-2 text-right tabular-nums font-medium">{stock.ltp !== null ? formatINR(stock.ltp) : "--"}</td>
-                      <td className="px-3 py-2 text-right tabular-nums font-medium">{formatINR(stock.investment)}</td>
-                      <td className="px-3 py-2 text-right tabular-nums font-medium">{stock.currentValue !== null ? formatINR(stock.currentValue) : "--"}</td>
-                      <td className={`px-3 py-2 text-right tabular-nums font-medium ${(stock.pnl ?? 0) >= 0 ? "text-emerald-500" : "text-red-500"}`}>
-                        {stock.pnl !== null ? `${stock.pnl >= 0 ? "+" : ""}${formatINR(stock.pnl)}` : "--"}
+                      <td className="px-3 py-2">
+                        <Badge variant="outline" className="text-[8px] font-normal px-1 py-0">{stock.app || "NSE"}</Badge>
+                      </td>
+                      <td className="px-3 py-2 text-right font-medium">{stock.qty.toLocaleString("en-IN")}</td>
+                      <td className="px-3 py-2 text-right text-muted-foreground">₹{stock.avgPrice.toLocaleString("en-IN")}</td>
+                      <td className="px-3 py-2 text-right">
+                        <div className="flex flex-col items-end">
+                          <span className="font-bold">₹{stock.ltp?.toLocaleString("en-IN") || "--"}</span>
+                          {stock.changePercent !== 0 && (
+                            <span className={`text-[9px] ${stock.changePercent >= 0 ? "text-emerald-500" : "text-red-500"}`}>
+                              {stock.changePercent >= 0 ? "+" : ""}{stock.changePercent.toFixed(2)}%
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-3 py-2 text-right font-medium">₹{stock.investment.toLocaleString("en-IN")}</td>
+                      <td className="px-3 py-2 text-right font-bold">
+                        {stock.currentValue ? `₹${stock.currentValue.toLocaleString("en-IN")}` : "--"}
+                      </td>
+                      <td className={`px-3 py-2 text-right font-bold ${Number(stock.pnl) >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+                        <div className="flex flex-col items-end">
+                          <span>{stock.pnl ? `₹${stock.pnl.toLocaleString("en-IN")}` : "--"}</span>
+                          {stock.pnlPercent !== null && (
+                            <span className="text-[9px] font-normal opacity-80">({stock.pnlPercent >= 0 ? "+" : ""}{stock.pnlPercent.toFixed(2)}%)</span>
+                          )}
+                        </div>
                       </td>
                       <td className="px-3 py-2 text-right">
                         <div className="flex items-center justify-end gap-1">
                           <button
-                            type="button"
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              queryClient.invalidateQueries({ queryKey: ["livePrices"] });
-                              toast.success(`Refreshing prices...`);
-                            }}
-                            className="rounded-md border border-border p-1.5 text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors"
-                            title="Refresh price"
+                            onClick={() => handleEditHolding(stock)}
+                            className="p-1.5 rounded-md hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
                           >
-                            <RefreshCw className="h-3.5 w-3.5" />
+                            <Upload className="h-3.5 w-3.5" />
                           </button>
                           <button
-                            type="button"
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              void handleDeleteHolding(stock.id);
-                            }}
-                            className="rounded-md border border-border p-1.5 text-muted-foreground hover:bg-red-500/10 hover:text-red-500 transition-colors"
-                            title="Delete holding"
+                            onClick={() => void handleDeleteHolding(stock.id)}
+                            className="p-1.5 rounded-md hover:bg-red-500/10 text-muted-foreground hover:text-red-500 transition-colors"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
                           </button>
@@ -783,78 +785,22 @@ const Portfolio = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={11} className="px-3 py-12 text-center text-muted-foreground italic">
-                      <div className="flex flex-col items-center gap-2">
-                        <Upload className="w-6 h-6 opacity-20" />
-                        <span>No holdings found. Add a stock or upload your Excel sheet.</span>
-                      </div>
+                    <td colSpan={11} className="py-20 text-center text-muted-foreground italic">
+                      No stocks found. Add one or search to get started.
                     </td>
                   </tr>
                 )}
               </tbody>
-              {filtered.length > 0 && (
-                <tfoot className="bg-primary/10">
-                  <tr className="border-t border-border font-bold text-xs">
-                    <td className="px-3 py-2" colSpan={4}>
-                      <span className="text-[9px] text-muted-foreground uppercase font-bold tracking-wider">Portfolio Totals</span>
-                    </td>
-                    <td className="px-3 py-2 text-right tabular-nums">{enrichedHoldings.reduce((sum, holding) => sum + holding.qty, 0).toLocaleString("en-IN")}</td>
-                    <td className="px-3 py-2 text-right text-muted-foreground">-</td>
-                    <td className="px-3 py-2 text-right text-muted-foreground">-</td>
-                    <td className="px-3 py-2 text-right tabular-nums">{formatINR(totalInvestment)}</td>
-                    <td className="px-3 py-2 text-right tabular-nums">{pricedHoldings.length > 0 ? formatINR(totalCurrentValue) : "--"}</td>
-                    <td className={`px-3 py-2 text-right tabular-nums ${totalPnl >= 0 ? "text-emerald-500" : "text-red-500"}`}>{pricedHoldings.length > 0 ? `${totalPnl >= 0 ? "+" : ""}${formatINR(totalPnl)}` : "--"}</td>
-                    <td className="px-3 py-2 text-right text-muted-foreground">-</td>
-                  </tr>
-                </tfoot>
-              )}
             </table>
           </div>
-
-          {filtered.length > pageSize && (
-            <div className="flex items-center justify-between gap-3 px-1 py-2 text-xs text-muted-foreground">
-              <p>
-                Showing {Math.min((currentPage - 1) * pageSize + 1, filtered.length)}-
-                {Math.min(currentPage * pageSize, filtered.length)} of {filtered.length} stocks
-              </p>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
-                  disabled={currentPage === 1}
-                  className="rounded-md border border-border px-2 py-1 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-secondary/50"
-                >
-                  Prev
-                </button>
-                <span className="tabular-nums">Page {currentPage} / {totalPages}</span>
-                <button
-                  type="button"
-                  onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
-                  disabled={currentPage === totalPages}
-                  className="rounded-md border border-border px-2 py-1 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-secondary/50"
-                >
-                  Next
-                </button>
-              </div>
-            </div>
-          )}
         </div>
       </Card>
-
-      <div className="text-[10px] text-center text-muted-foreground pt-2">
-        Live prices are fetched through TanStack Query and refresh without reloading the page.
-      </div>
 
       <AddStockDialog
         open={isEditDialogOpen}
         onOpenChange={setIsEditDialogOpen}
-        onStockAdded={async () => {
-          await queryClient.invalidateQueries({ queryKey: HOLDINGS_QUERY_KEY });
-          setSelectedHolding(null);
-          setSelectedHoldingId(null);
-        }}
-        initialHolding={selectedHolding}
-        editId={selectedHoldingId}
+        editHolding={selectedHolding}
+        onStockAdded={() => void queryClient.invalidateQueries({ queryKey: HOLDINGS_QUERY_KEY })}
       />
     </div>
   );
