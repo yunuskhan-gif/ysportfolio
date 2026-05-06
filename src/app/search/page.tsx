@@ -7,8 +7,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useQueryClient } from "@tanstack/react-query";
-import { HOLDINGS_QUERY_KEY, saveHolding } from "@/lib/portfolio-api";
+import { HOLDINGS_QUERY_KEY, type StockHolding } from "@/lib/portfolio-api";
 import toast from "react-hot-toast";
+import AddStockDialog from "@/components/portfolio/AddStockDialog";
 
 interface SearchResult {
   symbol: string;
@@ -26,6 +27,8 @@ export default function MarketSearchPage() {
   const [loading, setLoading] = useState(false);
   const queryClient = useQueryClient();
   const searchTimeout = useRef<NodeJS.Timeout | null>(null);
+  const [isAddStockOpen, setIsAddStockOpen] = useState(false);
+  const [selectedHolding, setSelectedHolding] = useState<StockHolding | null>(null);
 
   const fetchResults = async (q: string) => {
     if (!q) {
@@ -56,20 +59,15 @@ export default function MarketSearchPage() {
     };
   }, [query]);
 
-  const handleAddStock = async (stock: SearchResult) => {
-    try {
-      await saveHolding({
-        name: stock.name,
-        symbol: stock.symbol,
-        qty: 1,
-        avgPrice: stock.ltp || 0,
-        app: stock.type === "mf" ? "MF" : "NSE",
-      });
-      await queryClient.invalidateQueries({ queryKey: HOLDINGS_QUERY_KEY });
-      toast.success(`${stock.name} added to portfolio`);
-    } catch (error) {
-      toast.error("Failed to add stock");
-    }
+  const handleAddStock = (stock: SearchResult) => {
+    setSelectedHolding({
+      name: stock.name,
+      symbol: stock.symbol.includes(".") ? stock.symbol : `${stock.symbol}.NS`,
+      qty: 1,
+      avgPrice: stock.ltp || 0,
+      app: stock.type === "mf" ? "MF" : "NSE",
+    });
+    setIsAddStockOpen(true);
   };
 
   return (
@@ -151,8 +149,8 @@ export default function MarketSearchPage() {
                   </div>
                   <Button 
                     size="sm" 
-                    variant="ghost" 
-                    className="h-8 px-3 text-xs font-bold gap-1.5 hover:bg-primary hover:text-primary-foreground transition-all rounded-lg"
+                    variant="outline" 
+                    className="h-8 px-3 text-xs font-bold gap-1.5 hover:bg-primary hover:text-primary-foreground transition-all rounded-xl border-primary/20"
                     onClick={() => handleAddStock(item)}
                   >
                     <Plus className="w-3.5 h-3.5" /> Add to Portfolio
@@ -184,6 +182,15 @@ export default function MarketSearchPage() {
           </div>
         )}
       </div>
+
+      <AddStockDialog
+        open={isAddStockOpen}
+        onOpenChange={setIsAddStockOpen}
+        initialHolding={selectedHolding}
+        onStockAdded={() => {
+          queryClient.invalidateQueries({ queryKey: HOLDINGS_QUERY_KEY });
+        }}
+      />
     </div>
   );
 }

@@ -312,6 +312,7 @@ const scrapePriceFromMoneycontrolMF = async (symbol: string): Promise<CachedPric
 const scrapePriceFromNSE = async (symbol: string): Promise<CachedPrice | null> => {
   try {
     const cleanSymbol = sanitizeSymbol(symbol);
+    // Try API first
     const url = `https://www.nseindia.com/api/quote-equity?symbol=${encodeURIComponent(cleanSymbol)}`;
     const response = await axios.get(url, {
       headers: {
@@ -324,7 +325,20 @@ const scrapePriceFromNSE = async (symbol: string): Promise<CachedPrice | null> =
     });
 
     const data = response.data;
-    const price = data?.priceInfo?.lastPrice || data?.priceInfo?.close;
+    let price = data?.priceInfo?.lastPrice || data?.priceInfo?.close;
+
+    // Fallback: If API returns no price, try scraping the page directly
+    if (!isValidPrice(price)) {
+      const pageUrl = `https://www.nseindia.com/get-quote/equity?symbol=${encodeURIComponent(cleanSymbol)}`;
+      const pageRes = await axios.get(pageUrl, {
+        headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36" },
+        timeout: 5000
+      });
+      const $ = cheerio.load(pageRes.data);
+      // Looking for the price in the structure identified: <span class="val">328.10</span>
+      const valText = $("span.val").first().text().replace(/,/g, "").trim();
+      if (valText) price = parseFloat(valText);
+    }
 
     if (isValidPrice(price)) {
       const change = data?.priceInfo?.change || 0;

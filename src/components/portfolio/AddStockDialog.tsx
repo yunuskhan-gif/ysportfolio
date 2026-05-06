@@ -123,6 +123,8 @@ export default function AddStockDialog({
   const [motilalError, setMotilalError] = useState<string | null>(null);
   const [motilalSessionSavedAt, setMotilalSessionSavedAt] = useState("");
   const [autoFetchedMotilal, setAutoFetchedMotilal] = useState(false);
+  const [selectedPrice, setSelectedPrice] = useState<number | null>(null);
+  const [selectedChangePercent, setSelectedChangePercent] = useState<number | null>(null);
 
   // ── Live search state ──────────────────────────────────────
   const [liveResults, setLiveResults] = useState<LiveSearchResult[]>([]);
@@ -287,12 +289,14 @@ export default function AddStockDialog({
     setFormState((current) => ({ ...current, [field]: value }));
   };
 
-  const handleStockSelect = (name: string, symbol: string) => {
+  const handleStockSelect = (name: string, symbol: string, ltp?: number, changePercent?: number) => {
     setFormState((current) => ({
       ...current,
       name,
       symbol: formatSymbol(symbol),
     }));
+    if (ltp !== undefined) setSelectedPrice(ltp);
+    if (changePercent !== undefined) setSelectedChangePercent(changePercent);
     setActiveSelector(null);
     setLiveResults([]);
     setLiveLoading(false);
@@ -325,6 +329,8 @@ export default function AddStockDialog({
     setMotilalPreview([]);
     setMotilalError(null);
     setAutoFetchedMotilal(false);
+    setSelectedPrice(null);
+    setSelectedChangePercent(null);
   };
 
   const handleClose = (nextOpen: boolean) => {
@@ -508,24 +514,40 @@ export default function AddStockDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="!w-[calc(100vw-96px)] !max-w-[1650px] min-h-[70vh]">
-        <DialogHeader>
-          <DialogTitle>{isEditMode ? "Edit Stock" : "Add Stock"}</DialogTitle>
+      <DialogContent className="w-[95vw] max-w-[1650px] sm:w-[calc(100vw-96px)] h-fit sm:min-h-[70vh] max-h-[90vh] overflow-y-auto p-4 sm:p-6">
+        <DialogHeader className="relative pr-20 sm:pr-24">
+          <DialogTitle className="text-lg sm:text-2xl">{isEditMode ? "Edit Stock" : "Add Stock"}</DialogTitle>
+          {selectedPrice !== null && (
+            <div className="absolute right-0 top-0 flex flex-col items-end animate-in fade-in slide-in-from-right-4">
+              <div className="text-base sm:text-xl font-black tracking-tighter">
+                ₹{selectedPrice.toLocaleString("en-IN")}
+              </div>
+              {selectedChangePercent !== null && (
+                <div className={`text-[9px] sm:text-[10px] font-bold ${selectedChangePercent >= 0 ? "text-emerald-500" : "text-red-500"}`}>
+                  {selectedChangePercent >= 0 ? "+" : ""}{selectedChangePercent.toFixed(2)}%
+                </div>
+              )}
+            </div>
+          )}
         </DialogHeader>
 
         {!isEditMode ? (
-          <div className="flex gap-2 border-b pb-4">
+          <div className="flex gap-2 border-b pb-3 sm:pb-4">
             <Button
               type="button"
+              size="sm"
               variant={mode === "manual" ? "default" : "outline"}
               onClick={() => setMode("manual")}
+              className="h-8 sm:h-10 text-xs sm:text-sm px-3"
             >
               Manual
             </Button>
             <Button
               type="button"
+              size="sm"
               variant={mode === "motilal" ? "default" : "outline"}
               onClick={() => setMode("motilal")}
+              className="h-8 sm:h-10 text-xs sm:text-sm px-3"
             >
               Motilal API
             </Button>
@@ -533,10 +555,10 @@ export default function AddStockDialog({
         ) : null}
 
         {mode === "manual" || isEditMode ? (
-          <div className="grid gap-8 py-5">
-            <div className="grid gap-6 md:grid-cols-2">
-              <div className="relative grid gap-1.5">
-                <Label htmlFor="stock-name">Stock Name</Label>
+          <div className="grid gap-4 sm:gap-8 py-3 sm:py-5">
+            <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
+              <div className="relative grid gap-1 sm:gap-1.5">
+                <Label htmlFor="stock-name" className="text-xs sm:text-sm">Stock Name</Label>
                 <div className="relative">
                   <Input
                     id="stock-name"
@@ -546,8 +568,8 @@ export default function AddStockDialog({
                       setActiveSelector(event.target.value.trim() ? "name" : null);
                     }}
                     onBlur={() => setTimeout(() => setActiveSelector(null), 200)}
-                    placeholder="Search stocks — e.g. Reliance, HDFC, Tata Motors"
-                    className="pr-8"
+                    placeholder="Search stocks..."
+                    className="h-9 sm:h-10 text-sm pr-8"
                   />
                   {liveLoading && activeSelector === "name" && (
                     <Loader2 className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 animate-spin text-muted-foreground" />
@@ -566,7 +588,7 @@ export default function AddStockDialog({
                         key={`${stock.symbol}-${stock.source}`}
                         type="button"
                         onMouseDown={(event) => event.preventDefault()}
-                        onClick={() => handleStockSelect(stock.name, stock.symbol)}
+                        onClick={() => handleStockSelect(stock.name, stock.symbol, stock.ltp, stock.changePercent)}
                         className="flex w-full items-center justify-between gap-2 rounded-sm px-2 py-1.5 text-left text-sm hover:bg-accent"
                       >
                         <div className="flex flex-col min-w-0 flex-1">
@@ -604,8 +626,8 @@ export default function AddStockDialog({
                 )}
               </div>
 
-              <div className="relative grid gap-1.5">
-                <Label htmlFor="stock-symbol">Symbol</Label>
+              <div className="relative grid gap-1 sm:gap-1.5">
+                <Label htmlFor="stock-symbol" className="text-xs sm:text-sm">Symbol</Label>
                 <div className="relative">
                   <Input
                     id="stock-symbol"
@@ -621,7 +643,7 @@ export default function AddStockDialog({
                     }}
                     onBlur={() => setTimeout(() => setActiveSelector(null), 200)}
                     placeholder="RELIANCE.NS"
-                    className="pr-8"
+                    className="h-9 sm:h-10 text-sm pr-8"
                   />
                   {liveLoading && activeSelector === "symbol" && (
                     <Loader2 className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 animate-spin text-muted-foreground" />
@@ -640,7 +662,7 @@ export default function AddStockDialog({
                         key={`${stock.symbol}-symbol-${stock.source}`}
                         type="button"
                         onMouseDown={(event) => event.preventDefault()}
-                        onClick={() => handleStockSelect(stock.name, stock.symbol)}
+                        onClick={() => handleStockSelect(stock.name, stock.symbol, stock.ltp, stock.changePercent)}
                         className="flex w-full items-center justify-between gap-2 rounded-sm px-2 py-1.5 text-left text-sm hover:bg-accent"
                       >
                         <div className="flex items-center gap-1.5">
@@ -662,9 +684,9 @@ export default function AddStockDialog({
               </div>
             </div>
 
-            <div className="grid gap-5 md:grid-cols-3">
-              <div className="grid gap-1.5">
-                <Label htmlFor="stock-qty">Quantity</Label>
+            <div className="grid gap-4 sm:gap-5 grid-cols-2 sm:grid-cols-3">
+              <div className="grid gap-1 sm:gap-1.5">
+                <Label htmlFor="stock-qty" className="text-xs sm:text-sm">Quantity</Label>
                 <Input
                   id="stock-qty"
                   type="number"
@@ -674,11 +696,12 @@ export default function AddStockDialog({
                   onFocus={() => setActiveSelector(null)}
                   onChange={(event) => handleFormChange("qty", event.target.value)}
                   placeholder="10"
+                  className="h-9 sm:h-10 text-sm"
                 />
               </div>
 
-              <div className="grid gap-1.5">
-                <Label htmlFor="stock-price">Avg Price</Label>
+              <div className="grid gap-1 sm:gap-1.5">
+                <Label htmlFor="stock-price" className="text-xs sm:text-sm">Avg Price</Label>
                 <Input
                   id="stock-price"
                   type="number"
@@ -688,17 +711,19 @@ export default function AddStockDialog({
                   onFocus={() => setActiveSelector(null)}
                   onChange={(event) => handleFormChange("avgPrice", event.target.value)}
                   placeholder="1450"
+                  className="h-9 sm:h-10 text-sm"
                 />
               </div>
 
-              <div className="grid gap-1.5">
-                <Label htmlFor="stock-app">App / Source</Label>
+              <div className="grid gap-1 sm:gap-1.5 col-span-2 sm:col-span-1">
+                <Label htmlFor="stock-app" className="text-xs sm:text-sm">App / Source</Label>
                 <Input
                   id="stock-app"
                   value={formState.app}
                   onFocus={() => setActiveSelector(null)}
                   onChange={(event) => handleFormChange("app", event.target.value)}
                   placeholder="Manual"
+                  className="h-9 sm:h-10 text-sm"
                 />
               </div>
             </div>

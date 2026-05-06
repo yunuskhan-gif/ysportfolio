@@ -768,13 +768,15 @@ const Portfolio = () => {
                       <td className="px-3 py-2 text-right">
                         <div className="flex items-center justify-end gap-1">
                           <button
-                            onClick={() => handleEditHolding(stock)}
-                            className="p-1.5 rounded-md hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
+                            onClick={() => void refetchPrices()}
+                            title="Resync Price"
+                            className={`p-1.5 rounded-md hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors ${isRefreshing ? "animate-spin" : ""}`}
                           >
-                            <Upload className="h-3.5 w-3.5" />
+                            <RefreshCw className="h-3.5 w-3.5" />
                           </button>
                           <button
                             onClick={() => void handleDeleteHolding(stock.id)}
+                            title="Delete Holding"
                             className="p-1.5 rounded-md hover:bg-red-500/10 text-muted-foreground hover:text-red-500 transition-colors"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
