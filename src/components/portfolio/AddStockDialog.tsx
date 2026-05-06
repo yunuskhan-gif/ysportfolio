@@ -60,11 +60,14 @@ const INITIAL_FORM: StockFormState = {
 const normalizeSymbol = (symbol: string) => {
   const cleaned = symbol.trim().toUpperCase().replace(/\s+/g, "");
   if (!cleaned) return "";
-  if (cleaned.includes(".")) return cleaned;
+  // If it already has an exchange suffix, a colon (GF ID), or looks like an MF code, don't append .NS
+  if (cleaned.includes(".") || cleaned.includes(":") || cleaned.length > 10) return cleaned;
+  // Common MF prefix pattern for Moneycontrol (3 letters + numbers)
+  if (/^[A-Z]{2,}[0-9]+$/.test(cleaned)) return cleaned;
   return `${cleaned}.NS`;
 };
 
-const formatSymbol = (symbol: string) => symbol.toUpperCase().endsWith(".NS") ? symbol.toUpperCase() : `${symbol.toUpperCase()}.NS`;
+const formatSymbol = (symbol: string) => normalizeSymbol(symbol);
 
 export default function AddStockDialog({
   open,

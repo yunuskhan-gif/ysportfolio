@@ -112,42 +112,72 @@ const scrapePriceFromScreener = async (symbol: string): Promise<CachedPrice | nu
 // ═══════════════════════════════════════════════════════════
 // SCRAPER 2: Google Finance
 // ═══════════════════════════════════════════════════════════
-const scrapePriceFromGoogleFinance = async (symbol: string): Promise<CachedPrice | null> => {
+const scrapePriceFromGoogleFinance = async (symbol: string, exchange: string = "NSE"): Promise<CachedPrice | null> => {
   try {
-    const cleanSymbol = sanitizeSymbol(symbol);
-    const url = `https://www.google.com/finance/quote/${cleanSymbol}:NSE`;
-    const response = await axios.get(url, {
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
-        "Accept-Language": "en-US,en;q=0.9",
-      },
-      timeout: 5000,
-    });
+    let cleanSymbol = sanitizeSymbol(symbol);
+    let exchanges = exchange === "NSE" ? ["NSE", "BOM", "MUTF_IN"] : [exchange];
 
-    const $ = cheerio.load(response.data);
-    const html = response.data as string;
-    let price = NaN;
-
-    // Method 1: Known class selectors
-    for (const sel of [".YMlKec.fxKbKc", ".AHmHk .fxKbKc", ".rPF6Lc", ".kf1m0"]) {
-      const text = $(sel).first().text().replace(/,/g, "").replace("₹", "").trim();
-      if (text) { price = parseFloat(text); if (isValidPrice(price)) break; }
+    // If symbol already has an exchange (e.g. "RELIANCE:NSE" or "ID:MUTF_IN")
+    if (symbol.includes(":")) {
+      const parts = symbol.split(":");
+      cleanSymbol = parts[0];
+      exchanges = [parts[1]];
     }
+    
+    for (const exch of exchanges) {
+      const url = `https://www.google.com/finance/quote/${cleanSymbol}:${exch}`;
+      try {
+        const response = await axios.get(url, {
+          headers: {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
+            "Accept-Language": "en-US,en;q=0.9",
+          },
+          timeout: 4000,
+        });
 
-    // Method 2: data-last-price attribute
-    if (!isValidPrice(price)) {
-      const attr = $("[data-last-price]").attr("data-last-price");
-      if (attr) price = parseFloat(attr);
-    }
+        const $ = cheerio.load(response.data);
+        const html = response.data as string;
+        let price = NaN;
 
-    // Method 3: Regex in raw HTML
-    if (!isValidPrice(price)) {
-      const match = html.match(/data-last-price="([\d.]+)"/);
-      if (match) price = parseFloat(match[1]);
-    }
+        // Method 1: Known class selectors (including new ones found in beta)
+        for (const sel of [".YMlKec.fxKbKc", ".YMlS1d", ".AHmHk .fxKbKc", ".rPF6Lc", ".kf1m0"]) {
+          const text = $(sel).first().text().replace(/,/g, "").replace(/[₹$]/g, "").trim();
+          if (text) {
+            price = parseFloat(text);
+            if (isValidPrice(price)) break;
+          }
+        }
 
-    if (isValidPrice(price)) {
-      return { symbol, price, change: 0, changePercent: 0, source: "Google Finance", fetchedAt: Date.now() };
+        // Method 2: data-last-price attribute
+        if (!isValidPrice(price)) {
+          const attr = $("[data-last-price]").attr("data-last-price");
+          if (attr) price = parseFloat(attr);
+        }
+
+        // Method 3: Regex in raw HTML
+        if (!isValidPrice(price)) {
+          const match = html.match(/data-last-price="([\d.]+)"/);
+          if (match) price = parseFloat(match[1]);
+        }
+
+        if (isValidPrice(price)) {
+          // Also try to get change percent
+          let changePercent = 0;
+          const cpText = $(".Jw7X9 .P29nLc").first().text().replace(/[()%]/g, "").trim();
+          if (cpText) changePercent = parseFloat(cpText);
+
+          return { 
+            symbol, 
+            price, 
+            change: 0, 
+            changePercent, 
+            source: `Google Finance (${exch})`, 
+            fetchedAt: Date.now() 
+          };
+        }
+      } catch (e) {
+        continue; // Try next exchange
+      }
     }
     return null;
   } catch (error: any) {
@@ -283,8 +313,9 @@ const scrapePriceFromMoneycontrol = async (symbol: string): Promise<CachedPrice 
 // ═══════════════════════════════════════════════════════════
 const scrapePriceFromMoneycontrolMF = async (symbol: string): Promise<CachedPrice | null> => {
   try {
-    // For MFs, the symbol is usually the scheme code (e.g., MSA031)
-    const priceUrl = `https://priceapi.moneycontrol.com/pricefeed/mutualfund/nav/${symbol}`;
+    const cleanSymbol = sanitizeSymbol(symbol);
+    // For MFs, the symbol is usually the scheme code (e.g., MSA031 or MSN1536)
+    const priceUrl = `https://priceapi.moneycontrol.com/pricefeed/mutualfund/nav/${cleanSymbol}`;
     const res = await axios.get(priceUrl, {
       headers: { "User-Agent": "Mozilla/5.0" },
       timeout: 4000,
@@ -365,8 +396,8 @@ const fetchPriceForSymbol = async (symbol: string, retryCount = 0): Promise<Cach
     return cached;
   }
 
-  // 2. Detect and route Mutual Funds (MF symbols are usually alphanumeric codes like MSA031)
-  const isMF = /^[A-Z]{2,}[0-9]+$/.test(cleanSymbol);
+  // 2. Detect and route Mutual Funds (MF symbols are usually alphanumeric codes like MSA031 or Google Finance IDs)
+  const isMF = /^[A-Z]{2,}[A-Z0-9_]*[0-9]+$/.test(cleanSymbol) || cleanSymbol.includes("_") || cleanSymbol.includes(":") || cleanSymbol.length > 12;
   
   if (isMF) {
     try {
@@ -383,7 +414,7 @@ const fetchPriceForSymbol = async (symbol: string, retryCount = 0): Promise<Cach
     const raceResult = await Promise.any([
       scrapePriceFromMoneycontrol(symbol).then(r => { if (!r) throw new Error("no result"); return r; }),
       scrapePriceFromScreener(symbol).then(r => { if (!r) throw new Error("no result"); return r; }),
-      scrapePriceFromGoogleFinance(symbol).then(r => { if (!r) throw new Error("no result"); return r; }),
+      scrapePriceFromGoogleFinance(symbol, isMF ? "MUTF_IN" : "NSE").then(r => { if (!r) throw new Error("no result"); return r; }),
     ]);
 
     if (raceResult) {
@@ -463,7 +494,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Handle names that might be passed as symbols from Excel
-    return s.includes(".") ? s : `${s}.NS`;
+    return (s.includes(".") || s.includes(":")) ? s : `${s}.NS`;
   });
 
   try {
