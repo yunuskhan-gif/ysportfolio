@@ -8,19 +8,14 @@ export const items = [
       icon: Home,
     },
     {
-      title: "Market Search",
-      url: "/search",
-      icon: Search,
-    },
-    {
       title: "Portfolio",
       url: "/portfolio",
       icon: Wallet,
     },
     {
-      title: "Motilal Settings",
-      url: "/settings",
-      icon: KeyRound,
+      title: "Market Search",
+      url: "/search",
+      icon: Search,
     },
     {
       title: "History",

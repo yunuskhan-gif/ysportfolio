@@ -1,9 +1,12 @@
 // src/pages/Portfolio.tsx
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   deleteHolding,
   fetchHoldings,
@@ -12,6 +15,7 @@ import {
   type StockHolding,
 } from "@/lib/portfolio-api";
 import AddStockDialog from "@/components/portfolio/AddStockDialog";
+import HoldingDetailsDialog from "@/components/portfolio/HoldingDetailsDialog";
 import {
   Search,
   ChevronDown,
@@ -21,14 +25,24 @@ import {
   Upload,
   TrendingDownIcon,
   TrendingUpIcon,
+  Edit2,
+  Copy,
 } from "lucide-react";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
+import { Download, FileSpreadsheet, Clipboard } from "lucide-react";
+import * as XLSX from "xlsx";
 import { Badge } from "@/components/ui/badge";
 
 interface PriceData {
@@ -177,7 +191,6 @@ const PortfolioTrendCard = ({
       {subtitle ? <p className="text-[10px] text-muted-foreground mt-0.5 truncate">{subtitle}</p> : null}
     </div>
 
-    <div className="h-2 w-full max-sm:h-1" />
 
     <CardContent className="flex-1 !p-0 min-h-0 flex flex-col">
       <div className="flex-1">
@@ -192,8 +205,7 @@ const PortfolioTrendCard = ({
               },
             }}
           >
-            <AreaChart data={chartData} margin={{ top: 8, right: 0, left: 0, bottom: -10 }}>
-              <CartesianGrid vertical={false} stroke="var(--border)" strokeOpacity={0.2} />
+            <AreaChart data={chartData} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
               <XAxis dataKey="timestamp" tickLine={false} axisLine={false} tick={false} />
               <YAxis hide domain={["dataMin", "dataMax"]} />
               <ChartTooltip
@@ -221,7 +233,7 @@ const PortfolioTrendCard = ({
                 stroke="var(--color-value)"
                 strokeWidth={1.5}
                 fill="var(--color-value)"
-                fillOpacity={0.14}
+                fillOpacity={0.05}
                 dot={false}
                 isAnimationActive={false}
               />
@@ -239,16 +251,41 @@ const PortfolioTrendCard = ({
 
 const Portfolio = () => {
   const queryClient = useQueryClient();
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const pageSize = 20;
   const [searchTerm, setSearchTerm] = useState("");
   const [sortField, setSortField] = useState<SortField>("pnl");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+  const [isAddStockOpen, setIsAddStockOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [selectedHolding, setSelectedHolding] = useState<StockHolding | null>(null);
+  const [viewHolding, setViewHolding] = useState<EnrichedHolding | null>(null);
   const [selectedHoldingId, setSelectedHoldingId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isSavingSnapshot, setIsSavingSnapshot] = useState(false);
+
+  useEffect(() => {
+    const addSymbol = searchParams.get("add");
+    const addName = searchParams.get("name");
+    const addPrice = searchParams.get("price");
+
+    if (addSymbol && addName) {
+      setSelectedHolding({
+        name: addName,
+        symbol: addSymbol,
+        qty: 1,
+        avgPrice: Number(addPrice) || 0,
+      });
+      setIsAddStockOpen(true);
+      
+      // Clear the URL params after opening the dialog
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, '', newUrl);
+    }
+  }, [searchParams]);
 
   const handleSaveSnapshot = async () => {
     try {
@@ -535,6 +572,61 @@ const Portfolio = () => {
     setIsEditDialogOpen(true);
   };
 
+  const handleGlobalRefresh = async () => {
+    await queryClient.invalidateQueries({ queryKey: ["portfolio", "prices"] });
+    toast.success("Resyncing all prices...");
+  };
+
+  const handleExportExcel = () => {
+    try {
+      if (!holdings || holdings.length === 0) {
+        toast.error("No portfolio data to export.");
+        return;
+      }
+
+      const exportData = holdings.map(h => ({
+        "Stock Name": h.name,
+        "Symbol": h.symbol,
+        "Quantity": h.qty,
+        "Avg. Price": h.avgPrice,
+        "Invested Value": h.qty * h.avgPrice,
+        "Source": h.app || "Manual"
+      }));
+
+      const worksheet = XLSX.utils.json_to_sheet(exportData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Portfolio");
+      
+      // Auto-size columns
+      const max_width = exportData.reduce((w, r) => Math.max(w, String(r["Stock Name"]).length), 10);
+      worksheet["!cols"] = [ { wch: max_width }, { wch: 15 }, { wch: 10 }, { wch: 12 }, { wch: 15 }, { wch: 15 } ];
+
+      XLSX.writeFile(workbook, `Portfolio_Export_${new Date().toISOString().split('T')[0]}.xlsx`);
+      toast.success("Excel file downloaded!");
+    } catch (err) {
+      toast.error("Failed to export Excel.");
+    }
+  };
+
+  const handleCopyTable = async () => {
+    try {
+      if (!holdings || holdings.length === 0) {
+        toast.error("No portfolio data to copy.");
+        return;
+      }
+
+      // Create TSV (Tab Separated Values) for Excel
+      const headers = ["Stock Name", "Symbol", "Quantity", "Avg. Price", "Source"];
+      const rows = holdings.map(h => [h.name, h.symbol, h.qty, h.avgPrice, h.app || "Manual"]);
+      const content = [headers, ...rows].map(r => r.join("\t")).join("\n");
+
+      await navigator.clipboard.writeText(content);
+      toast.success("Portfolio copied to clipboard!");
+    } catch (err) {
+      toast.error("Failed to copy table.");
+    }
+  };
+
   const SortIcon = ({ field }: { field: SortField }) => {
     if (sortField !== field) {
       return <ChevronDown className="w-3 h-3 opacity-20" />;
@@ -629,22 +721,51 @@ const Portfolio = () => {
       <Card className="shadow-none border-border">
         <div className="px-2 py-2">
           <div className="flex flex-wrap items-center justify-between mb-2 gap-2">
-            <div className="relative max-w-xs flex-1 min-w-[200px]">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
-              <input
-                type="text"
+            <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 gap-2 text-xs font-bold uppercase tracking-tighter"
+              onClick={handleGlobalRefresh}
+            >
+              <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
+              <span className="hidden sm:inline">Resync All</span>
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-8 gap-2 text-xs font-bold uppercase tracking-tighter"
+                >
+                  <Download className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Export</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem onClick={handleExportExcel} className="gap-2 cursor-pointer">
+                  <FileSpreadsheet className="h-4 w-4 text-emerald-500" />
+                  <span>Download Excel</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleCopyTable} className="gap-2 cursor-pointer">
+                  <Clipboard className="h-4 w-4 text-blue-500" />
+                  <span>Copy to Clipboard</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <div className="relative w-full max-w-[200px] md:max-w-[300px]">
+              <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+              <Input
                 placeholder="Search holdings..."
                 value={searchTerm}
-                onChange={(event) => setSearchTerm(event.target.value)}
-                className="w-full pl-8 pr-3 py-1.5 text-xs bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary/40"
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="h-8 pl-8 text-xs bg-muted/20 border-none shadow-none focus-visible:ring-1"
               />
             </div>
+          </div>
             <div className="flex items-center gap-1.5 ml-auto">
               <button
                 type="button"
-                className="rounded-md border border-border p-1.5 text-muted-foreground hover:bg-muted"
-                onClick={() => void refetchPrices()}
-                title="Refresh Prices"
               >
                 <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
               </button>
@@ -725,10 +846,17 @@ const Portfolio = () => {
                         />
                       </td>
                       <td className="px-3 py-2 text-muted-foreground/60">{(currentPage - 1) * pageSize + index + 1}</td>
-                      <td className="px-3 py-2">
+                      <td 
+                        className="px-3 py-2 cursor-pointer hover:bg-primary/5 group/name transition-colors"
+                        onClick={() => {
+                          setViewHolding(stock);
+                          setIsDetailsOpen(true);
+                        }}
+                        title="View Details"
+                      >
                         <div className="flex flex-col">
                           <div className="flex items-center gap-2">
-                            <span className="font-semibold text-primary/90">{stock.name}</span>
+                            <span className="font-semibold text-primary/90 group-hover/name:text-primary">{stock.name}</span>
                             {/^[A-Z]{2,}[0-9]+$/.test(stock.symbol) ? (
                               <span className="text-[8px] bg-blue-500/15 text-blue-600 px-1 rounded font-bold uppercase">MF</span>
                             ) : (
@@ -768,6 +896,13 @@ const Portfolio = () => {
                       <td className="px-3 py-2 text-right">
                         <div className="flex items-center justify-end gap-1">
                           <button
+                            onClick={() => handleEditHolding(stock)}
+                            title="Edit Holding"
+                            className="p-1.5 rounded-md hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
+                          >
+                            <Edit2 className="h-3.5 w-3.5" />
+                          </button>
+                          <button
                             onClick={() => void refetchPrices()}
                             title="Resync Price"
                             className={`p-1.5 rounded-md hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors ${isRefreshing ? "animate-spin" : ""}`}
@@ -801,8 +936,17 @@ const Portfolio = () => {
       <AddStockDialog
         open={isEditDialogOpen}
         onOpenChange={setIsEditDialogOpen}
-        editHolding={selectedHolding}
+        initialHolding={selectedHolding}
+        editId={selectedHoldingId}
         onStockAdded={() => void queryClient.invalidateQueries({ queryKey: HOLDINGS_QUERY_KEY })}
+      />
+
+      <HoldingDetailsDialog
+        open={isDetailsOpen}
+        onOpenChange={setIsDetailsOpen}
+        holding={viewHolding}
+        onEdit={handleEditHolding}
+        onDelete={handleDeleteHolding}
       />
     </div>
   );

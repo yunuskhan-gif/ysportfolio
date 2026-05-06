@@ -84,7 +84,7 @@ export function ChartMetricCard({
   const allValuesZero = chartData.every((item) => item.value === 0);
 
   return (
-    <Card className="h-[150px] max-sm:h-[135px] max-sm:min-w-[240px] max-sm:flex-shrink-0 !p-0 !gap-0 flex flex-col overflow-hidden snap-start">
+    <Card className="h-[150px] max-sm:h-[135px] w-full !p-0 !gap-0 flex flex-col overflow-hidden snap-center">
       <CardHeader className="flex-none pt-1 px-2 py-1 pb-0 space-y-0 max-sm:pt-0.5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
@@ -110,7 +110,6 @@ export function ChartMetricCard({
         </CardTitle>
       </CardHeader>
 
-      <div className="h-2 w-full max-sm:h-1" />
 
       <CardContent className="flex-1 !p-0 min-h-0 flex flex-col">
         <ChartContainer
@@ -119,14 +118,9 @@ export function ChartMetricCard({
         >
           <AreaChart
             data={chartData}
-            syncId="portfolio-sync" // ⭐ IMPORTANT (same for all charts)
-            margin={{ top: 0, right: 0, left: 0, bottom: -10 }}
+            syncId="portfolio-sync"
+            margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
           >
-            <CartesianGrid
-              vertical={false}
-              stroke="var(--border)"
-              strokeOpacity={0.15}
-            />
 
             <XAxis
               dataKey="formattedTime"
@@ -147,6 +141,7 @@ export function ChartMetricCard({
               strokeWidth={1.5}
               fill={allValuesZero ? "transparent" : "var(--color-value)"}
               fillOpacity={allValuesZero ? 0 : 0.12}
+              fillOpacity={0.05}
               dot={false}
               baseValue="dataMin"
               isAnimationActive={false}

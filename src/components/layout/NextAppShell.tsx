@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Plus, Upload } from "lucide-react";
+import Link from "next/link";
+import { Plus, Upload, Wallet, Copy, RefreshCw, Search } from "lucide-react";
+import { CommandMenu } from "./CommandMenu";
 import { useQueryClient } from "@tanstack/react-query";
 import { PrimeReactProvider } from "primereact/api";
 import toast from "react-hot-toast";
@@ -24,6 +26,7 @@ export default function NextAppShell({ children }: { children: React.ReactNode }
   const queryClient = useQueryClient();
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [isAddStockOpen, setIsAddStockOpen] = useState(false);
+  const [isCommandOpen, setIsCommandOpen] = useState(false);
 
   const getPageTitle = () => {
     if (pathname.includes("/portfolio")) return "Portfolio";
@@ -38,41 +41,6 @@ export default function NextAppShell({ children }: { children: React.ReactNode }
     document.title = `YS Portfolio | ${getPageTitle()}`;
   }, [pathname]);
 
-  useEffect(() => {
-    let cancelled = false;
-
-    const syncMotilalOnLoad = async () => {
-      // Prevent syncing on every navigation. Only once per session or if manually triggered.
-      const hasSyncedThisSession = sessionStorage.getItem("motilal_synced_this_session");
-      if (hasSyncedThisSession) return;
-
-      try {
-        const response = await fetchMotilalHoldings({ persistHoldings: true });
-        if (!cancelled && !response.skipped) {
-          sessionStorage.setItem("motilal_synced_this_session", "true");
-          await queryClient.invalidateQueries({ queryKey: HOLDINGS_QUERY_KEY });
-          window.dispatchEvent(new CustomEvent(MOTILAL_SYNC_EVENT));
-        }
-      } catch (error) {
-        if (!cancelled && pathname.includes("/portfolio")) {
-          const message = error instanceof Error ? error.message : "Motilal sync failed.";
-          if (message.includes("session") || message.includes("Credentials")) {
-            toast.error("Motilal session expired. Please re-authenticate in Settings or Add Stock dialog.", { id: "motilal-sync-error" });
-          } else {
-            // Silently fail if it's not a session error to avoid annoying the user
-            console.warn("Motilal background sync failed:", message);
-          }
-        }
-      }
-    };
-
-    void syncMotilalOnLoad();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [queryClient]); // Removed pathname to prevent re-syncing on every page change
-
   const handleDataUploaded = async () => {
     await queryClient.invalidateQueries({ queryKey: HOLDINGS_QUERY_KEY });
   };
@@ -84,7 +52,7 @@ export default function NextAppShell({ children }: { children: React.ReactNode }
       <AppSidebar variant="inset" />
 
       <SidebarInset>
-        <header className="flex h-12 shrink-0 items-center gap-2 border-b border-border/50 transition-[width,height] ease-linear">
+        <header className="sticky top-0 z-40 lg:static flex h-12 shrink-0 items-center gap-2 border-b border-border/50 bg-background/90 backdrop-blur-md transition-[width,height] ease-linear">
           <div className="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6">
             <SidebarTrigger className="-ml-1" />
             <Separator
@@ -92,8 +60,28 @@ export default function NextAppShell({ children }: { children: React.ReactNode }
               className="mx-2 data-[orientation=vertical]:h-4"
             />
             <h1 className="text-base font-medium">{getPageTitle()}</h1>
-
-            <div className="ml-auto flex items-center gap-2">
+            
+            <div className="ml-auto flex items-center gap-1 sm:gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 w-8 p-0 sm:hidden"
+                onClick={() => setIsCommandOpen(true)}
+              >
+                <Search className="h-4 w-4" />
+              </Button>
+              {!isPortfolioPage && (
+                <Button
+                  asChild
+                  variant="outline"
+                  size="sm"
+                  className="h-8 cursor-pointer gap-2 text-xs font-bold uppercase tracking-tighter sm:hidden"
+                >
+                  <Link href="/portfolio">
+                    <Wallet className="h-3.5 w-3.5" />
+                  </Link>
+                </Button>
+              )}
               {isPortfolioPage && (
                 <Button
                   variant="outline"
@@ -132,6 +120,7 @@ export default function NextAppShell({ children }: { children: React.ReactNode }
           onOpenChange={setIsAddStockOpen}
           onStockAdded={handleDataUploaded}
         />
+        <CommandMenu open={isCommandOpen} setOpen={setIsCommandOpen} />
       </SidebarInset>
     </SidebarProvider>
   );

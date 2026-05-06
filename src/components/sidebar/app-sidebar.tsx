@@ -29,12 +29,14 @@ import {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { toggleTheme, selectedTheme, setSelectedTheme } = useTheme();
-  const { state } = useSidebar();
+  const { state, isMobile } = useSidebar();
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isAddStockOpen, setIsAddStockOpen] = useState(false);
   const selectableThemes = ALL_THEMES.filter((theme) => theme.value !== "system");
 
-  const displayItems = items;
+  const displayItems = isMobile
+    ? items.filter((item) => item.url !== "/search")
+    : items;
   const actionItems = [
     {
       title: "Add Stock",
