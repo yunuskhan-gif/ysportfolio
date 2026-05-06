@@ -5,8 +5,12 @@ import Providers from "@/app/providers";
 import PasswordGate from "@/components/auth/PasswordGate";
 
 export const metadata: Metadata = {
-  title: "YS Portfolio",
-  description: "YS Portfolio Next.js app",
+  title: "Tradylytics | Market Intelligence",
+  description: "High-performance financial portfolio tracking and market intelligence dashboard.",
+  icons: {
+    icon: "/favicon.png",
+    apple: "/favicon.png",
+  },
 };
 
 export default function RootLayout({
