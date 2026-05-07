@@ -338,6 +338,77 @@ const scrapePriceFromMoneycontrolMF = async (symbol: string): Promise<CachedPric
 };
 
 // ═══════════════════════════════════════════════════════════
+// SCRAPER 4c: Moneycontrol MF Web Scrape — Fallback for API
+// Scrapes the actual NAV from the web page title or .amt class
+// ═══════════════════════════════════════════════════════════
+const scrapePriceFromMoneycontrolMFPage = async (symbol: string): Promise<CachedPrice | null> => {
+  try {
+    const cleanSymbol = sanitizeSymbol(symbol);
+    // Use the short redirect URL pattern
+    const url = `https://www.moneycontrol.com/mutual-funds/nav/-/${cleanSymbol}`;
+    
+    const response = await axios.get(url, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
+        "Accept-Language": "en-US,en;q=0.9",
+      },
+      timeout: 6000,
+      maxRedirects: 5
+    });
+
+    const $ = cheerio.load(response.data);
+    let price = NaN;
+
+    // Method 1: Title Tag [NAV]
+    const title = $("title").text();
+    const titleMatch = title.match(/\[([\d\.,]+)\]/);
+    if (titleMatch) {
+      price = parseFloat(titleMatch[1].replace(/,/g, ""));
+    }
+
+    // Method 2: .amt class
+    if (!isValidPrice(price)) {
+      const amtText = $(".amt").first().text().replace(/,/g, "").trim();
+      if (amtText) price = parseFloat(amtText);
+    }
+
+    // Method 3: og:title meta
+    if (!isValidPrice(price)) {
+      const ogTitle = $('meta[property="og:title"]').attr("content");
+      const ogMatch = ogTitle?.match(/\[([\d\.,]+)\]/);
+      if (ogMatch) price = parseFloat(ogMatch[1].replace(/,/g, ""));
+    }
+
+    // Method 4: Regex in body text (searching for "NAV 73.74")
+    if (!isValidPrice(price)) {
+      const bodyText = $("body").text().replace(/\s+/g, " ");
+      const navMatch = bodyText.match(/NAV\s*(?:as on[^:]+)?[:\s]+₹?\s*([\d\.,]+)/i);
+      if (navMatch) price = parseFloat(navMatch[1].replace(/,/g, ""));
+    }
+
+    if (isValidPrice(price)) {
+      // Try to get change from .percentage or .p_change
+      let changePercent = 0;
+      const pcText = $(".percentage, .p_change, .amt_pct").first().text().replace(/[()%]/g, "").trim();
+      if (pcText) changePercent = parseFloat(pcText);
+
+      return { 
+        symbol, 
+        price, 
+        change: 0, 
+        changePercent, 
+        source: "Moneycontrol MF (Web)", 
+        fetchedAt: Date.now() 
+      };
+    }
+    return null;
+  } catch (e: any) {
+    console.warn(`Moneycontrol MF Web [${symbol}]:`, e.message);
+    return null;
+  }
+};
+
+// ═══════════════════════════════════════════════════════════
 // SCRAPER 5: NSE India official website
 // ═══════════════════════════════════════════════════════════
 const scrapePriceFromNSE = async (symbol: string): Promise<CachedPrice | null> => {
@@ -397,14 +468,25 @@ const fetchPriceForSymbol = async (symbol: string, retryCount = 0): Promise<Cach
   }
 
   // 2. Detect and route Mutual Funds (MF symbols are usually alphanumeric codes like MSA031 or Google Finance IDs)
-  const isMF = /^[A-Z]{2,}[A-Z0-9_]*[0-9]+$/.test(cleanSymbol) || cleanSymbol.includes("_") || cleanSymbol.includes(":") || cleanSymbol.length > 12;
+  const isMF = /^[A-Z]{2,}[A-Z0-9_]*[0-9]+$/.test(cleanSymbol) || 
+               cleanSymbol.includes("_") || 
+               cleanSymbol.includes(":") || 
+               cleanSymbol.length > 12 ||
+               /fund|growth|direct|regular/i.test(cleanSymbol);
   
   if (isMF) {
+    // Try Moneycontrol API then Web Page
     try {
-      const result = await scrapePriceFromMoneycontrolMF(symbol);
-      if (result) {
-        setCachedPrice(symbol, result);
-        return result;
+      const apiResult = await scrapePriceFromMoneycontrolMF(symbol);
+      if (apiResult) {
+        setCachedPrice(symbol, apiResult);
+        return apiResult;
+      }
+      
+      const webResult = await scrapePriceFromMoneycontrolMFPage(symbol);
+      if (webResult) {
+        setCachedPrice(symbol, webResult);
+        return webResult;
       }
     } catch { /* fallback to normal scrapers just in case */ }
   }
@@ -425,8 +507,18 @@ const fetchPriceForSymbol = async (symbol: string, retryCount = 0): Promise<Cach
     // All primary scrapers failed
   }
 
-  // 4. Sequential Fallback
-  const fallbackScrapers = [scrapePriceFromYahooPage, scrapePriceFromNSE];
+  // 4. Sequential Fallback (Try MC Web Scraper again if not already tried for MF)
+  const fallbackScrapers = isMF ? [scrapePriceFromYahooPage] : [scrapePriceFromYahooPage, scrapePriceFromNSE];
+  
+  // If MF and we haven't tried MC Web yet (unlikely given logic above, but safe)
+  if (isMF) {
+    const mcWeb = await scrapePriceFromMoneycontrolMFPage(symbol);
+    if (mcWeb) {
+      setCachedPrice(symbol, mcWeb);
+      return mcWeb;
+    }
+  }
+
   for (const scraper of fallbackScrapers) {
     try {
       const result = await scraper(symbol);

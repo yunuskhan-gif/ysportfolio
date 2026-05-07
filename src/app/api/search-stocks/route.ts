@@ -198,7 +198,7 @@ export async function GET(request: NextRequest) {
 
     // Interleave and prioritize:
     // If query looks like a fund, put GF results and MF results at the top
-    const looksLikeFund = /fund|cap|growth|direct|regular|plan/i.test(query);
+    const looksLikeFund = /fund|cap|growth|direct|regular|plan|mutual|equity|index/i.test(query);
     console.log(`📊 Query: "${query}", LooksLikeFund: ${looksLikeFund}`);
 
     if (looksLikeFund) {
