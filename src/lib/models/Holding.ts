@@ -28,6 +28,10 @@ const HoldingSchema = new Schema(
       default: "Manual",
       trim: true,
     },
+    sourceUrl: {
+      type: String,
+      trim: true,
+    },
   },
   {
     timestamps: true,

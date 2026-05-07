@@ -5,6 +5,7 @@ export interface StockHolding {
   qty: number;
   avgPrice: number;
   app?: string;
+  sourceUrl?: string;
 }
 
 export interface MotilalPrefs {

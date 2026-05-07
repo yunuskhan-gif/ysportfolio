@@ -19,6 +19,7 @@ interface SearchResult {
   ltp?: number;
   change?: number;
   changePercent?: number;
+  sourceUrl?: string;
 }
 
 export default function MarketSearchPage() {
@@ -66,6 +67,7 @@ export default function MarketSearchPage() {
       qty: 1,
       avgPrice: stock.ltp || 0,
       app: stock.type === "mf" ? "MF" : "NSE",
+      sourceUrl: stock.sourceUrl,
     });
     setIsAddStockOpen(true);
   };

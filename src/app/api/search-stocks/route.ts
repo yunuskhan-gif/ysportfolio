@@ -18,6 +18,7 @@ interface SearchResult {
   changePercent?: number;
   scId?: string;
   mfSchemeCode?: string;
+  sourceUrl?: string;
 }
 
 // In-memory cache: 5 minutes
@@ -95,6 +96,7 @@ async function searchGoogleFinance(query: string): Promise<SearchResult[]> {
           name: name || symbol,
           sector: exchange === 'MUTF_IN' ? 'Mutual Fund' : 'Stock',
           type: exchange === 'MUTF_IN' ? 'mf' : 'stock',
+          sourceUrl: `https://www.google.com/finance/quote/${symbol}:${exchange}`,
         });
       }
     });
@@ -222,6 +224,7 @@ export async function GET(request: NextRequest) {
           sector: item.sc_sector || "",
           type: "stock",
           scId: item.sc_id,
+          sourceUrl: `https://www.moneycontrol.com/india/stockpricequote/-/${item.sc_id}`,
         });
       }
     }
@@ -239,6 +242,7 @@ export async function GET(request: NextRequest) {
           name: item.name || symbol,
           sector: "Mutual Fund",
           type: "mf",
+          sourceUrl: `https://www.moneycontrol.com/mutual-funds/nav/-/${symbol}`,
         });
       }
     }

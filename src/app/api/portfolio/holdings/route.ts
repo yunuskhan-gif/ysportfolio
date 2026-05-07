@@ -8,6 +8,7 @@ type HoldingInput = {
   qty: number;
   avgPrice: number;
   app?: string;
+  sourceUrl?: string;
 };
 
 function normalizeHolding(holding: HoldingInput) {
@@ -17,6 +18,7 @@ function normalizeHolding(holding: HoldingInput) {
     qty: Number(holding.qty),
     avgPrice: Number(holding.avgPrice),
     app: (holding.app || "Manual").trim(),
+    sourceUrl: (holding.sourceUrl || "").trim(),
   };
 }
 
@@ -27,6 +29,7 @@ function serializeHolding(doc: {
   qty: number;
   avgPrice: number;
   app?: string;
+  sourceUrl?: string;
 }) {
   return {
     id: doc._id.toString(),
@@ -35,6 +38,7 @@ function serializeHolding(doc: {
     qty: doc.qty,
     avgPrice: doc.avgPrice,
     app: doc.app || "Manual",
+    sourceUrl: doc.sourceUrl || "",
   };
 }
 

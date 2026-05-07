@@ -41,7 +41,7 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
-import { Download, FileSpreadsheet, Clipboard } from "lucide-react";
+import { Download, FileSpreadsheet, Clipboard, Globe } from "lucide-react";
 import * as XLSX from "xlsx";
 import { Badge } from "@/components/ui/badge";
 
@@ -825,6 +825,7 @@ const Portfolio = () => {
                   <th className="text-right px-3 py-2 text-[9px] font-bold text-muted-foreground uppercase cursor-pointer select-none" onClick={() => handleSort("pnl")}>
                     <span className="flex items-center justify-end gap-0.5">P&amp;L <SortIcon field="pnl" /></span>
                   </th>
+                  <th className="text-center px-3 py-2 text-[9px] font-bold text-muted-foreground uppercase">Link</th>
                   <th className="text-right px-3 py-2 text-[9px] font-bold text-muted-foreground uppercase">Action</th>
                 </tr>
               </thead>
@@ -892,6 +893,26 @@ const Portfolio = () => {
                             <span className="text-[9px] font-normal opacity-80">({stock.pnlPercent >= 0 ? "+" : ""}{stock.pnlPercent.toFixed(2)}%)</span>
                           )}
                         </div>
+                      </td>
+                      <td className="px-3 py-2 text-center">
+                        {(() => {
+                          const url = stock.sourceUrl || (
+                            /^[A-Z]{2,}[0-9]+$/.test(stock.symbol) 
+                              ? `https://www.moneycontrol.com/mutual-funds/nav/-/${stock.symbol}`
+                              : `https://www.nseindia.com/get-quote/equity?symbol=${stock.symbol}`
+                          );
+                          return (
+                            <a 
+                              href={url} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="inline-flex p-1 rounded-md hover:bg-primary/10 text-primary transition-colors"
+                              title="View Source"
+                            >
+                              <Globe className="h-3.5 w-3.5" />
+                            </a>
+                          );
+                        })()}
                       </td>
                       <td className="px-3 py-2 text-right">
                         <div className="flex items-center justify-end gap-1">

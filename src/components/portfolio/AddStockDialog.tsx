@@ -21,6 +21,7 @@ interface LiveSearchResult {
   ltp?: number;
   change?: number;
   changePercent?: number;
+  sourceUrl?: string;
 }
 
 interface StockOption {
@@ -31,6 +32,7 @@ interface StockOption {
   type: "stock" | "mf";
   ltp?: number;
   changePercent?: number;
+  sourceUrl?: string;
 }
 
 interface StockFormState {
@@ -39,6 +41,7 @@ interface StockFormState {
   qty: string;
   avgPrice: string;
   app: string;
+  sourceUrl: string;
 }
 
 interface AddStockDialogProps {
@@ -55,6 +58,7 @@ const INITIAL_FORM: StockFormState = {
   qty: "",
   avgPrice: "",
   app: "Manual",
+  sourceUrl: "",
 };
 
 const normalizeSymbol = (symbol: string) => {
@@ -155,6 +159,7 @@ export default function AddStockDialog({
       type: r.type,
       ltp: r.ltp,
       changePercent: r.changePercent,
+      sourceUrl: (r as any).sourceUrl,
     }));
 
     const localMatches = q
@@ -218,11 +223,12 @@ export default function AddStockDialog({
     setFormState((current) => ({ ...current, [field]: value }));
   };
 
-  const handleStockSelect = (name: string, symbol: string, ltp?: number, changePercent?: number) => {
+  const handleStockSelect = (name: string, symbol: string, ltp?: number, changePercent?: number, sourceUrl?: string) => {
     setFormState((current) => ({
       ...current,
       name,
       symbol: formatSymbol(symbol),
+      sourceUrl: sourceUrl || "",
     }));
     if (ltp !== undefined) setSelectedPrice(ltp);
     if (changePercent !== undefined) setSelectedChangePercent(changePercent);
@@ -256,6 +262,7 @@ export default function AddStockDialog({
         qty: String(initialHolding.qty),
         avgPrice: String(initialHolding.avgPrice),
         app: initialHolding.app || "Manual",
+        sourceUrl: initialHolding.sourceUrl || "",
       });
       setSelectedPrice(initialHolding.avgPrice);
       setActiveSelector(null);
@@ -271,6 +278,7 @@ export default function AddStockDialog({
     const qty = Number(formState.qty);
     const avgPrice = Number(formState.avgPrice);
     const app = formState.app.trim() || "Manual";
+    const sourceUrl = formState.sourceUrl.trim();
 
     if (!name || !symbol || qty <= 0 || avgPrice <= 0) {
       toast.error("Please fill valid stock details.");
@@ -283,6 +291,7 @@ export default function AddStockDialog({
       qty,
       avgPrice,
       app,
+      sourceUrl,
     };
 
     try {
@@ -351,7 +360,7 @@ export default function AddStockDialog({
                       key={`${stock.symbol}-${stock.source}`}
                       type="button"
                       onMouseDown={(event) => event.preventDefault()}
-                      onClick={() => handleStockSelect(stock.name, stock.symbol, stock.ltp, stock.changePercent)}
+                      onClick={() => handleStockSelect(stock.name, stock.symbol, stock.ltp, stock.changePercent, stock.sourceUrl)}
                       className="flex w-full items-center justify-between gap-2 rounded-lg px-2 py-2 text-left hover:bg-accent transition-colors"
                     >
                       <div className="flex flex-col min-w-0 flex-1">
