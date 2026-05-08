@@ -701,7 +701,7 @@ const Portfolio = () => {
           value={pricedHoldings.length > 0 ? formatCompact(totalCurrentValue) : "--"}
           subtitle=""
           chartData={currentValueTrendData}
-          changeText={`${priceCoveragePercent.toFixed(1)}%`}
+          changeText={`${priceCoveragePercent.toFixed(2)}%`}
           changePositive={pricedHoldings.length > 0}
         />
 
@@ -712,7 +712,7 @@ const Portfolio = () => {
           chartData={pnlTrendData}
           valueClassName={totalPnl >= 0 ? "text-emerald-500" : "text-red-500"}
           accentColor={totalPnl >= 0 ? "hsl(142 76% 36%)" : "hsl(0 84% 60%)"}
-          changeText={`${Math.abs(totalPnlPercent).toFixed(1)}%`}
+          changeText={`${Math.abs(totalPnlPercent).toFixed(2)}%`}
           changePositive={totalPnl >= 0}
         />
       </div>
@@ -871,10 +871,10 @@ const Portfolio = () => {
                         <Badge variant="outline" className="text-[8px] font-normal px-1 py-0">{stock.app || "NSE"}</Badge>
                       </td>
                       <td className="px-3 py-2 text-right font-medium">{stock.qty.toLocaleString("en-IN")}</td>
-                      <td className="px-3 py-2 text-right text-muted-foreground">₹{stock.avgPrice.toLocaleString("en-IN")}</td>
+                      <td className="px-3 py-2 text-right text-muted-foreground">{formatINR(stock.avgPrice)}</td>
                       <td className="px-3 py-2 text-right">
                         <div className="flex flex-col items-end">
-                          <span className="font-bold">₹{stock.ltp?.toLocaleString("en-IN") || "--"}</span>
+                          <span className="font-bold">{stock.ltp ? formatINR(stock.ltp) : "--"}</span>
                           {stock.changePercent !== 0 && (
                             <span className={`text-[9px] ${stock.changePercent >= 0 ? "text-emerald-500" : "text-red-500"}`}>
                               {stock.changePercent >= 0 ? "+" : ""}{stock.changePercent.toFixed(2)}%
@@ -882,13 +882,13 @@ const Portfolio = () => {
                           )}
                         </div>
                       </td>
-                      <td className="px-3 py-2 text-right font-medium">₹{stock.investment.toLocaleString("en-IN")}</td>
+                      <td className="px-3 py-2 text-right font-medium">{formatINR(stock.investment)}</td>
                       <td className="px-3 py-2 text-right font-bold">
-                        {stock.currentValue ? `₹${stock.currentValue.toLocaleString("en-IN")}` : "--"}
+                        {stock.currentValue ? formatINR(stock.currentValue) : "--"}
                       </td>
                       <td className={`px-3 py-2 text-right font-bold ${Number(stock.pnl) >= 0 ? "text-emerald-600" : "text-red-600"}`}>
                         <div className="flex flex-col items-end">
-                          <span>{stock.pnl ? `₹${stock.pnl.toLocaleString("en-IN")}` : "--"}</span>
+                          <span>{stock.pnl ? formatINR(stock.pnl) : "--"}</span>
                           {stock.pnlPercent !== null && (
                             <span className="text-[9px] font-normal opacity-80">({stock.pnlPercent >= 0 ? "+" : ""}{stock.pnlPercent.toFixed(2)}%)</span>
                           )}

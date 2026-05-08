@@ -13,6 +13,14 @@ import {
   type StockHolding,
 } from "@/lib/portfolio-api";
 
+const formatINR = (value: number) =>
+  new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value);
+
 interface LiveSearchResult {
   symbol: string;
   name: string;
@@ -205,32 +213,74 @@ export default function AddStockDialog({
   const handleFormChange = (field: keyof StockFormState, value: string) => {
     if (field === "name") {
       debouncedSearch(value);
+      // Reset selected price/stats when searching for something else
+      setSelectedPrice(null);
+      setSelectedChangePercent(null);
+      
       const exactMatch = EQUITY_SYMBOLS.find(
         (stock) => stock.n.toLowerCase() === value.trim().toLowerCase()
       );
       setFormState((current) => ({
         ...current,
         name: value,
-        symbol: exactMatch ? formatSymbol(exactMatch.s) : current.symbol,
+        symbol: exactMatch ? formatSymbol(exactMatch.s) : "",
       }));
       return;
     }
 
     if (field === "symbol") {
       debouncedSearch(value.replace(/\.NS$/i, ""));
+      // Reset selected price/stats when manually editing symbol
+      setSelectedPrice(null);
+      setSelectedChangePercent(null);
     }
 
     setFormState((current) => ({ ...current, [field]: value }));
   };
 
+  const fetchLivePrice = useCallback(async (symbol: string) => {
+    const cleanSymbol = normalizeSymbol(symbol);
+    if (!cleanSymbol || cleanSymbol.length < 3) return;
+
+    try {
+      const res = await fetch(`/api/prices?symbols=${encodeURIComponent(cleanSymbol)}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        const p = data[0];
+        if (p.price) {
+          setSelectedPrice(p.price);
+          setSelectedChangePercent(p.changePercent);
+          // If the user manually typed and we found a better name, update it if empty
+          setFormState(prev => ({
+            ...prev,
+            symbol: cleanSymbol,
+            avgPrice: prev.avgPrice || String(p.price)
+          }));
+        }
+      }
+    } catch {
+      // Silent fail
+    }
+  }, []);
+
   const handleStockSelect = (name: string, symbol: string, ltp?: number, changePercent?: number, sourceUrl?: string) => {
+    const finalSymbol = formatSymbol(symbol);
     setFormState((current) => ({
       ...current,
       name,
-      symbol: formatSymbol(symbol),
+      symbol: finalSymbol,
       sourceUrl: sourceUrl || "",
+      avgPrice: current.avgPrice || (ltp ? String(ltp) : current.avgPrice)
     }));
-    if (ltp !== undefined) setSelectedPrice(ltp);
+    
+    if (ltp !== undefined) {
+      setSelectedPrice(ltp);
+    } else {
+      // If result had no price, try to fetch it immediately
+      fetchLivePrice(finalSymbol);
+    }
+    
     if (changePercent !== undefined) setSelectedChangePercent(changePercent);
     setActiveSelector(null);
     setLiveResults([]);
@@ -271,6 +321,17 @@ export default function AddStockDialog({
 
     resetDialogState();
   }, [initialHolding, open]);
+
+  // Auto-fetch price when symbol is typed manually but not selected from dropdown
+  useEffect(() => {
+    if (!open || isEditMode || selectedPrice !== null || !formState.symbol || formState.symbol.length < 3) return;
+
+    const timer = setTimeout(() => {
+      fetchLivePrice(formState.symbol);
+    }, 2000); // Wait 2 seconds of inactivity
+
+    return () => clearTimeout(timer);
+  }, [formState.symbol, selectedPrice, open, isEditMode, fetchLivePrice]);
 
   const handleSubmit = async () => {
     const name = formState.name.trim();
@@ -316,7 +377,7 @@ export default function AddStockDialog({
           {selectedPrice !== null && (
             <div className="absolute right-0 top-0 flex flex-col items-end">
               <div className="text-lg font-black tracking-tighter">
-                ₹{selectedPrice.toLocaleString("en-IN")}
+                {formatINR(selectedPrice)}
               </div>
               {selectedChangePercent !== null && (
                 <div className={`text-[10px] font-bold ${selectedChangePercent >= 0 ? "text-emerald-500" : "text-red-500"}`}>
@@ -348,42 +409,80 @@ export default function AddStockDialog({
                 )}
               </div>
               {activeSelector === "name" && stockMatches.length > 0 && (
-                <div className="absolute top-full z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-xl border bg-popover/95 backdrop-blur-md p-1 shadow-2xl">
-                  {liveResults.length > 0 && (
-                    <div className="flex items-center gap-1.5 px-2 py-1 text-[9px] font-bold uppercase text-muted-foreground/60 tracking-widest border-b border-border/50 mb-1">
-                      <Globe className="h-3 w-3" />
-                      <span>Live NSE Data</span>
+                <div className="absolute top-full z-50 mt-1 max-h-[400px] w-full overflow-y-auto rounded-xl border bg-popover/95 backdrop-blur-md p-1 shadow-2xl">
+                  <div className="grid grid-cols-2 gap-1 min-h-[100px]">
+                    {/* Stocks Column */}
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-1.5 px-2 py-1.5 text-[9px] font-black uppercase text-emerald-500/80 tracking-widest border-b border-border/30 mb-1 bg-emerald-500/5 rounded-t-lg">
+                        <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        <span>Stocks</span>
+                      </div>
+                      <div className="space-y-1">
+                        {stockMatches.filter(s => s.type === "stock").length > 0 ? (
+                          stockMatches.filter(s => s.type === "stock").map((stock) => (
+                            <button
+                              key={`${stock.symbol}-${stock.source}`}
+                              type="button"
+                              onMouseDown={(event) => event.preventDefault()}
+                              onClick={() => handleStockSelect(stock.name, stock.symbol, stock.ltp, stock.changePercent, stock.sourceUrl)}
+                              className="flex w-full items-center justify-between gap-2 rounded-lg px-2 py-1.5 text-left hover:bg-emerald-500/10 transition-all group border border-transparent hover:border-emerald-500/20"
+                            >
+                              <div className="flex flex-col min-w-0 flex-1">
+                                <span className="truncate font-bold text-[10px] group-hover:text-emerald-600 transition-colors">{stock.name}</span>
+                                <span className="text-[8px] text-muted-foreground/60 font-medium uppercase">{stock.symbol}</span>
+                              </div>
+                              <div className="flex flex-col items-end shrink-0">
+                                {stock.ltp && <span className="text-[10px] font-black">{formatINR(stock.ltp)}</span>}
+                                {stock.changePercent !== undefined && (
+                                  <span className={`text-[8px] font-bold ${stock.changePercent >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
+                                    {stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%
+                                  </span>
+                                )}
+                              </div>
+                            </button>
+                          ))
+                        ) : (
+                          <div className="px-2 py-4 text-center text-[9px] text-muted-foreground/40 italic">No stocks found</div>
+                        )}
+                      </div>
                     </div>
-                  )}
-                  {stockMatches.map((stock) => (
-                    <button
-                      key={`${stock.symbol}-${stock.source}`}
-                      type="button"
-                      onMouseDown={(event) => event.preventDefault()}
-                      onClick={() => handleStockSelect(stock.name, stock.symbol, stock.ltp, stock.changePercent, stock.sourceUrl)}
-                      className="flex w-full items-center justify-between gap-2 rounded-lg px-2 py-2 text-left hover:bg-accent transition-colors"
-                    >
-                      <div className="flex flex-col min-w-0 flex-1">
-                        <div className="flex items-center gap-1.5">
-                          <span className="truncate font-bold text-xs">{stock.name}</span>
-                          {stock.type === "mf" && (
-                            <span className="text-[8px] bg-blue-500/15 text-blue-600 px-1 rounded font-bold uppercase">MF</span>
-                          )}
-                        </div>
-                        <span className="text-[10px] text-muted-foreground/60 font-medium uppercase">{stock.symbol}</span>
+
+                    {/* Mutual Funds Column */}
+                    <div className="flex flex-col gap-1 border-l border-border/40 pl-1">
+                      <div className="flex items-center gap-1.5 px-2 py-1.5 text-[9px] font-black uppercase text-blue-500/80 tracking-widest border-b border-border/30 mb-1 bg-blue-500/5 rounded-t-lg">
+                        <span className="size-1.5 rounded-full bg-blue-500 animate-pulse" />
+                        <span>Mutual Funds</span>
                       </div>
-                      <div className="flex flex-col items-end shrink-0">
-                        {stock.ltp && (
-                          <span className="text-xs font-black">₹{stock.ltp.toLocaleString('en-IN')}</span>
-                        )}
-                        {stock.changePercent !== undefined && (
-                          <span className={`text-[9px] font-bold ${stock.changePercent >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
-                            {stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%
-                          </span>
+                      <div className="space-y-1">
+                        {stockMatches.filter(s => s.type === "mf").length > 0 ? (
+                          stockMatches.filter(s => s.type === "mf").map((stock) => (
+                            <button
+                              key={`${stock.symbol}-${stock.source}`}
+                              type="button"
+                              onMouseDown={(event) => event.preventDefault()}
+                              onClick={() => handleStockSelect(stock.name, stock.symbol, stock.ltp, stock.changePercent, stock.sourceUrl)}
+                              className="flex w-full items-center justify-between gap-2 rounded-lg px-2 py-1.5 text-left hover:bg-blue-500/10 transition-all group border border-transparent hover:border-blue-500/20"
+                            >
+                              <div className="flex flex-col min-w-0 flex-1">
+                                <span className="truncate font-bold text-[10px] group-hover:text-blue-600 transition-colors">{stock.name}</span>
+                                <span className="text-[8px] text-muted-foreground/60 font-medium uppercase">{stock.symbol}</span>
+                              </div>
+                              <div className="flex flex-col items-end shrink-0">
+                                {stock.ltp && <span className="text-[10px] font-black">{formatINR(stock.ltp)}</span>}
+                                {stock.changePercent !== undefined && (
+                                  <span className={`text-[8px] font-bold ${stock.changePercent >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
+                                    {stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%
+                                  </span>
+                                )}
+                              </div>
+                            </button>
+                          ))
+                        ) : (
+                          <div className="px-2 py-4 text-center text-[9px] text-muted-foreground/40 italic">No funds found</div>
                         )}
                       </div>
-                    </button>
-                  ))}
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -394,6 +493,9 @@ export default function AddStockDialog({
                 id="stock-symbol"
                 value={formState.symbol}
                 onChange={(event) => handleFormChange("symbol", event.target.value)}
+                onBlur={() => {
+                  if (!selectedPrice && formState.symbol) fetchLivePrice(formState.symbol);
+                }}
                 placeholder="RELIANCE.NS"
                 className="h-10 sm:h-11 uppercase font-mono text-xs"
               />

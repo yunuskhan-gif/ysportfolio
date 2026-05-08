@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 import * as cheerio from "cheerio";
+import { fetchStockLTP, scrapePriceFromGoogleFinance } from "@/lib/priceScrapers";
 
 // ═══════════════════════════════════════════════════════════
 // LIVE STOCK & MUTUAL FUND SEARCH API
@@ -108,47 +109,7 @@ async function searchGoogleFinance(query: string): Promise<SearchResult[]> {
   }
 }
 
-/**
- * Fetch live stock price from Moneycontrol price API using sc_id.
- */
-async function fetchStockLTP(scId: string): Promise<{ ltp: number; change: number; changePercent: number } | null> {
-  try {
-    const res = await axios.get(`https://priceapi.moneycontrol.com/pricefeed/nse/equitycash/${scId}`, {
-      headers: { "User-Agent": "Mozilla/5.0" },
-      timeout: 3000,
-    });
-    const d = res.data?.data;
-    if (!d?.pricecurrent) return null;
-    return {
-      ltp: parseFloat(String(d.pricecurrent).replace(/,/g, "")),
-      change: parseFloat(d.pricechange || "0"),
-      changePercent: parseFloat(d.pricepercentchange || "0"),
-    };
-  } catch {
-    return null;
-  }
-}
-
-/**
- * Fetch live MF NAV from Moneycontrol NAV API using scheme code (e.g. MSN1536).
- */
-async function fetchMFNav(schemeCode: string): Promise<{ ltp: number; change: number; changePercent: number } | null> {
-  try {
-    const res = await axios.get(`https://priceapi.moneycontrol.com/pricefeed/mutualfund/nav/${schemeCode}`, {
-      headers: { "User-Agent": "Mozilla/5.0" },
-      timeout: 3000,
-    });
-    const d = res.data?.data;
-    if (!d?.nav) return null;
-    return {
-      ltp: parseFloat(String(d.nav).replace(/,/g, "")),
-      change: parseFloat(d.navChange || "0"),
-      changePercent: parseFloat(d.navPChange || "0"),
-    };
-  } catch {
-    return null;
-  }
-}
+// ... remaining functions will be moved or kept as needed ...
 
 export async function GET(request: NextRequest) {
   const query = request.nextUrl.searchParams.get("q")?.trim();
@@ -218,13 +179,17 @@ export async function GET(request: NextRequest) {
         if (!nseSymbol || nseSymbol.includes(":")) continue;
         if (results.some(r => r.symbol === nseSymbol)) continue;
 
+        // Internal sc_id (e.g. ML04) is required for the price API. 
+        // link_src segment (e.g. SJ01) is often just for display.
+        const realScId = item.sc_id || item.link_src?.split("/").pop();
+
         stockItems.push({
           symbol: nseSymbol,
           name: item.stock_name || item.name || nseSymbol,
           sector: item.sc_sector || "",
           type: "stock",
-          scId: item.sc_id,
-          sourceUrl: `https://www.moneycontrol.com/india/stockpricequote/-/${item.sc_id}`,
+          scId: realScId,
+          sourceUrl: item.link_src || `https://www.moneycontrol.com/india/stockpricequote/-/${realScId}`,
         });
       }
     }
@@ -260,21 +225,30 @@ export async function GET(request: NextRequest) {
     await Promise.allSettled(
       topResults.map(async (item) => {
         try {
+          let priceData: { ltp: number; changePercent: number } | null = null;
+
+          // Try specialized Moneycontrol API first for speed if it's a stock
           if (item.scId && item.type === "stock") {
-            const price = await fetchStockLTP(item.scId);
-            if (price) {
-              item.ltp = price.ltp;
-              item.change = price.change;
-              item.changePercent = price.changePercent;
+            const mcPrice = await fetchStockLTP(item.scId);
+            if (mcPrice) {
+              priceData = { ltp: mcPrice.ltp, changePercent: mcPrice.changePercent };
             }
-          } else {
-            // For GF symbols or MF codes, use our internal prices API as a universal fetcher
-            const priceUrl = `${request.nextUrl.origin}/api/prices?symbols=${encodeURIComponent(item.symbol)}`;
-            const res = await axios.get(priceUrl, { timeout: 3000 }).catch(() => null);
-            if (res?.data?.[0]) {
-              item.ltp = res.data[0].price;
-              item.changePercent = res.data[0].changePercent;
+          }
+
+          // Fallback to Google Finance scraper if specialized API failed or for other types
+          if (!priceData) {
+            const gfPrice = await scrapePriceFromGoogleFinance(item.symbol, item.type === "mf" ? "MUTF_IN" : "NSE");
+            if (gfPrice) {
+              priceData = { 
+                ltp: gfPrice.price, 
+                changePercent: gfPrice.changePercent 
+              };
             }
+          }
+
+          if (priceData) {
+            item.ltp = priceData.ltp;
+            item.changePercent = priceData.changePercent;
           }
         } catch { /* skip */ }
       })

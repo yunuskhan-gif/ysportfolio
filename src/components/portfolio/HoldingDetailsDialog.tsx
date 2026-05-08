@@ -17,6 +17,7 @@ const formatINR = (value: number) =>
     style: "currency",
     currency: "INR",
     minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   }).format(value);
 
 export default function HoldingDetailsDialog({

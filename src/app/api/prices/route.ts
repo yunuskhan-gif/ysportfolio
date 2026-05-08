@@ -272,10 +272,12 @@ const findMoneycontrolScId = async (symbol: string): Promise<string | null> => {
       return nse?.toUpperCase() === cleanSymbol.toUpperCase();
     }) || searchRes.data[0];
 
-    if (!match?.sc_id) return null;
+    // Real sc_id is usually in match.sc_id, fallback to URL pop
+    const scId = match.sc_id || match.link_src?.split("/").pop();
+    if (!scId) return null;
 
-    SCID_CACHE.set(cacheKey, { scId: match.sc_id, ts: Date.now() });
-    return match.sc_id;
+    SCID_CACHE.set(cacheKey, { scId, ts: Date.now() });
+    return scId;
   } catch {
     return null;
   }
@@ -286,23 +288,43 @@ const scrapePriceFromMoneycontrol = async (symbol: string): Promise<CachedPrice 
     const scId = await findMoneycontrolScId(symbol);
     if (!scId) return null;
 
-    const priceUrl = `https://priceapi.moneycontrol.com/pricefeed/nse/equitycash/${scId}`;
-    const res = await axios.get(priceUrl, {
-      headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" },
-      timeout: 4000,
-    });
+    // Try both NSE and BSE feeds to get the most recent and accurate price
+    const feeds = ["nse", "bse"];
+    let bestResult: CachedPrice | null = null;
+    let latestTs = 0;
 
-    const d = res.data?.data;
-    if (!d?.pricecurrent) return null;
+    for (const exch of feeds) {
+      try {
+        const priceUrl = `https://priceapi.moneycontrol.com/pricefeed/${exch}/equitycash/${scId}`;
+        const res = await axios.get(priceUrl, {
+          headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" },
+          timeout: 4000,
+        });
 
-    const price = parseFloat(String(d.pricecurrent).replace(/,/g, ""));
-    const change = parseFloat(d.pricechange || "0");
-    const changePercent = parseFloat(d.pricepercentchange || "0");
+        const d = res.data?.data;
+        if (!d?.pricecurrent) continue;
 
-    if (isValidPrice(price)) {
-      return { symbol, price, change, changePercent, source: "Moneycontrol", fetchedAt: Date.now() };
+        const price = parseFloat(String(d.pricecurrent).replace(/,/g, ""));
+        const ts = parseInt(d.lastupd_epoch || "0");
+
+        // Prefer the latest data (higher epoch)
+        if (isValidPrice(price) && ts >= latestTs) {
+          latestTs = ts;
+          bestResult = { 
+            symbol, 
+            price, 
+            change: parseFloat(d.pricechange || "0"), 
+            changePercent: parseFloat(d.pricepercentchange || "0"), 
+            source: `Moneycontrol (${exch.toUpperCase()})`, 
+            fetchedAt: Date.now() 
+          };
+        }
+      } catch {
+        continue;
+      }
     }
-    return null;
+
+    return bestResult;
   } catch {
     return null;
   }
@@ -569,11 +591,9 @@ export async function GET(request: NextRequest) {
     "TMPV": "TMCV",          // Motilal uses TMPV, NSE uses TMCV
     "GE VERNOVA": "GVT&D",
     "GVT&D": "GVT&D",
-    "TATACAP": "TATAINVEST",
     "ITCHOTELS": "ITC",
     "BAJAJHFL": "BAJAJHFL",  // Bajaj Housing
     "RELIANCE IND": "RELIANCE",
-    "TATA MOTORS": "TMCV",
     "HDFC BANK": "HDFCBANK",
   };
 

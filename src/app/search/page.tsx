@@ -126,7 +126,9 @@ export default function MarketSearchPage() {
                   <div className="flex flex-col items-end shrink-0">
                     {item.ltp ? (
                       <>
-                        <div className="text-lg font-black tracking-tighter">₹{item.ltp.toLocaleString("en-IN")}</div>
+                        <div className="text-lg font-black tracking-tighter">
+                          ₹{item.ltp.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </div>
                         {item.changePercent !== undefined && (
                           <div className={`flex items-center gap-0.5 text-[11px] font-bold ${item.changePercent >= 0 ? "text-emerald-500" : "text-red-500"}`}>
                             {item.changePercent >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}

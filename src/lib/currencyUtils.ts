@@ -60,7 +60,7 @@ export function formatCurrency(
   }
 
   // Full formatting
-  const formattedValue = Math.round(absValue).toLocaleString(locale, {
+  const formattedValue = absValue.toLocaleString(locale, {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
   });

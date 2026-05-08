@@ -137,7 +137,9 @@ export function CommandMenu({ open, setOpen }: { open: boolean, setOpen: (open: 
                 </div>
                 {item.ltp && (
                   <div className="flex flex-col items-end shrink-0">
-                    <span className="text-sm font-black tracking-tighter">₹{item.ltp.toLocaleString('en-IN')}</span>
+                    <span className="text-sm font-black tracking-tighter">
+                      ₹{item.ltp.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </span>
                     {item.changePercent !== undefined && (
                       <span className={`text-[10px] font-bold ${item.changePercent >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
                         {item.changePercent >= 0 ? '+' : ''}{item.changePercent.toFixed(2)}%

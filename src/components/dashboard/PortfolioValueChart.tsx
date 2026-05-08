@@ -48,7 +48,7 @@ export default function PortfolioValueChart({ data }: PortfolioValueChartProps) 
                       <div className="bg-background border border-border p-2 rounded-lg shadow-xl">
                         <p className="text-xs font-bold">{payload[0].payload.name}</p>
                         <p className="text-sm text-primary font-bold">
-                          ₹{payload[0].value?.toLocaleString("en-IN")}
+                          ₹{payload[0].value?.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </p>
                       </div>
                     );
