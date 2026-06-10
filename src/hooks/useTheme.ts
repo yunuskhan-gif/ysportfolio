@@ -21,7 +21,7 @@ export const useTheme = () => {
     }
 
     const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
-    if (storedTheme && THEME_VALUES.includes(storedTheme)) {
+    if (storedTheme && (THEME_VALUES as string[]).includes(storedTheme)) {
       setSelectedThemeState(storedTheme);
     }
   }, []);

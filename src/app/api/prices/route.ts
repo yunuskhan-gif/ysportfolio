@@ -56,8 +56,8 @@ const isValidPrice = (price: number): boolean => {
 const scrapePriceFromScreener = async (symbol: string): Promise<CachedPrice | null> => {
   const cleanSymbol = sanitizeSymbol(symbol);
   const urls = [
-    `https://www.screener.in/company/${cleanSymbol}/`,
     `https://www.screener.in/company/${cleanSymbol}/consolidated/`,
+    `https://www.screener.in/company/${cleanSymbol}/`,
   ];
 
   for (const url of urls) {
@@ -68,7 +68,7 @@ const scrapePriceFromScreener = async (symbol: string): Promise<CachedPrice | nu
           "Accept-Language": "en-US,en;q=0.9",
           "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
         },
-        timeout: 5000,
+        timeout: 3000,
         maxRedirects: 3,
       });
 
@@ -132,7 +132,7 @@ const scrapePriceFromGoogleFinance = async (symbol: string, exchange: string = "
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
             "Accept-Language": "en-US,en;q=0.9",
           },
-          timeout: 4000,
+          timeout: 3000,
         });
 
         const $ = cheerio.load(response.data);
@@ -198,7 +198,7 @@ const scrapePriceFromYahooPage = async (symbol: string): Promise<CachedPrice | n
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
         "Accept-Language": "en-US,en;q=0.9",
       },
-      timeout: 5000,
+      timeout: 3000,
     });
 
     const html = response.data as string;
@@ -261,7 +261,7 @@ const findMoneycontrolScId = async (symbol: string): Promise<string | null> => {
     const searchUrl = `https://www.moneycontrol.com/mccode/common/autosuggestion_solr.php?classic=true&query=${encodeURIComponent(cleanSymbol)}&type=1&format=json`;
     const searchRes = await axios.get(searchUrl, {
       headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" },
-      timeout: 4000,
+      timeout: 3000,
     });
 
     if (!Array.isArray(searchRes.data) || searchRes.data.length === 0) return null;
@@ -340,7 +340,7 @@ const scrapePriceFromMoneycontrolMF = async (symbol: string): Promise<CachedPric
     const priceUrl = `https://priceapi.moneycontrol.com/pricefeed/mutualfund/nav/${cleanSymbol}`;
     const res = await axios.get(priceUrl, {
       headers: { "User-Agent": "Mozilla/5.0" },
-      timeout: 4000,
+      timeout: 3000,
     });
 
     const d = res.data?.data;
@@ -374,7 +374,7 @@ const scrapePriceFromMoneycontrolMFPage = async (symbol: string): Promise<Cached
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
         "Accept-Language": "en-US,en;q=0.9",
       },
-      timeout: 6000,
+      timeout: 4000,
       maxRedirects: 5
     });
 
@@ -513,13 +513,41 @@ const fetchPriceForSymbol = async (symbol: string, retryCount = 0): Promise<Cach
     } catch { /* fallback to normal scrapers just in case */ }
   }
 
-  // 3. Race the top 3 scrapers for speed
+  // 3. Smart Race: Prefer scrapers that return change/changePercent (Moneycontrol, Google Finance)
   try {
-    const raceResult = await Promise.any([
-      scrapePriceFromMoneycontrol(symbol).then(r => { if (!r) throw new Error("no result"); return r; }),
-      scrapePriceFromScreener(symbol).then(r => { if (!r) throw new Error("no result"); return r; }),
-      scrapePriceFromGoogleFinance(symbol, isMF ? "MUTF_IN" : "NSE").then(r => { if (!r) throw new Error("no result"); return r; }),
-    ]);
+    const promises = [
+      scrapePriceFromMoneycontrol(symbol),
+      scrapePriceFromGoogleFinance(symbol, isMF ? "MUTF_IN" : "NSE"),
+      scrapePriceFromScreener(symbol)
+    ];
+
+    const raceResult = await new Promise<CachedPrice | null>((resolve) => {
+      let resolvedCount = 0;
+      let firstValid: CachedPrice | null = null;
+      let fallbackScreener: CachedPrice | null = null;
+
+      promises.forEach(p => {
+        p.then(res => {
+          resolvedCount++;
+          if (res) {
+            // If it has changePercent or is from a reliable source with change data
+            if (res.changePercent !== 0 || res.source.includes("Moneycontrol") || res.source.includes("Google")) {
+              resolve(res);
+            } else if (!firstValid) {
+              firstValid = res;
+            }
+          }
+          if (resolvedCount === promises.length) {
+            resolve(firstValid);
+          }
+        }).catch(() => {
+          resolvedCount++;
+          if (resolvedCount === promises.length) {
+            resolve(firstValid);
+          }
+        });
+      });
+    });
 
     if (raceResult) {
       setCachedPrice(symbol, raceResult);
@@ -621,10 +649,6 @@ export async function GET(request: NextRequest) {
     );
 
     const validResults = results.filter(r => r !== null);
-
-    if (validResults.length === 0) {
-      return NextResponse.json({ message: "All price sources failed." }, { status: 503 });
-    }
 
     console.log(`📊 Prices: ${validResults.length}/${symbols.length} resolved`);
     return NextResponse.json(validResults);

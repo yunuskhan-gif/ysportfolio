@@ -54,7 +54,7 @@ async function searchGoogleFinance(query: string): Promise<SearchResult[]> {
       headers: {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
       },
-      timeout: 5000,
+      timeout: 2000,
     });
 
     const $ = cheerio.load(response.data);
@@ -136,7 +136,7 @@ export async function GET(request: NextRequest) {
         `https://www.moneycontrol.com/mccode/common/autosuggestion_solr.php?classic=true&query=${encodeURIComponent(query)}&type=1&format=json`,
         {
           headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" },
-          timeout: 5000,
+          timeout: 2000,
         }
       )
       .catch(() => ({ data: [] }));
@@ -148,7 +148,7 @@ export async function GET(request: NextRequest) {
             `https://www.moneycontrol.com/mccode/common/autosuggestion_solr.php?classic=true&query=${encodeURIComponent(query)}&type=2&format=json`,
             {
               headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" },
-              timeout: 5000,
+              timeout: 2000,
             }
           )
           .catch(() => ({ data: [] }))

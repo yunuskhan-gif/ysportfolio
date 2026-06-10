@@ -1,5 +1,5 @@
 // src/menudata/SidebarMenuItem.ts
-import { Home, Wallet, KeyRound, History as HistoryIcon, Search } from "lucide-react";
+import { Home, Wallet, KeyRound, History as HistoryIcon, Search, Book, PieChart, Settings } from "lucide-react";
 
 export const items = [
     {
@@ -13,6 +13,11 @@ export const items = [
       icon: Wallet,
     },
     {
+      title: "Mutual Funds",
+      url: "/mutual-funds",
+      icon: PieChart,
+    },
+    {
       title: "Market Search",
       url: "/search",
       icon: Search,
@@ -22,4 +27,14 @@ export const items = [
       url: "/history",
       icon: HistoryIcon,
     },
-]
+    {
+      title: "Cash Book",
+      url: "/cashbook",
+      icon: Book,
+    },
+    {
+      title: "Settings",
+      url: "/settings",
+      icon: Settings,
+    },
+];

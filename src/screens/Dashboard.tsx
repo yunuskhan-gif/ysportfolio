@@ -246,7 +246,7 @@ const Dashboard = () => {
             </div>
             <p className="text-[10px] text-muted-foreground">
               {stats.count > 0
-                ? `Top holding concentration is ${stats.concentration.toFixed(1)}% of invested capital. Live prices available for ${stats.pricedCount}/${stats.count} stocks.`
+                ? `Top holding concentration is ${stats.concentration.toFixed(1)}% of invested capital. Live prices available for ${stats.pricedCount}/${stats.count} assets.`
                 : "Add holdings to see portfolio health."}
             </p>
           </CardContent>

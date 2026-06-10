@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-export type MarketType = 'option' | 'equity' | 'commodity' | 'crypto';
+export type MarketType = 'option' | 'equity' | 'commodity' | 'crypto' | 'forex';
 
 interface MarketState {
   selectedMarket: MarketType;

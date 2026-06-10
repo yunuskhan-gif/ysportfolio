@@ -8,16 +8,34 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 export default function History() {
   const [snapshots, setSnapshots] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/portfolio/history")
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          return res.json().then((data) => {
+            throw new Error(data.message || `HTTP error! Status: ${res.status}`);
+          }).catch(() => {
+            throw new Error(`HTTP error! Status: ${res.status}`);
+          });
+        }
+        return res.json();
+      })
       .then((data) => {
-        setSnapshots(data);
+        if (Array.isArray(data)) {
+          setSnapshots(data);
+        } else {
+          setSnapshots([]);
+          setError(data.message || "Invalid response format.");
+        }
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch((err) => {
+        setError(err.message || "Failed to load history.");
+        setLoading(false);
+      });
   }, []);
 
   const handleDeleteSnapshot = async (id: string, e: React.MouseEvent) => {
@@ -46,6 +64,15 @@ export default function History() {
 
   if (loading) {
     return <div className="p-4 text-sm text-muted-foreground">Loading history...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="p-4 flex flex-col items-center justify-center min-h-[400px]">
+        <p className="text-sm font-semibold text-red-500">Error: {error}</p>
+        <p className="text-xs text-muted-foreground mt-2">Please check your database connection.</p>
+      </div>
+    );
   }
 
   if (snapshots.length === 0) {
@@ -78,7 +105,7 @@ export default function History() {
                     {format(new Date(snapshot.createdAt), "dd MMM yyyy, hh:mm a")}
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    {snapshot.holdings.length} stocks saved
+                    {snapshot.holdings.length} assets saved
                   </p>
                 </div>
 
@@ -132,7 +159,7 @@ export default function History() {
                     <table className="w-full text-sm text-left">
                       <thead className="text-xs uppercase bg-muted/30 text-muted-foreground">
                         <tr>
-                          <th className="px-4 py-3 font-medium">Stock</th>
+                          <th className="px-4 py-3 font-medium">Asset</th>
                           <th className="px-4 py-3 font-medium text-right">Qty</th>
                           <th className="px-4 py-3 font-medium text-right">Avg Price</th>
                           <th className="px-4 py-3 font-medium text-right">Saved LTP</th>

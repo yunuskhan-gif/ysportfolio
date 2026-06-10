@@ -34,7 +34,7 @@ export async function scrapePriceFromGoogleFinance(symbol: string, exchange: str
           headers: {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
           },
-          timeout: 4000,
+          timeout: 1500,
         });
 
         const $ = cheerio.load(response.data);
@@ -91,7 +91,7 @@ export async function fetchStockLTP(scId: string): Promise<{ ltp: number; change
     try {
       const res = await axios.get(`https://priceapi.moneycontrol.com/pricefeed/${exch}/equitycash/${scId}`, {
         headers: { "User-Agent": "Mozilla/5.0" },
-        timeout: 3000,
+        timeout: 1500,
       });
       const d = res.data?.data;
       if (d?.pricecurrent) {

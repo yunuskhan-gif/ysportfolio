@@ -44,7 +44,7 @@ import {
 import { Download, FileSpreadsheet, Clipboard, Globe } from "lucide-react";
 import * as XLSX from "xlsx";
 import { Badge } from "@/components/ui/badge";
-
+import { isMutualFund } from "@/lib/utils";
 interface PriceData {
   symbol: string;
   price: number;
@@ -249,7 +249,11 @@ const PortfolioTrendCard = ({
   </Card>
 );
 
-const Portfolio = () => {
+interface PortfolioProps {
+  filterType?: "all" | "mf" | "stock";
+}
+
+const Portfolio = ({ filterType = "all" }: PortfolioProps = {}) => {
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -266,6 +270,7 @@ const Portfolio = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isSavingSnapshot, setIsSavingSnapshot] = useState(false);
+  const [isSyncingMotilal, setIsSyncingMotilal] = useState(false);
 
   useEffect(() => {
     const addSymbol = searchParams.get("add");
@@ -279,6 +284,7 @@ const Portfolio = () => {
         qty: 1,
         avgPrice: Number(addPrice) || 0,
       });
+      setSelectedHoldingId(null);
       setIsAddStockOpen(true);
       
       // Clear the URL params after opening the dialog
@@ -322,10 +328,45 @@ const Portfolio = () => {
     }
   };
 
-  const { data: holdings = [], isLoading: loading } = useQuery({
+  const handleSyncMotilal = async () => {
+    try {
+      setIsSyncingMotilal(true);
+      const response = await fetch("/api/motilal/holdings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ persistHoldings: true }),
+      });
+      const data = await response.json();
+      
+      if (!response.ok) {
+        if (data.requiresReauth || (data.message && data.message.includes("incomplete"))) {
+           toast.error("Motilal setup incomplete or session expired. Please enter details in Settings.");
+           router.push("/settings");
+           return;
+        }
+        throw new Error(data.message || "Failed to sync holdings");
+      }
+      
+      toast.success(`Synced ${data.holdings?.length || 0} holdings from Motilal Oswal!`);
+      await queryClient.invalidateQueries({ queryKey: HOLDINGS_QUERY_KEY });
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setIsSyncingMotilal(false);
+    }
+  };
+
+  const { data: rawHoldings = [], isLoading: loading } = useQuery({
     queryKey: HOLDINGS_QUERY_KEY,
     queryFn: fetchHoldings,
   });
+
+  const holdings = useMemo(() => {
+    if (filterType === "all") return rawHoldings;
+    return rawHoldings.filter((h) =>
+      filterType === "mf" ? isMutualFund(h.symbol) : !isMutualFund(h.symbol)
+    );
+  }, [rawHoldings, filterType]);
 
   const uniqueSymbols = useMemo(
     () => [...new Set(holdings.map((holding) => holding.symbol).filter(Boolean))],
@@ -649,8 +690,13 @@ const Portfolio = () => {
       <div className="flex flex-nowrap overflow-x-auto gap-2 no-scrollbar md:grid md:grid-cols-2 lg:grid-cols-4">
         <Card className="shadow-none border-border !py-0 !gap-0 min-w-[140px] md:min-w-0">
           <CardContent className="px-3 py-2">
-            <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tight">Stocks</p>
-            <p className="text-sm font-semibold">{holdings.length}</p>
+            <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tight">Assets</p>
+            <p className="text-sm font-semibold">
+              {holdings.length}
+              <span className="text-[10px] text-muted-foreground ml-1 font-normal">
+                ({holdings.filter(h => !isMutualFund(h.symbol)).length} Stocks, {holdings.filter(h => isMutualFund(h.symbol)).length} MFs)
+              </span>
+            </p>
           </CardContent>
         </Card>
         <Card className="shadow-none border-border !py-0 !gap-0 min-w-[140px] md:min-w-0">
@@ -722,6 +768,33 @@ const Portfolio = () => {
         <div className="px-2 py-2">
           <div className="flex flex-wrap items-center justify-between mb-2 gap-2">
             <div className="flex items-center gap-2">
+            <Button
+              variant="default"
+              size="sm"
+              className="h-8 gap-2 text-xs font-bold uppercase tracking-tighter"
+              onClick={() => {
+                setSelectedHolding(null);
+                setSelectedHoldingId(null);
+                setIsAddStockOpen(true);
+              }}
+            >
+              <span className="text-lg leading-none">+</span>
+              <span className="hidden sm:inline">
+                {filterType === "mf" ? "Add Fund" : "Add Asset"}
+              </span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 gap-2 text-xs font-bold uppercase tracking-tighter text-blue-600 border-blue-200 hover:bg-blue-50"
+              onClick={handleSyncMotilal}
+              disabled={isSyncingMotilal}
+            >
+              <Upload className={`h-3.5 w-3.5 ${isSyncingMotilal ? "animate-bounce" : ""}`} />
+              <span className="hidden sm:inline">
+                {isSyncingMotilal ? "Syncing..." : "Sync Broker"}
+              </span>
+            </Button>
             <Button
               variant="outline"
               size="sm"
@@ -858,7 +931,7 @@ const Portfolio = () => {
                         <div className="flex flex-col">
                           <div className="flex items-center gap-2">
                             <span className="font-semibold text-primary/90 group-hover/name:text-primary">{stock.name}</span>
-                            {/^[A-Z]{2,}[0-9]+$/.test(stock.symbol) ? (
+                            {isMutualFund(stock.symbol) ? (
                               <span className="text-[8px] bg-blue-500/15 text-blue-600 px-1 rounded font-bold uppercase">MF</span>
                             ) : (
                               <span className="text-[8px] bg-emerald-500/15 text-emerald-600 px-1 rounded font-bold uppercase">Stock</span>
@@ -897,7 +970,7 @@ const Portfolio = () => {
                       <td className="px-3 py-2 text-center">
                         {(() => {
                           const url = stock.sourceUrl || (
-                            /^[A-Z]{2,}[0-9]+$/.test(stock.symbol) 
+                            isMutualFund(stock.symbol)
                               ? `https://www.moneycontrol.com/mutual-funds/nav/-/${stock.symbol}`
                               : `https://www.nseindia.com/get-quote/equity?symbol=${stock.symbol}`
                           );
@@ -944,7 +1017,7 @@ const Portfolio = () => {
                 ) : (
                   <tr>
                     <td colSpan={11} className="py-20 text-center text-muted-foreground italic">
-                      No stocks found. Add one or search to get started.
+                      No assets found. Add one or search to get started.
                     </td>
                   </tr>
                 )}
@@ -953,6 +1026,14 @@ const Portfolio = () => {
           </div>
         </div>
       </Card>
+
+      <AddStockDialog
+        open={isAddStockOpen}
+        onOpenChange={setIsAddStockOpen}
+        initialHolding={selectedHolding}
+        editId={null}
+        onStockAdded={() => void queryClient.invalidateQueries({ queryKey: HOLDINGS_QUERY_KEY })}
+      />
 
       <AddStockDialog
         open={isEditDialogOpen}

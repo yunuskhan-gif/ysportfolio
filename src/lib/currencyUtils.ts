@@ -1,4 +1,4 @@
-import type { MarketType } from "@/redux/slices/market/marketTypes";
+import type { MarketType } from "@/redux/slices/marketSlice";
 
 export const getCurrencySymbol = (market?: MarketType): string => {
   if (market === 'crypto' || market === 'forex') {

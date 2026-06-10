@@ -140,8 +140,7 @@ export function ChartMetricCard({
               stroke="var(--color-value)"
               strokeWidth={1.5}
               fill={allValuesZero ? "transparent" : "var(--color-value)"}
-              fillOpacity={allValuesZero ? 0 : 0.12}
-              fillOpacity={0.05}
+              fillOpacity={allValuesZero ? 0 : 0.05}
               dot={false}
               baseValue="dataMin"
               isAnimationActive={false}
