@@ -3,5 +3,5 @@
 import Portfolio from "@/screens/Portfolio";
 
 export default function PortfolioPage() {
-  return <Portfolio />;
+  return <Portfolio filterType="stock" />;
 }
