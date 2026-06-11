@@ -22,7 +22,7 @@ interface CachedPrice {
 }
 
 const PRICE_CACHE = new Map<string, CachedPrice>();
-const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+const CACHE_TTL_MS = 5 * 1000; // 5 seconds (to guarantee fresh data every 10s poll)
 const STALE_TTL_MS = 60 * 60 * 1000; // 1 hour (for fallback)
 
 const getCachedPrice = (symbol: string): CachedPrice | null => {
@@ -204,23 +204,10 @@ const scrapePriceFromYahooPage = async (symbol: string): Promise<CachedPrice | n
     const html = response.data as string;
     let price = NaN;
 
-    // Method 1: regularMarketPrice in JSON
-    const m1 = html.match(/"regularMarketPrice":\s*\{[^}]*"raw":\s*([\d.]+)/);
-    if (m1) price = parseFloat(m1[1]);
-
-    // Method 2: fin-streamer tag
-    if (!isValidPrice(price)) {
-      const $ = cheerio.load(html);
-      const val = $('fin-streamer[data-field="regularMarketPrice"]').attr("data-value") ||
-                  $('fin-streamer[data-field="regularMarketPrice"]').text().replace(/,/g, "").trim();
-      if (val) price = parseFloat(val);
-    }
-
-    // Method 3: currentPrice in JSON
-    if (!isValidPrice(price)) {
-      const m2 = html.match(/"currentPrice":\s*\{[^}]*"raw":\s*([\d.]+)/);
-      if (m2) price = parseFloat(m2[1]);
-    }
+    const $ = cheerio.load(html);
+    const val = $(`fin-streamer[data-field="regularMarketPrice"][data-symbol="${yahooSymbol}"]`).attr("data-value") ||
+                $(`fin-streamer[data-field="regularMarketPrice"][data-symbol="${yahooSymbol}"]`).text().replace(/,/g, "").trim();
+    if (val) price = parseFloat(val);
 
     if (isValidPrice(price)) {
       return { symbol, price, change: 0, changePercent: 0, source: "Yahoo Finance", fetchedAt: Date.now() };
@@ -619,7 +606,6 @@ export async function GET(request: NextRequest) {
     "TMPV": "TMCV",          // Motilal uses TMPV, NSE uses TMCV
     "GE VERNOVA": "GVT&D",
     "GVT&D": "GVT&D",
-    "ITCHOTELS": "ITC",
     "BAJAJHFL": "BAJAJHFL",  // Bajaj Housing
     "RELIANCE IND": "RELIANCE",
     "HDFC BANK": "HDFCBANK",

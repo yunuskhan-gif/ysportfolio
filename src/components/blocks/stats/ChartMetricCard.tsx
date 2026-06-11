@@ -28,6 +28,7 @@ interface ChartMetricCardProps {
   prevValue: number;
   timeRange?: string;
   flag?: number;
+  customPercent?: number;
 }
 
 const formatCurrency = (value: number) => {
@@ -45,6 +46,7 @@ export function ChartMetricCard({
   prevValue,
   timeRange = "1d",
   flag = 0,
+  customPercent,
 }: ChartMetricCardProps) {
   const chartData = data.map((item) => {
     return {
@@ -56,9 +58,11 @@ export function ChartMetricCard({
   });
 
   const percentChange =
-    prevValue !== 0
-      ? (((currentValue - prevValue) / Math.abs(prevValue)) * 100).toFixed(1)
-      : "0";
+    customPercent !== undefined
+      ? customPercent.toFixed(2)
+      : prevValue !== 0
+      ? (((currentValue - prevValue) / Math.abs(prevValue)) * 100).toFixed(2)
+      : "0.00";
 
   const isPositive = Number(percentChange) >= 0;
   const TrendIcon = isPositive ? TrendingUpIcon : TrendingDownIcon;

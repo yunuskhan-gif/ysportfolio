@@ -11,6 +11,7 @@ interface MetricDefinition {
   prevValue: number;
   data: ChartPoint[];
   flag?: number;
+  customPercent?: number;
 }
 
 interface PortfolioMetricsProps {
@@ -28,6 +29,7 @@ export default function PortfolioMetricCards({ metrics = [] }: PortfolioMetricsP
             prevValue={metric.prevValue}
             data={metric.data}
             flag={metric.flag}
+            customPercent={metric.customPercent}
           />
         </div>
       ))}

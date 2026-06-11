@@ -62,6 +62,7 @@ const Dashboard = () => {
 
       return nextPrices;
     },
+    refetchInterval: 10000, // Live auto-refresh every 10 seconds
   });
 
   const enrichedHoldings = useMemo<EnrichedHolding[]>(() => {
@@ -80,6 +81,8 @@ const Dashboard = () => {
         currentValue,
         pnl,
         pnlPercent,
+        change: livePrice?.change ?? 0,
+        changePercent: livePrice?.changePercent ?? 0,
       };
     });
   }, [holdings, prices]);
@@ -87,8 +90,8 @@ const Dashboard = () => {
   const stats = useMemo(() => {
     const investment = enrichedHoldings.reduce((sum, holding) => sum + holding.investment, 0);
     const pricedHoldings = enrichedHoldings.filter((holding) => holding.currentValue !== null);
-    const currentValue = pricedHoldings.reduce(
-      (sum, holding) => sum + (holding.currentValue ?? 0),
+    const currentValue = enrichedHoldings.reduce(
+      (sum, holding) => sum + (holding.currentValue ?? holding.investment),
       0
     );
     const totalPnl = currentValue - investment;
@@ -98,12 +101,18 @@ const Dashboard = () => {
       0
     );
 
+    const dayPnl = enrichedHoldings.reduce((sum, holding) => sum + holding.qty * holding.change, 0);
+    const pricedCurrentValue = pricedHoldings.reduce((sum, holding) => sum + (holding.currentValue ?? 0), 0);
+    const dayPnlPercent = pricedCurrentValue > 0 ? (dayPnl / (pricedCurrentValue - dayPnl)) * 100 : 0;
+
     return {
       investment,
       count: holdings.length,
       currentValue,
       totalPnl,
       totalPnlPercent,
+      dayPnl,
+      dayPnlPercent,
       pricedCount: pricedHoldings.length,
       concentration: investment > 0 ? (topInvestment / investment) * 100 : 0,
     };
@@ -141,16 +150,21 @@ const Dashboard = () => {
     );
     const currentValueSeries = buildSeries(
       [...enrichedHoldings]
-        .filter((holding) => holding.currentValue !== null)
-        .sort((a, b) => (b.currentValue ?? 0) - (a.currentValue ?? 0))
-        .map((holding) => holding.currentValue ?? 0)
+        .sort((a, b) => (b.currentValue ?? b.investment) - (a.currentValue ?? a.investment))
+        .map((holding) => holding.currentValue ?? holding.investment)
     );
     const pnlSeries = buildSeries(
       [...enrichedHoldings]
-        .filter((holding) => holding.pnlPercent !== null)
-        .sort((a, b) => Math.abs(b.pnlPercent ?? 0) - Math.abs(a.pnlPercent ?? 0))
-        .map((holding) => holding.pnlPercent ?? 0),
+        .filter((holding) => holding.pnl !== null)
+        .sort((a, b) => Math.abs(b.pnl ?? 0) - Math.abs(a.pnl ?? 0))
+        .map((holding) => holding.pnl ?? 0),
       false
+    );
+    const dayPnlSeries = buildSeries(
+      [...enrichedHoldings]
+        .filter((holding) => holding.currentValue !== null)
+        .sort((a, b) => Math.abs(b.qty * b.change) - Math.abs(a.qty * a.change))
+        .map((holding) => holding.qty * holding.change)
     );
 
     return [
@@ -174,10 +188,19 @@ const Dashboard = () => {
       },
       {
         title: "Total P&L",
-        currentValue: stats.totalPnlPercent,
+        currentValue: stats.totalPnl,
         prevValue: 0,
         data: pnlSeries.length > 0 ? pnlSeries : [{ timestamp: Date.now(), value: 0 }],
-        flag: 1,
+        flag: 0,
+        customPercent: stats.totalPnlPercent,
+      },
+      {
+        title: "Day P&L",
+        currentValue: stats.dayPnl,
+        prevValue: 0,
+        data: dayPnlSeries.length > 0 ? dayPnlSeries : [{ timestamp: Date.now(), value: 0 }],
+        flag: 0,
+        customPercent: stats.dayPnlPercent,
       },
     ];
   }, [enrichedHoldings, stats]);

@@ -89,8 +89,6 @@ const formatINR = (value: number) =>
   }).format(value);
 
 const formatCompact = (value: number) => {
-  if (Math.abs(value) >= 10000000) return `Rs ${(value / 10000000).toFixed(2)} Cr`;
-  if (Math.abs(value) >= 100000) return `Rs ${(value / 100000).toFixed(2)} L`;
   return formatINR(value);
 };
 
@@ -406,7 +404,7 @@ const Portfolio = ({ filterType = "all" }: PortfolioProps = {}) => {
 
       return nextPrices;
     },
-    refetchInterval: 60000, // Auto-refresh every minute
+    refetchInterval: 10000, // Live auto-refresh every 10 seconds
   });
 
   const prices = priceQueryData ?? {};
@@ -481,12 +479,16 @@ const Portfolio = ({ filterType = "all" }: PortfolioProps = {}) => {
   const totalInvestment = enrichedHoldings.reduce((sum, holding) => sum + holding.investment, 0);
   const totalQuantity = enrichedHoldings.reduce((sum, holding) => sum + holding.qty, 0);
   const pricedHoldings = enrichedHoldings.filter((holding) => holding.currentValue !== null);
-  const totalCurrentValue = pricedHoldings.reduce(
-    (sum, holding) => sum + (holding.currentValue ?? 0),
+  const totalCurrentValue = enrichedHoldings.reduce(
+    (sum, holding) => sum + (holding.currentValue ?? holding.investment),
     0
   );
   const totalPnl = totalCurrentValue - totalInvestment;
   const totalPnlPercent = totalInvestment > 0 ? (totalPnl / totalInvestment) * 100 : 0;
+
+  const dayPnl = enrichedHoldings.reduce((sum, holding) => sum + holding.qty * holding.change, 0);
+  const pricedCurrentValue = pricedHoldings.reduce((sum, h) => sum + (h.currentValue ?? 0), 0);
+  const dayPnlPercent = pricedCurrentValue > 0 ? (dayPnl / (pricedCurrentValue - dayPnl)) * 100 : 0;
 
   const buildTrendData = (
     items: EnrichedHolding[],
@@ -518,10 +520,10 @@ const Portfolio = ({ filterType = "all" }: PortfolioProps = {}) => {
   const currentValueTrendData = useMemo(
     () =>
       buildTrendData(
-        [...pricedHoldings].sort((a, b) => (b.currentValue ?? 0) - (a.currentValue ?? 0)),
-        (holding) => holding.currentValue
+        [...enrichedHoldings].sort((a, b) => (b.currentValue ?? b.investment) - (a.currentValue ?? a.investment)),
+        (holding) => holding.currentValue ?? holding.investment
       ),
-    [pricedHoldings]
+    [enrichedHoldings]
   );
 
   const pnlTrendData = useMemo(
@@ -529,6 +531,15 @@ const Portfolio = ({ filterType = "all" }: PortfolioProps = {}) => {
       buildTrendData(
         [...pricedHoldings].sort((a, b) => Math.abs(b.pnl ?? 0) - Math.abs(a.pnl ?? 0)),
         (holding) => holding.pnl
+      ),
+    [pricedHoldings]
+  );
+
+  const dayPnlTrendData = useMemo(
+    () =>
+      buildTrendData(
+        [...pricedHoldings].sort((a, b) => Math.abs(b.qty * b.change) - Math.abs(a.qty * a.change)),
+        (holding) => holding.qty * holding.change
       ),
     [pricedHoldings]
   );
@@ -722,7 +733,7 @@ const Portfolio = ({ filterType = "all" }: PortfolioProps = {}) => {
       </div>
 
       {/* Main Charts Carousel */}
-      <div className="flex flex-nowrap overflow-x-auto snap-x snap-mandatory gap-2 no-scrollbar md:grid md:grid-cols-2 xl:grid-cols-4">
+      <div className="flex flex-nowrap overflow-x-auto snap-x snap-mandatory gap-2 no-scrollbar md:grid md:grid-cols-2 xl:grid-cols-5">
         <PortfolioTrendCard
           title="Total Invested"
           value={formatCompact(totalInvestment)}
@@ -760,6 +771,17 @@ const Portfolio = ({ filterType = "all" }: PortfolioProps = {}) => {
           accentColor={totalPnl >= 0 ? "hsl(142 76% 36%)" : "hsl(0 84% 60%)"}
           changeText={`${Math.abs(totalPnlPercent).toFixed(2)}%`}
           changePositive={totalPnl >= 0}
+        />
+
+        <PortfolioTrendCard
+          title="Day P&L"
+          value={pricedHoldings.length > 0 ? `${dayPnl >= 0 ? "+" : ""}${formatCompact(dayPnl)}` : "--"}
+          subtitle=""
+          chartData={dayPnlTrendData}
+          valueClassName={dayPnl >= 0 ? "text-emerald-500" : "text-red-500"}
+          accentColor={dayPnl >= 0 ? "hsl(142 76% 36%)" : "hsl(0 84% 60%)"}
+          changeText={`${Math.abs(dayPnlPercent).toFixed(2)}%`}
+          changePositive={dayPnl >= 0}
         />
       </div>
 
