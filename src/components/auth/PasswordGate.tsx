@@ -123,9 +123,10 @@ export default function PasswordGate({ children }: { children: React.ReactNode }
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className="text-center mt-8 text-zinc-500 text-xs tracking-wider uppercase"
+          className="text-center mt-8 text-zinc-500 text-xs tracking-wider uppercase flex flex-col items-center gap-1"
         >
-          &copy; {new Date().getFullYear()} YS Portfolio • Private Access Only
+          <span>&copy; {new Date().getFullYear()} YS Portfolio • Private Access Only</span>
+          <span className="text-[10px] text-zinc-600 lowercase mt-1">powered by unzora</span>
         </motion.p>
       </motion.div>
     </div>
