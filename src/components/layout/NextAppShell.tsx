@@ -46,6 +46,9 @@ export default function NextAppShell({ children }: { children: React.ReactNode }
   };
 
   const isPortfolioPage = pathname.includes("/portfolio");
+  const isMFPage = pathname.includes("/mutual-funds");
+  const isAllPage = pathname.includes("/dashboard");
+  const uploadType = isMFPage ? "mf" : "stock";
 
   return (
     <SidebarProvider defaultOpen={true}>
@@ -93,15 +96,17 @@ export default function NextAppShell({ children }: { children: React.ReactNode }
                   <span className="hidden sm:inline">Add Stock</span>
                 </Button>
               )}
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-8 cursor-pointer gap-2 text-xs font-bold uppercase tracking-tighter"
-                  onClick={() => setIsUploadOpen(true)}
-              >
-                <Upload className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Upload Excel</span>
-              </Button>
+              {(isPortfolioPage || isMFPage || isAllPage) && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-8 cursor-pointer gap-2 text-xs font-bold uppercase tracking-tighter"
+                    onClick={() => setIsUploadOpen(true)}
+                >
+                  <Upload className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Upload {isMFPage ? "MFs" : "Excel"}</span>
+                </Button>
+              )}
             </div>
           </div>
         </header>
@@ -114,6 +119,7 @@ export default function NextAppShell({ children }: { children: React.ReactNode }
           open={isUploadOpen}
           onOpenChange={setIsUploadOpen}
           onDataUploaded={handleDataUploaded}
+          uploadType={uploadType}
         />
         <AddStockDialog
           open={isAddStockOpen}

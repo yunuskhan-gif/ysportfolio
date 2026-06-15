@@ -1,10 +1,20 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Wallet, Layers, TrendingDown, TrendingUp, Landmark, RefreshCw, CheckCircle2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import PortfolioValueChart from "@/components/dashboard/PortfolioValueChart";
 import PortfolioMetricCards from "@/components/blocks/stats/PortfolioMetricCards";
 import { fetchHoldings, HOLDINGS_QUERY_KEY, type StockHolding } from "@/lib/portfolio-api";
-import { isMutualFund } from "@/lib/utils";
+import { isMutualFund, cn } from "@/lib/utils";
+
+const formatCurrency = (value: number) => {
+  return new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    maximumFractionDigits: 0
+  }).format(value);
+};
 
 interface PriceData {
   symbol: string;
@@ -18,6 +28,8 @@ interface EnrichedHolding extends StockHolding {
   currentValue: number | null;
   pnl: number | null;
   pnlPercent: number | null;
+  change: number;
+  changePercent: number;
 }
 
 interface ChartPoint {
@@ -289,15 +301,139 @@ const Dashboard = () => {
   const stockHoldings = useMemo(() => enrichedHoldings.filter(h => !isMutualFund(h.symbol)), [enrichedHoldings]);
   const mfHoldings = useMemo(() => enrichedHoldings.filter(h => isMutualFund(h.symbol)), [enrichedHoldings]);
 
+  // Aggregated calculations for top cards
+  const totalStockInvestment = stockHoldings.reduce((sum, h) => sum + h.investment, 0);
+  const totalStockCurrent = stockHoldings.reduce((sum, h) => sum + (h.currentValue ?? h.investment), 0);
+  const stockPnl = totalStockCurrent - totalStockInvestment;
+  const stockPnlPercent = totalStockInvestment > 0 ? (stockPnl / totalStockInvestment) * 100 : 0;
+
+  const totalMFInvestment = mfHoldings.reduce((sum, h) => sum + h.investment, 0);
+  const totalMFCurrent = mfHoldings.reduce((sum, h) => sum + (h.currentValue ?? h.investment), 0);
+  const mfPnl = totalMFCurrent - totalMFInvestment;
+  const mfPnlPercent = totalMFInvestment > 0 ? (mfPnl / totalMFInvestment) * 100 : 0;
+
+  const netWorth = totalStockCurrent + totalMFCurrent;
+  const totalInvestment = totalStockInvestment + totalMFInvestment;
+
   return (
-    <div className="w-full">
-      {stockHoldings.length > 0 && <DashboardSection title="Stocks Overview" holdings={stockHoldings} />}
-      {mfHoldings.length > 0 && <DashboardSection title="Mutual Funds Overview" holdings={mfHoldings} />}
-      {stockHoldings.length === 0 && mfHoldings.length === 0 && (
-        <div className="text-center p-8 text-muted-foreground border border-dashed rounded-lg">
-          No holdings found. Add some to get started!
+    <div className="w-full space-y-6">
+      {/* My Wealth Dashboard Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="bg-primary text-primary-foreground text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-widest">
+              INR
+            </span>
+            <h1 className="text-2xl font-extrabold tracking-tight">My Wealth Dashboard</h1>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">
+            Personal Wealth Management Hub & Executive Financial Analyzer
+          </p>
         </div>
-      )}
+        <Button variant="outline" size="sm" className="gap-2 text-xs h-8">
+          <RefreshCw className="h-3.5 w-3.5" />
+          Reset scenario parameters
+        </Button>
+      </div>
+
+      {/* Top Cards Row */}
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        {/* Card 1: NET WORTH */}
+        <Card className="shadow-none border-border">
+          <CardContent className="p-4 flex flex-col justify-between h-full space-y-4">
+            <div className="flex justify-between items-start">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Net Worth</span>
+              <div className="bg-primary/10 p-1.5 rounded-md text-primary">
+                <Wallet className="h-4 w-4" />
+              </div>
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-primary">{formatCurrency(netWorth)}</p>
+              <div className="flex items-center gap-1 mt-1">
+                <CheckCircle2 className="h-3 w-3 text-emerald-500" />
+                <span className="text-[10px] text-muted-foreground">(Total Assets - Current Loans)</span>
+              </div>
+            </div>
+          </CardContent>
+          <div className="h-1 w-full bg-primary rounded-b-xl" />
+        </Card>
+
+        {/* Card 2: TOTAL INVESTMENT */}
+        <Card className="shadow-none border-border">
+          <CardContent className="p-4 flex flex-col justify-between h-full space-y-4">
+            <div className="flex justify-between items-start">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Total Investment</span>
+              <div className="bg-blue-500/10 p-1.5 rounded-md text-blue-500">
+                <Layers className="h-4 w-4" />
+              </div>
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{formatCurrency(totalInvestment)}</p>
+              <p className="text-[10px] text-muted-foreground mt-1">Stock: {formatCurrency(totalStockInvestment)}</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Card 3: STOCK CURRENT VALUE */}
+        <Card className="shadow-none border-border">
+          <CardContent className="p-4 flex flex-col justify-between h-full space-y-4">
+            <div className="flex justify-between items-start">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Stock Current Value</span>
+              <div className={cn("p-1.5 rounded-md", stockPnl >= 0 ? "bg-emerald-500/10 text-emerald-500" : "bg-red-500/10 text-red-500")}>
+                {stockPnl >= 0 ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
+              </div>
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{formatCurrency(totalStockCurrent)}</p>
+              <div className={cn("inline-flex mt-1 px-1.5 py-0.5 rounded text-[10px] font-medium", stockPnl >= 0 ? "bg-emerald-500/10 text-emerald-600" : "bg-red-500/10 text-red-600")}>
+                {stockPnl >= 0 ? "+" : ""}{stockPnlPercent.toFixed(2)}% ({stockHoldings.length} Stocks)
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Card 4: MUTUAL FUND VALUE */}
+        <Card className="shadow-none border-border">
+          <CardContent className="p-4 flex flex-col justify-between h-full space-y-4">
+            <div className="flex justify-between items-start">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Mutual Fund Value</span>
+              <div className={cn("p-1.5 rounded-md", mfPnl >= 0 ? "bg-emerald-500/10 text-emerald-500" : "bg-red-500/10 text-red-500")}>
+                {mfPnl >= 0 ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
+              </div>
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{formatCurrency(totalMFCurrent)}</p>
+              <p className="text-[10px] text-muted-foreground mt-1">Total Invested: {formatCurrency(totalMFInvestment)}</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Card 5: TOTAL ACTIVE LOANS */}
+        <Card className="shadow-none border-border">
+          <CardContent className="p-4 flex flex-col justify-between h-full space-y-4">
+            <div className="flex justify-between items-start">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Total Active Loans</span>
+              <div className="bg-orange-500/10 p-1.5 rounded-md text-orange-500">
+                <Landmark className="h-4 w-4" />
+              </div>
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-muted-foreground">₹0</p>
+              <p className="text-[10px] text-muted-foreground mt-1">Debt-free! ✨</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="w-full">
+        {stockHoldings.length > 0 && <DashboardSection title="Stocks Overview" holdings={stockHoldings} />}
+        {mfHoldings.length > 0 && <DashboardSection title="Mutual Funds Overview" holdings={mfHoldings} />}
+        {stockHoldings.length === 0 && mfHoldings.length === 0 && (
+          <div className="text-center p-8 text-muted-foreground border border-dashed rounded-lg">
+            No holdings found. Add some to get started!
+          </div>
+        )}
+      </div>
     </div>
   );
 };

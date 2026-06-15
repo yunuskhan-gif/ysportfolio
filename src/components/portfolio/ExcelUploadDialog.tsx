@@ -18,13 +18,7 @@ import {
   HOLDINGS_QUERY_KEY,
   type StockHolding,
 } from "@/lib/portfolio-api";
-
-interface ExcelUploadDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onDataUploaded: (data: StockHolding[]) => void;
-}
-
+import { isMutualFund } from "@/lib/utils";
 const normalizeHeader = (value: string) =>
   value
     .toLowerCase()
@@ -60,7 +54,14 @@ export const loadHoldings = async (): Promise<StockHolding[]> => fetchHoldings()
 
 export const clearHoldings = async () => replaceHoldings([]);
 
-export default function ExcelUploadDialog({ open, onOpenChange, onDataUploaded }: ExcelUploadDialogProps) {
+interface ExcelUploadDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onDataUploaded: (data: StockHolding[]) => void;
+  uploadType?: "all" | "mf" | "stock";
+}
+
+export default function ExcelUploadDialog({ open, onOpenChange, onDataUploaded, uploadType = "all" }: ExcelUploadDialogProps) {
   const queryClient = useQueryClient();
   const [dragOver, setDragOver] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
@@ -160,13 +161,28 @@ export default function ExcelUploadDialog({ open, onOpenChange, onDataUploaded }
   };
 
   const handleConfirm = async () => {
-    await saveHoldings(preview);
-    await queryClient.invalidateQueries({ queryKey: HOLDINGS_QUERY_KEY });
-    toast.success(`Imported ${preview.length} holdings.`);
-    onDataUploaded(preview);
-    setPreview([]);
-    setFileName(null);
-    onOpenChange(false);
+    try {
+      const existingHoldings = await loadHoldings();
+      let finalHoldings = preview;
+      
+      if (uploadType === "mf") {
+        const oldStocks = existingHoldings.filter(h => !isMutualFund(h.symbol));
+        finalHoldings = [...oldStocks, ...preview];
+      } else if (uploadType === "stock") {
+        const oldMFs = existingHoldings.filter(h => isMutualFund(h.symbol));
+        finalHoldings = [...oldMFs, ...preview];
+      }
+
+      await saveHoldings(finalHoldings);
+      await queryClient.invalidateQueries({ queryKey: HOLDINGS_QUERY_KEY });
+      toast.success(`Imported ${preview.length} holdings.`);
+      onDataUploaded(preview);
+      setPreview([]);
+      setFileName(null);
+      onOpenChange(false);
+    } catch (e) {
+      toast.error("Failed to save imported holdings.");
+    }
   };
 
   const handleReset = () => {
