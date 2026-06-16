@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { Plus, ArrowDownCircle, ArrowUpCircle, Trash2, Calendar, BookOpen, Download, FileSpreadsheet, Clipboard, RefreshCw } from "lucide-react";
+import { useState, useMemo, useEffect } from "react";
+import { Plus, ArrowDownCircle, ArrowUpCircle, Trash2, Calendar, BookOpen, Download, FileSpreadsheet, Clipboard, RefreshCw, Check, X, Edit } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -59,6 +59,72 @@ export default function CashBookPage() {
   const [entryDate, setEntryDate] = useState(() => new Date().toISOString().split("T")[0]);
   const [entryAccountId, setEntryAccountId] = useState("");
 
+  // Opening Balance and persistence states
+  const [openingBalance, setOpeningBalance] = useState<number>(0);
+  const [isEditingOB, setIsEditingOB] = useState(false);
+  const [tempOpeningBalance, setTempOpeningBalance] = useState("");
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // Load from localStorage on mount
+  useEffect(() => {
+    const savedAccounts = localStorage.getItem("ys_cashbook_accounts");
+    if (savedAccounts) {
+      try {
+        setAccounts(JSON.parse(savedAccounts));
+      } catch (e) {
+        console.error("Failed to parse accounts from localStorage", e);
+      }
+    }
+
+    const savedEntries = localStorage.getItem("ys_cashbook_entries");
+    if (savedEntries) {
+      try {
+        setEntries(JSON.parse(savedEntries));
+      } catch (e) {
+        console.error("Failed to parse entries from localStorage", e);
+      }
+    }
+
+    const savedOB = localStorage.getItem("ys_cashbook_opening_balance");
+    if (savedOB) {
+      const val = parseFloat(savedOB);
+      if (!isNaN(val)) {
+        setOpeningBalance(val);
+      }
+    }
+    setIsLoaded(true);
+  }, []);
+
+  // Save to localStorage when state changes
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem("ys_cashbook_accounts", JSON.stringify(accounts));
+    }
+  }, [accounts, isLoaded]);
+
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem("ys_cashbook_entries", JSON.stringify(entries));
+    }
+  }, [entries, isLoaded]);
+
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem("ys_cashbook_opening_balance", openingBalance.toString());
+    }
+  }, [openingBalance, isLoaded]);
+
+  // Set default account when entry dialog opens
+  useEffect(() => {
+    if (showAddEntry) {
+      if (selectedAccount !== "ALL") {
+        setEntryAccountId(selectedAccount);
+      } else if (accounts.length > 0) {
+        setEntryAccountId(accounts[0].id);
+      }
+    }
+  }, [showAddEntry, selectedAccount, accounts]);
+
   const handleAddAccount = (e: React.FormEvent) => {
     e.preventDefault();
     if (!accountName) return;
@@ -105,39 +171,98 @@ export default function CashBookPage() {
     toast.success("Entry deleted successfully!");
   };
 
-  const filteredEntries = useMemo(() => {
+  const handleSaveOB = () => {
+    const val = parseFloat(tempOpeningBalance);
+    if (!isNaN(val)) {
+      setOpeningBalance(val);
+    }
+    setIsEditingOB(false);
+    toast.success("Opening balance updated successfully!");
+  };
+
+  // Calculate filtered entries and their running balances
+  const { filteredEntriesWithBalance, periodOpeningBalance } = useMemo(() => {
     let result = entries;
     if (selectedAccount !== "ALL") {
       result = result.filter(e => e.accountId === selectedAccount);
     }
-    if (timeFilter === "ALL") return result;
+    
+    // Sort chronologically (oldest first)
+    const sorted = [...result].sort((a, b) => {
+      const dateDiff = new Date(a.date).getTime() - new Date(b.date).getTime();
+      if (dateDiff !== 0) return dateDiff;
+      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+    });
+
+    let currentBalance = openingBalance;
+    const computed = sorted.map(entry => {
+      if (entry.type === "CASH_IN") {
+        currentBalance += entry.amount;
+      } else {
+        currentBalance -= entry.amount;
+      }
+      return {
+        ...entry,
+        runningBalance: currentBalance
+      };
+    });
+
+    if (timeFilter === "ALL") {
+      return {
+        filteredEntriesWithBalance: computed,
+        periodOpeningBalance: openingBalance
+      };
+    }
 
     const now = new Date();
     const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    let periodStartLimit = 0;
+    switch (timeFilter) {
+      case "DAILY": periodStartLimit = startOfToday; break;
+      case "WEEKLY": periodStartLimit = startOfToday - (7 * 24 * 60 * 60 * 1000); break;
+      case "MONTHLY": periodStartLimit = startOfToday - (30 * 24 * 60 * 60 * 1000); break;
+      case "YEARLY": periodStartLimit = startOfToday - (365 * 24 * 60 * 60 * 1000); break;
+    }
 
-    return result.filter(e => {
-      const entryTime = new Date(e.date).getTime();
-      switch (timeFilter) {
-        case "DAILY": return entryTime >= startOfToday;
-        case "WEEKLY": return entryTime >= startOfToday - (7 * 24 * 60 * 60 * 1000);
-        case "MONTHLY": return entryTime >= startOfToday - (30 * 24 * 60 * 60 * 1000);
-        case "YEARLY": return entryTime >= startOfToday - (365 * 24 * 60 * 60 * 1000);
-        default: return true;
-      }
-    });
-  }, [entries, timeFilter, selectedAccount]);
+    const entriesBefore = computed.filter(e => new Date(e.date).getTime() < periodStartLimit);
+    const entriesIn = computed.filter(e => new Date(e.date).getTime() >= periodStartLimit);
+
+    const periodOB = entriesBefore.length > 0 
+      ? entriesBefore[entriesBefore.length - 1].runningBalance 
+      : openingBalance;
+
+    return {
+      filteredEntriesWithBalance: entriesIn,
+      periodOpeningBalance: periodOB
+    };
+  }, [entries, selectedAccount, timeFilter, openingBalance]);
 
   const { totalIn, totalOut } = useMemo(() => {
     let inAmount = 0;
     let outAmount = 0;
-    filteredEntries.forEach(e => {
+    filteredEntriesWithBalance.forEach(e => {
       if (e.type === "CASH_IN") inAmount += e.amount;
       else outAmount += e.amount;
     });
     return { totalIn: inAmount, totalOut: outAmount };
-  }, [filteredEntries]);
+  }, [filteredEntriesWithBalance]);
 
-  const netBalance = totalIn - totalOut;
+  // Overall calculations for Cash In Hand
+  const { allTimeIn, allTimeOut } = useMemo(() => {
+    let inAmount = 0;
+    let outAmount = 0;
+    let baseEntries = entries;
+    if (selectedAccount !== "ALL") {
+      baseEntries = baseEntries.filter(e => e.accountId === selectedAccount);
+    }
+    baseEntries.forEach(e => {
+      if (e.type === "CASH_IN") inAmount += e.amount;
+      else outAmount += e.amount;
+    });
+    return { allTimeIn: inAmount, allTimeOut: outAmount };
+  }, [entries, selectedAccount]);
+
+  const currentBalance = openingBalance + allTimeIn - allTimeOut;
   const totalVolume = totalIn + totalOut;
   const inPercentage = totalVolume > 0 ? (totalIn / totalVolume) * 100 : 50;
 
@@ -188,7 +313,66 @@ export default function CashBookPage() {
       </div>
 
       {/* Mini Stats Row */}
-      <div className="flex flex-nowrap overflow-x-auto gap-2 no-scrollbar md:grid md:grid-cols-3">
+      <div className="flex flex-nowrap overflow-x-auto gap-2 no-scrollbar md:grid md:grid-cols-4">
+        {/* Opening Balance Card */}
+        <Card className="shadow-none border-border !py-0 !gap-0 min-w-[140px] md:min-w-0">
+          <CardContent className="px-3 py-2 flex items-center justify-between h-full">
+            <div className="w-full">
+              <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tight">Opening Balance</p>
+              {isEditingOB ? (
+                <div className="flex items-center gap-1 mt-1">
+                  <Input
+                    type="number"
+                    value={tempOpeningBalance}
+                    onChange={e => setTempOpeningBalance(e.target.value)}
+                    className="h-7 w-20 text-xs px-1 py-0 font-semibold tabular-nums"
+                    autoFocus
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleSaveOB();
+                      } else if (e.key === "Escape") {
+                        setIsEditingOB(false);
+                      }
+                    }}
+                  />
+                  <Button
+                    size="sm"
+                    className="h-7 px-2 text-[10px] font-bold bg-emerald-600 hover:bg-emerald-700 text-white"
+                    onClick={handleSaveOB}
+                  >
+                    Save
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-7 px-2 text-[10px] font-bold"
+                    onClick={() => setIsEditingOB(false)}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <p className="text-sm font-semibold text-foreground tabular-nums">{formatINR(openingBalance)}</p>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-5 w-5 text-muted-foreground hover:text-foreground opacity-50 hover:opacity-100"
+                    onClick={() => {
+                      setTempOpeningBalance(openingBalance.toString());
+                      setIsEditingOB(true);
+                    }}
+                  >
+                    <Edit className="h-3 w-3" />
+                  </Button>
+                </div>
+              )}
+            </div>
+            <BookOpen className="h-4 w-4 text-muted-foreground/30 flex-shrink-0" />
+          </CardContent>
+        </Card>
+
+        {/* Total Cash In Card */}
         <Card className="shadow-none border-border !py-0 !gap-0 min-w-[140px] md:min-w-0">
           <CardContent className="px-3 py-2 flex items-center justify-between">
             <div>
@@ -198,6 +382,8 @@ export default function CashBookPage() {
             <ArrowDownCircle className="h-4 w-4 text-emerald-500/50" />
           </CardContent>
         </Card>
+
+        {/* Total Cash Out Card */}
         <Card className="shadow-none border-border !py-0 !gap-0 min-w-[140px] md:min-w-0">
           <CardContent className="px-3 py-2 flex items-center justify-between">
             <div>
@@ -207,15 +393,17 @@ export default function CashBookPage() {
             <ArrowUpCircle className="h-4 w-4 text-rose-500/50" />
           </CardContent>
         </Card>
+
+        {/* Cash in Hand / Net Balance Card */}
         <Card className="shadow-none border-border !py-0 !gap-0 min-w-[140px] md:min-w-0">
           <CardContent className="px-3 py-2 flex items-center justify-between">
             <div>
-              <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tight">Net Balance</p>
-              <p className={`text-sm font-semibold ${netBalance >= 0 ? 'text-blue-600 dark:text-blue-500' : 'text-red-600 dark:text-red-500'}`}>
-                {netBalance >= 0 ? "+" : "-"}{formatINR(Math.abs(netBalance))}
+              <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tight">Cash In Hand</p>
+              <p className={`text-sm font-semibold ${currentBalance >= 0 ? 'text-blue-600 dark:text-blue-500' : 'text-red-600 dark:text-red-500'}`}>
+                {currentBalance >= 0 ? "+" : "-"}{formatINR(Math.abs(currentBalance))}
               </p>
             </div>
-            <BookOpen className="h-4 w-4 text-muted-foreground/30" />
+            <RefreshCw className="h-4 w-4 text-muted-foreground/30" />
           </CardContent>
         </Card>
       </div>
@@ -277,43 +465,91 @@ export default function CashBookPage() {
               <thead>
                 <tr className="border-b border-border bg-secondary/20 text-left">
                   <th className="px-3 py-2 font-semibold text-muted-foreground">Date</th>
-                  <th className="px-3 py-2 font-semibold text-muted-foreground">Account</th>
-                  <th className="px-3 py-2 font-semibold text-muted-foreground">Details</th>
-                  <th className="px-3 py-2 font-semibold text-muted-foreground text-right">Amount</th>
+                  <th className="px-3 py-2 font-semibold text-muted-foreground">Particulars / Details</th>
+                  <th className="px-3 py-2 font-semibold text-muted-foreground text-right">Payment (Out)</th>
+                  <th className="px-3 py-2 font-semibold text-muted-foreground text-right">Receipt (In)</th>
+                  <th className="px-3 py-2 font-semibold text-muted-foreground text-right">Balance</th>
                   <th className="px-3 py-2 font-semibold text-muted-foreground text-center w-10"></th>
                 </tr>
               </thead>
               <tbody>
-                {filteredEntries.length === 0 ? (
+                {/* Period Opening Balance Row */}
+                <tr className="bg-muted/10 font-medium border-b border-border">
+                  <td className="px-3 py-2 text-muted-foreground">-</td>
+                  <td className="px-3 py-2 font-semibold flex items-center gap-2">
+                    <span className="text-foreground">Opening Balance</span>
+                  </td>
+                  <td className="px-3 py-2 text-right text-muted-foreground">-</td>
+                  <td className="px-3 py-2 text-right text-muted-foreground">-</td>
+                  <td className="px-3 py-2 text-right font-bold text-foreground">
+                    {formatINR(periodOpeningBalance)}
+                  </td>
+                  <td className="px-3 py-2"></td>
+                </tr>
+
+                {filteredEntriesWithBalance.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="h-24 text-center">
+                    <td colSpan={6} className="h-24 text-center">
                       <div className="flex flex-col items-center justify-center text-muted-foreground">
                         <Calendar className="h-6 w-6 mb-2 opacity-20" />
-                        <span className="text-xs">No transactions recorded.</span>
+                        <span className="text-xs">No transactions recorded for this period.</span>
                       </div>
                     </td>
                   </tr>
                 ) : (
-                  filteredEntries.map(entry => (
+                  filteredEntriesWithBalance.map(entry => (
                     <tr key={entry.id} className="border-b border-border last:border-0 hover:bg-muted/10">
+                      {/* Date */}
                       <td className="px-3 py-2">
-                        <div className="font-medium">{new Date(entry.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</div>
-                        <div className="text-[10px] text-muted-foreground">{new Date(entry.createdAt).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</div>
+                        <div className="font-medium">
+                          {new Date(entry.date).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
+                        </div>
+                        <div className="text-[10px] text-muted-foreground">
+                          {new Date(entry.createdAt).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
+                        </div>
                       </td>
-                      <td className="px-3 py-2">
-                        <Badge variant="secondary" className="text-[10px] py-0 font-normal">
-                          {getAccountName(entry.accountId)}
-                        </Badge>
-                      </td>
+                      
+                      {/* Particulars / Details */}
                       <td className="px-3 py-2 max-w-[200px]">
                         <div className="truncate font-medium">{entry.remark || "-"}</div>
-                        <div className="text-[10px] text-muted-foreground">{entry.paymentMode}</div>
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                          <Badge variant="secondary" className="text-[9px] px-1 py-0 font-normal">
+                            {getAccountName(entry.accountId)}
+                          </Badge>
+                          <span className="text-[9px] text-muted-foreground bg-muted px-1 rounded">
+                            {entry.paymentMode}
+                          </span>
+                        </div>
                       </td>
+                      
+                      {/* Payment (Out) */}
                       <td className="px-3 py-2 text-right">
-                        <span className={`font-bold tabular-nums ${entry.type === "CASH_IN" ? "text-emerald-600 dark:text-emerald-500" : "text-rose-600 dark:text-rose-500"}`}>
-                          {entry.type === "CASH_IN" ? "+" : "-"} {formatINR(entry.amount)}
-                        </span>
+                        {entry.type === "CASH_OUT" ? (
+                          <span className="font-bold tabular-nums text-rose-600 dark:text-rose-500">
+                            {formatINR(entry.amount)}
+                          </span>
+                        ) : (
+                          <span className="text-muted-foreground/30">-</span>
+                        )}
                       </td>
+                      
+                      {/* Receipt (In) */}
+                      <td className="px-3 py-2 text-right">
+                        {entry.type === "CASH_IN" ? (
+                          <span className="font-bold tabular-nums text-emerald-600 dark:text-emerald-500">
+                            {formatINR(entry.amount)}
+                          </span>
+                        ) : (
+                          <span className="text-muted-foreground/30">-</span>
+                        )}
+                      </td>
+                      
+                      {/* Running Balance */}
+                      <td className="px-3 py-2 text-right font-bold tabular-nums text-foreground">
+                        {formatINR(entry.runningBalance)}
+                      </td>
+                      
+                      {/* Actions */}
                       <td className="px-3 py-2 text-center">
                         <Button
                           variant="ghost"
@@ -362,9 +598,21 @@ export default function CashBookPage() {
                     className="h-8 text-xs"
                   />
                 </div>
-                <div className="flex gap-2 pt-2">
-                  <Button type="button" variant="outline" size="sm" className="w-full h-8 text-xs" onClick={() => setShowAddAccount(false)}>Cancel</Button>
-                  <Button type="submit" size="sm" className="w-full h-8 text-xs">Save</Button>
+                <div className="flex gap-3 pt-2">
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    className="flex-1 h-10 rounded-xl font-bold text-xs sm:text-sm" 
+                    onClick={() => setShowAddAccount(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    type="submit" 
+                    className="flex-1 h-10 rounded-xl font-bold text-xs sm:text-sm"
+                  >
+                    Save
+                  </Button>
                 </div>
               </CardContent>
             </form>
@@ -448,12 +696,18 @@ export default function CashBookPage() {
                   />
                 </div>
 
-                <div className="flex gap-2 pt-2">
-                  <Button type="button" variant="outline" size="sm" className="w-full h-8 text-xs" onClick={() => setShowAddEntry(null)}>Cancel</Button>
+                <div className="flex gap-3 pt-2">
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    className="flex-1 h-10 rounded-xl font-bold text-xs sm:text-sm" 
+                    onClick={() => setShowAddEntry(null)}
+                  >
+                    Cancel
+                  </Button>
                   <Button 
                     type="submit" 
-                    size="sm" 
-                    className={`w-full h-8 text-xs ${showAddEntry === 'CASH_IN' ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-rose-600 hover:bg-rose-700 text-white'}`}
+                    className={`flex-1 h-10 rounded-xl font-bold text-xs sm:text-sm text-white ${showAddEntry === 'CASH_IN' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-rose-600 hover:bg-rose-700'}`}
                     disabled={!entryAccountId}
                   >
                     Save Entry

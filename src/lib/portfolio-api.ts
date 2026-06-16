@@ -225,3 +225,65 @@ export async function deleteLoan(id: string) {
   return parseJson<Loan[]>(response);
 }
 
+export interface OtherInvestment {
+  id?: string;
+  particulars: string;
+  amount: number;
+}
+
+export const OTHER_INVESTMENTS_QUERY_KEY = ["portfolio", "other-investments"] as const;
+
+export async function fetchOtherInvestments(): Promise<OtherInvestment[]> {
+  const response = await fetch("/api/portfolio/other-investments", {
+    method: "GET",
+    cache: "no-store",
+  });
+
+  return parseJson<OtherInvestment[]>(response);
+}
+
+export async function replaceOtherInvestments(investments: OtherInvestment[]) {
+  const response = await fetch("/api/portfolio/other-investments", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ investments }),
+  });
+
+  return parseJson<OtherInvestment[]>(response);
+}
+
+export async function appendOtherInvestments(investments: OtherInvestment[]) {
+  const response = await fetch("/api/portfolio/other-investments", {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ mode: "append", investments }),
+  });
+
+  return parseJson<OtherInvestment[]>(response);
+}
+
+export async function saveOtherInvestment(investment: OtherInvestment, id?: string | null) {
+  const response = await fetch("/api/portfolio/other-investments", {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ mode: "upsert", id, investment }),
+  });
+
+  return parseJson<OtherInvestment[]>(response);
+}
+
+export async function deleteOtherInvestment(id: string) {
+  const response = await fetch(`/api/portfolio/other-investments?id=${encodeURIComponent(id)}`, {
+    method: "DELETE",
+  });
+
+  return parseJson<OtherInvestment[]>(response);
+}
+
+

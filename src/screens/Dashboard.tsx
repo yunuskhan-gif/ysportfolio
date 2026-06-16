@@ -1,11 +1,11 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Wallet, Layers, TrendingDown, TrendingUp, Landmark, RefreshCw, CheckCircle2 } from "lucide-react";
+import { Wallet, Layers, TrendingDown, TrendingUp, Landmark, RefreshCw, CheckCircle2, Coins } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PortfolioValueChart from "@/components/dashboard/PortfolioValueChart";
 import PortfolioMetricCards from "@/components/blocks/stats/PortfolioMetricCards";
-import { fetchHoldings, HOLDINGS_QUERY_KEY, type StockHolding, fetchLoans, LOANS_QUERY_KEY } from "@/lib/portfolio-api";
+import { fetchHoldings, HOLDINGS_QUERY_KEY, type StockHolding, fetchLoans, LOANS_QUERY_KEY, fetchOtherInvestments, OTHER_INVESTMENTS_QUERY_KEY } from "@/lib/portfolio-api";
 import { isMutualFund, cn } from "@/lib/utils";
 
 const formatCurrency = (value: number) => {
@@ -246,6 +246,11 @@ const Dashboard = () => {
     queryFn: fetchLoans,
   });
 
+  const { data: otherInvestments = [] } = useQuery({
+    queryKey: OTHER_INVESTMENTS_QUERY_KEY,
+    queryFn: fetchOtherInvestments,
+  });
+
   const uniqueSymbols = useMemo(
     () => [...new Set(holdings.map((holding) => holding.symbol).filter(Boolean))],
     [holdings]
@@ -318,7 +323,8 @@ const Dashboard = () => {
   const mfPnlPercent = totalMFInvestment > 0 ? (mfPnl / totalMFInvestment) * 100 : 0;
 
   const totalOutstandingLoans = loans.reduce((sum, l) => sum + l.outstanding, 0);
-  const netWorth = totalStockCurrent + totalMFCurrent - totalOutstandingLoans;
+  const totalOtherInvestments = otherInvestments.reduce((sum, item) => sum + item.amount, 0);
+  const netWorth = totalStockCurrent + totalMFCurrent + totalOtherInvestments - totalOutstandingLoans;
   const totalInvestment = totalStockInvestment + totalMFInvestment;
 
   return (
@@ -343,7 +349,7 @@ const Dashboard = () => {
       </div>
 
       {/* Top Cards Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         {/* Card 1: NET WORTH */}
         <Card className="shadow-none border-border">
           <CardContent className="p-4 flex flex-col justify-between h-full space-y-4">
@@ -429,6 +435,24 @@ const Dashboard = () => {
               </p>
               <p className="text-[10px] text-muted-foreground mt-1">
                 {loans.length > 0 ? `${loans.length} active account${loans.length > 1 ? 's' : ''}` : "Debt-free! ✨"}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Card 6: OTHER INVESTMENTS */}
+        <Card className="shadow-none border-border">
+          <CardContent className="p-4 flex flex-col justify-between h-full space-y-4">
+            <div className="flex justify-between items-start">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Other Investments</span>
+              <div className="bg-emerald-500/10 p-1.5 rounded-md text-emerald-600">
+                <Coins className="h-4 w-4" />
+              </div>
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{formatCurrency(totalOtherInvestments)}</p>
+              <p className="text-[10px] text-muted-foreground mt-1">
+                {otherInvestments.length > 0 ? `${otherInvestments.length} registered asset${otherInvestments.length > 1 ? 's' : ''}` : "No assets"}
               </p>
             </div>
           </CardContent>
