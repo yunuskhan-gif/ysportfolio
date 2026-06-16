@@ -20,6 +20,8 @@ interface EnrichedHolding extends StockHolding {
   currentValue: number | null;
   pnl: number | null;
   pnlPercent: number | null;
+  change: number;
+  changePercent: number;
 }
 
 export default function AIInsights() {

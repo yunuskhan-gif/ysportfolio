@@ -34,6 +34,7 @@ export default function NextAppShell({ children }: { children: React.ReactNode }
     if (pathname.includes("/search")) return "Market Search";
     if (pathname.includes("/settings")) return "Motilal Settings";
     if (pathname.includes("/history")) return "Portfolio History";
+    if (pathname.includes("/loans")) return "Loans Tracker";
     return "Dashboard";
   };
 

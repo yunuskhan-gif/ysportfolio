@@ -5,7 +5,7 @@ import { Wallet, Layers, TrendingDown, TrendingUp, Landmark, RefreshCw, CheckCir
 import { Button } from "@/components/ui/button";
 import PortfolioValueChart from "@/components/dashboard/PortfolioValueChart";
 import PortfolioMetricCards from "@/components/blocks/stats/PortfolioMetricCards";
-import { fetchHoldings, HOLDINGS_QUERY_KEY, type StockHolding } from "@/lib/portfolio-api";
+import { fetchHoldings, HOLDINGS_QUERY_KEY, type StockHolding, fetchLoans, LOANS_QUERY_KEY } from "@/lib/portfolio-api";
 import { isMutualFund, cn } from "@/lib/utils";
 
 const formatCurrency = (value: number) => {
@@ -241,6 +241,11 @@ const Dashboard = () => {
     queryFn: fetchHoldings,
   });
 
+  const { data: loans = [] } = useQuery({
+    queryKey: LOANS_QUERY_KEY,
+    queryFn: fetchLoans,
+  });
+
   const uniqueSymbols = useMemo(
     () => [...new Set(holdings.map((holding) => holding.symbol).filter(Boolean))],
     [holdings]
@@ -312,7 +317,8 @@ const Dashboard = () => {
   const mfPnl = totalMFCurrent - totalMFInvestment;
   const mfPnlPercent = totalMFInvestment > 0 ? (mfPnl / totalMFInvestment) * 100 : 0;
 
-  const netWorth = totalStockCurrent + totalMFCurrent;
+  const totalOutstandingLoans = loans.reduce((sum, l) => sum + l.outstanding, 0);
+  const netWorth = totalStockCurrent + totalMFCurrent - totalOutstandingLoans;
   const totalInvestment = totalStockInvestment + totalMFInvestment;
 
   return (
@@ -418,8 +424,12 @@ const Dashboard = () => {
               </div>
             </div>
             <div>
-              <p className="text-2xl font-bold text-muted-foreground">₹0</p>
-              <p className="text-[10px] text-muted-foreground mt-1">Debt-free! ✨</p>
+              <p className={cn("text-2xl font-bold", totalOutstandingLoans > 0 ? "text-orange-500" : "text-muted-foreground")}>
+                {formatCurrency(totalOutstandingLoans)}
+              </p>
+              <p className="text-[10px] text-muted-foreground mt-1">
+                {loans.length > 0 ? `${loans.length} active account${loans.length > 1 ? 's' : ''}` : "Debt-free! ✨"}
+              </p>
             </div>
           </CardContent>
         </Card>

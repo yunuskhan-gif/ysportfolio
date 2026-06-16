@@ -160,3 +160,68 @@ export async function fetchMotilalHoldings(
 
   return parseJson<MotilalHoldingsResponse>(response);
 }
+
+export interface Loan {
+  id?: string;
+  bank: string;
+  sanctionLoan: number;
+  type: string;
+  emi: number;
+  outstanding: number;
+}
+
+export const LOANS_QUERY_KEY = ["portfolio", "loans"] as const;
+
+export async function fetchLoans(): Promise<Loan[]> {
+  const response = await fetch("/api/portfolio/loans", {
+    method: "GET",
+    cache: "no-store",
+  });
+
+  return parseJson<Loan[]>(response);
+}
+
+export async function replaceLoans(loans: Loan[]) {
+  const response = await fetch("/api/portfolio/loans", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ loans }),
+  });
+
+  return parseJson<Loan[]>(response);
+}
+
+export async function appendLoans(loans: Loan[]) {
+  const response = await fetch("/api/portfolio/loans", {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ mode: "append", loans }),
+  });
+
+  return parseJson<Loan[]>(response);
+}
+
+export async function saveLoan(loan: Loan, id?: string | null) {
+  const response = await fetch("/api/portfolio/loans", {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ mode: "upsert", id, loan }),
+  });
+
+  return parseJson<Loan[]>(response);
+}
+
+export async function deleteLoan(id: string) {
+  const response = await fetch(`/api/portfolio/loans?id=${encodeURIComponent(id)}`, {
+    method: "DELETE",
+  });
+
+  return parseJson<Loan[]>(response);
+}
+
