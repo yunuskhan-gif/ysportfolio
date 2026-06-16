@@ -286,4 +286,78 @@ export async function deleteOtherInvestment(id: string) {
   return parseJson<OtherInvestment[]>(response);
 }
 
+export interface CashbookAccount {
+  id?: string;
+  name: string;
+  phone?: string;
+  openingBalance?: number;
+}
+
+export interface CashbookEntry {
+  id?: string;
+  accountId: string;
+  type: "CASH_IN" | "CASH_OUT";
+  amount: number;
+  date: string;
+  remark?: string;
+  paymentMode?: string;
+  createdAt?: string;
+}
+
+export const CASHBOOK_ACCOUNTS_QUERY_KEY = ["portfolio", "cashbook-accounts"] as const;
+export const CASHBOOK_ENTRIES_QUERY_KEY = ["portfolio", "cashbook-entries"] as const;
+
+export async function fetchCashbookAccounts(): Promise<CashbookAccount[]> {
+  const response = await fetch("/api/portfolio/cashbook/accounts", {
+    method: "GET",
+    cache: "no-store",
+  });
+  return parseJson<CashbookAccount[]>(response);
+}
+
+export async function saveCashbookAccount(account: CashbookAccount, id?: string | null) {
+  const response = await fetch("/api/portfolio/cashbook/accounts", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ id, ...account }),
+  });
+  return parseJson<CashbookAccount[]>(response);
+}
+
+export async function deleteCashbookAccount(id: string) {
+  const response = await fetch(`/api/portfolio/cashbook/accounts?id=${encodeURIComponent(id)}`, {
+    method: "DELETE",
+  });
+  return parseJson<CashbookAccount[]>(response);
+}
+
+export async function fetchCashbookEntries(): Promise<CashbookEntry[]> {
+  const response = await fetch("/api/portfolio/cashbook/entries", {
+    method: "GET",
+    cache: "no-store",
+  });
+  return parseJson<CashbookEntry[]>(response);
+}
+
+export async function saveCashbookEntry(entry: CashbookEntry, id?: string | null) {
+  const response = await fetch("/api/portfolio/cashbook/entries", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ id, ...entry }),
+  });
+  return parseJson<CashbookEntry[]>(response);
+}
+
+export async function deleteCashbookEntry(id: string) {
+  const response = await fetch(`/api/portfolio/cashbook/entries?id=${encodeURIComponent(id)}`, {
+    method: "DELETE",
+  });
+  return parseJson<CashbookEntry[]>(response);
+}
+
+
 

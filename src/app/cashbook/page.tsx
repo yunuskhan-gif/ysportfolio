@@ -20,30 +20,33 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-interface CashbookAccount {
-  id: string;
-  name: string;
-  phone?: string;
-}
-
-interface CashbookEntry {
-  id: string;
-  accountId: string;
-  type: "CASH_IN" | "CASH_OUT";
-  amount: number;
-  date: string;
-  remark: string;
-  paymentMode: string;
-  createdAt: string;
-}
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  fetchCashbookAccounts,
+  saveCashbookAccount,
+  deleteCashbookAccount,
+  fetchCashbookEntries,
+  saveCashbookEntry,
+  deleteCashbookEntry,
+  CASHBOOK_ACCOUNTS_QUERY_KEY,
+  CASHBOOK_ENTRIES_QUERY_KEY,
+  type CashbookAccount,
+  type CashbookEntry
+} from "@/lib/portfolio-api";
 
 export default function CashBookPage() {
-  const [accounts, setAccounts] = useState<CashbookAccount[]>([
-    { id: "acc-1", name: "Main Cash Drawer", phone: "" },
-  ]);
-  const [entries, setEntries] = useState<CashbookEntry[]>([]);
-  
+  const queryClient = useQueryClient();
+
+  const { data: accounts = [], isLoading: accountsLoading } = useQuery({
+    queryKey: CASHBOOK_ACCOUNTS_QUERY_KEY,
+    queryFn: fetchCashbookAccounts,
+  });
+
+  const { data: entries = [], isLoading: entriesLoading } = useQuery({
+    queryKey: CASHBOOK_ENTRIES_QUERY_KEY,
+    queryFn: fetchCashbookEntries,
+  });
+
   const [selectedAccount, setSelectedAccount] = useState<string>("ALL");
   const [timeFilter, setTimeFilter] = useState<"ALL" | "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY">("ALL");
 
@@ -52,6 +55,7 @@ export default function CashBookPage() {
 
   const [accountName, setAccountName] = useState("");
   const [accountPhone, setAccountPhone] = useState("");
+  const [accountOpeningBalance, setAccountOpeningBalance] = useState("");
 
   const [entryAmount, setEntryAmount] = useState("");
   const [entryRemark, setEntryRemark] = useState("");
@@ -59,60 +63,56 @@ export default function CashBookPage() {
   const [entryDate, setEntryDate] = useState(() => new Date().toISOString().split("T")[0]);
   const [entryAccountId, setEntryAccountId] = useState("");
 
-  // Opening Balance and persistence states
-  const [openingBalance, setOpeningBalance] = useState<number>(0);
   const [isEditingOB, setIsEditingOB] = useState(false);
   const [tempOpeningBalance, setTempOpeningBalance] = useState("");
-  const [isLoaded, setIsLoaded] = useState(false);
 
-  // Load from localStorage on mount
-  useEffect(() => {
-    const savedAccounts = localStorage.getItem("ys_cashbook_accounts");
-    if (savedAccounts) {
-      try {
-        setAccounts(JSON.parse(savedAccounts));
-      } catch (e) {
-        console.error("Failed to parse accounts from localStorage", e);
-      }
-    }
+  // mutations
+  const addAccountMutation = useMutation({
+    mutationFn: (newAcc: CashbookAccount) => saveCashbookAccount(newAcc),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: CASHBOOK_ACCOUNTS_QUERY_KEY });
+      toast.success("Account added successfully!");
+    },
+    onError: () => toast.error("Failed to add account"),
+  });
 
-    const savedEntries = localStorage.getItem("ys_cashbook_entries");
-    if (savedEntries) {
-      try {
-        setEntries(JSON.parse(savedEntries));
-      } catch (e) {
-        console.error("Failed to parse entries from localStorage", e);
-      }
-    }
+  const deleteAccountMutation = useMutation({
+    mutationFn: (id: string) => deleteCashbookAccount(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: CASHBOOK_ACCOUNTS_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: CASHBOOK_ENTRIES_QUERY_KEY });
+      toast.success("Account deleted successfully!");
+      setSelectedAccount("ALL");
+    },
+    onError: () => toast.error("Failed to delete account"),
+  });
 
-    const savedOB = localStorage.getItem("ys_cashbook_opening_balance");
-    if (savedOB) {
-      const val = parseFloat(savedOB);
-      if (!isNaN(val)) {
-        setOpeningBalance(val);
-      }
-    }
-    setIsLoaded(true);
-  }, []);
+  const addEntryMutation = useMutation({
+    mutationFn: (newEntry: CashbookEntry) => saveCashbookEntry(newEntry),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: CASHBOOK_ENTRIES_QUERY_KEY });
+      toast.success("Entry added successfully!");
+    },
+    onError: () => toast.error("Failed to add entry"),
+  });
 
-  // Save to localStorage when state changes
-  useEffect(() => {
-    if (isLoaded) {
-      localStorage.setItem("ys_cashbook_accounts", JSON.stringify(accounts));
-    }
-  }, [accounts, isLoaded]);
+  const deleteEntryMutation = useMutation({
+    mutationFn: (id: string) => deleteCashbookEntry(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: CASHBOOK_ENTRIES_QUERY_KEY });
+      toast.success("Entry deleted successfully!");
+    },
+    onError: () => toast.error("Failed to delete entry"),
+  });
 
-  useEffect(() => {
-    if (isLoaded) {
-      localStorage.setItem("ys_cashbook_entries", JSON.stringify(entries));
-    }
-  }, [entries, isLoaded]);
-
-  useEffect(() => {
-    if (isLoaded) {
-      localStorage.setItem("ys_cashbook_opening_balance", openingBalance.toString());
-    }
-  }, [openingBalance, isLoaded]);
+  const updateAccountOBMutation = useMutation({
+    mutationFn: ({ account, id }: { account: CashbookAccount; id: string }) => saveCashbookAccount(account, id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: CASHBOOK_ACCOUNTS_QUERY_KEY });
+      toast.success("Opening balance updated successfully!");
+    },
+    onError: () => toast.error("Failed to update opening balance"),
+  });
 
   // Set default account when entry dialog opens
   useEffect(() => {
@@ -120,64 +120,87 @@ export default function CashBookPage() {
       if (selectedAccount !== "ALL") {
         setEntryAccountId(selectedAccount);
       } else if (accounts.length > 0) {
-        setEntryAccountId(accounts[0].id);
+        setEntryAccountId(accounts[0].id || "");
       }
     }
   }, [showAddEntry, selectedAccount, accounts]);
 
-  const handleAddAccount = (e: React.FormEvent) => {
+  const handleAddAccount = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!accountName) return;
     
-    const newAcc: CashbookAccount = {
-      id: `acc-${Date.now()}`,
+    const opBal = parseFloat(accountOpeningBalance) || 0;
+    
+    const res = await addAccountMutation.mutateAsync({
       name: accountName,
       phone: accountPhone,
-    };
+      openingBalance: opBal,
+    });
     
-    setAccounts([...accounts, newAcc]);
     setShowAddAccount(false);
     setAccountName("");
     setAccountPhone("");
-    toast.success("Account added successfully!");
-    setSelectedAccount(newAcc.id);
+    setAccountOpeningBalance("");
+
+    if (res && res.length > 0) {
+      const newAcc = res.find(a => a.name === accountName);
+      if (newAcc && newAcc.id) {
+        setSelectedAccount(newAcc.id);
+      }
+    }
   };
 
-  const handleAddEntry = (e: React.FormEvent) => {
+  const handleDeleteAccount = async (id: string) => {
+    if (id === "ALL") return;
+    const account = accounts.find(a => a.id === id);
+    if (!account) return;
+    if (!window.confirm(`Are you sure you want to delete "${account.name}"? All entries associated with this account will be permanently deleted.`)) return;
+    await deleteAccountMutation.mutateAsync(id);
+  };
+
+  const handleAddEntry = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!entryAmount || !entryAccountId || !showAddEntry) return;
 
-    const newEntry: CashbookEntry = {
-      id: `entry-${Date.now()}`,
+    await addEntryMutation.mutateAsync({
       accountId: entryAccountId,
       type: showAddEntry,
       amount: parseFloat(entryAmount),
       date: entryDate,
       remark: entryRemark,
       paymentMode: entryPaymentMode,
-      createdAt: new Date().toISOString(),
-    };
+    });
 
-    setEntries([...entries, newEntry]);
     setShowAddEntry(null);
     setEntryAmount("");
     setEntryRemark("");
-    toast.success("Entry added successfully!");
   };
 
-  const handleDeleteEntry = (id: string) => {
+  const handleDeleteEntry = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this entry?")) return;
-    setEntries(entries.filter(e => e.id !== id));
-    toast.success("Entry deleted successfully!");
+    await deleteEntryMutation.mutateAsync(id);
   };
 
-  const handleSaveOB = () => {
+  const handleSaveOB = async () => {
     const val = parseFloat(tempOpeningBalance);
     if (!isNaN(val)) {
-      setOpeningBalance(val);
+      if (selectedAccount === "ALL") {
+        toast.error("Please select a specific account to change its opening balance.");
+      } else {
+        const acc = accounts.find(a => a.id === selectedAccount);
+        if (acc && acc.id) {
+          await updateAccountOBMutation.mutateAsync({
+            id: acc.id,
+            account: {
+              name: acc.name,
+              phone: acc.phone,
+              openingBalance: val,
+            }
+          });
+        }
+      }
     }
     setIsEditingOB(false);
-    toast.success("Opening balance updated successfully!");
   };
 
   // Calculate filtered entries and their running balances
@@ -191,10 +214,16 @@ export default function CashBookPage() {
     const sorted = [...result].sort((a, b) => {
       const dateDiff = new Date(a.date).getTime() - new Date(b.date).getTime();
       if (dateDiff !== 0) return dateDiff;
-      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      const tA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const tB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      return tA - tB;
     });
 
-    let currentBalance = openingBalance;
+    const activeOB = selectedAccount === "ALL"
+      ? accounts.reduce((sum, a) => sum + (a.openingBalance || 0), 0)
+      : (accounts.find(a => a.id === selectedAccount)?.openingBalance || 0);
+
+    let currentBalance = activeOB;
     const computed = sorted.map(entry => {
       if (entry.type === "CASH_IN") {
         currentBalance += entry.amount;
@@ -210,7 +239,7 @@ export default function CashBookPage() {
     if (timeFilter === "ALL") {
       return {
         filteredEntriesWithBalance: computed,
-        periodOpeningBalance: openingBalance
+        periodOpeningBalance: activeOB
       };
     }
 
@@ -229,13 +258,13 @@ export default function CashBookPage() {
 
     const periodOB = entriesBefore.length > 0 
       ? entriesBefore[entriesBefore.length - 1].runningBalance 
-      : openingBalance;
+      : activeOB;
 
     return {
       filteredEntriesWithBalance: entriesIn,
       periodOpeningBalance: periodOB
     };
-  }, [entries, selectedAccount, timeFilter, openingBalance]);
+  }, [entries, selectedAccount, timeFilter, accounts]);
 
   const { totalIn, totalOut } = useMemo(() => {
     let inAmount = 0;
@@ -262,7 +291,11 @@ export default function CashBookPage() {
     return { allTimeIn: inAmount, allTimeOut: outAmount };
   }, [entries, selectedAccount]);
 
-  const currentBalance = openingBalance + allTimeIn - allTimeOut;
+  const activeOB = selectedAccount === "ALL"
+    ? accounts.reduce((sum, a) => sum + (a.openingBalance || 0), 0)
+    : (accounts.find(a => a.id === selectedAccount)?.openingBalance || 0);
+
+  const currentBalance = activeOB + allTimeIn - allTimeOut;
   const totalVolume = totalIn + totalOut;
   const inPercentage = totalVolume > 0 ? (totalIn / totalVolume) * 100 : 50;
 
@@ -274,6 +307,17 @@ export default function CashBookPage() {
       currency: "INR",
       minimumFractionDigits: 2,
     }).format(value);
+
+  if (accountsLoading || entriesLoading) {
+    return (
+      <div className="flex h-[50vh] items-center justify-center">
+        <div className="flex flex-col items-center gap-2">
+          <RefreshCw className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-xs text-muted-foreground font-bold">Loading Cash Book...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full space-y-2 pb-20 p-2 md:p-4">
@@ -295,7 +339,7 @@ export default function CashBookPage() {
             <SelectContent>
               <SelectItem value="ALL">All Accounts (General)</SelectItem>
               {accounts.map(a => (
-                <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>
+                <SelectItem key={a.id || ''} value={a.id || ''}>{a.name}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -309,6 +353,18 @@ export default function CashBookPage() {
             <Plus className="h-3.5 w-3.5" />
             Add Khata
           </Button>
+
+          {selectedAccount !== "ALL" && (
+            <Button 
+              variant="destructive" 
+              size="sm" 
+              className="h-8 gap-2 text-xs font-bold w-full sm:w-auto hover:bg-destructive/90"
+              onClick={() => handleDeleteAccount(selectedAccount)}
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+              Delete Khata
+            </Button>
+          )}
         </div>
       </div>
 
@@ -318,7 +374,9 @@ export default function CashBookPage() {
         <Card className="shadow-none border-border !py-0 !gap-0 min-w-[140px] md:min-w-0">
           <CardContent className="px-3 py-2 flex items-center justify-between h-full">
             <div className="w-full">
-              <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tight">Opening Balance</p>
+              <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tight">
+                Opening Balance {selectedAccount === "ALL" ? "(Combined)" : ""}
+              </p>
               {isEditingOB ? (
                 <div className="flex items-center gap-1 mt-1">
                   <Input
@@ -353,18 +411,26 @@ export default function CashBookPage() {
                 </div>
               ) : (
                 <div className="flex items-center gap-1.5 mt-0.5">
-                  <p className="text-sm font-semibold text-foreground tabular-nums">{formatINR(openingBalance)}</p>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-5 w-5 text-muted-foreground hover:text-foreground opacity-50 hover:opacity-100"
-                    onClick={() => {
-                      setTempOpeningBalance(openingBalance.toString());
-                      setIsEditingOB(true);
-                    }}
-                  >
-                    <Edit className="h-3 w-3" />
-                  </Button>
+                  <p className="text-sm font-semibold text-foreground tabular-nums">
+                    {formatINR(selectedAccount === "ALL"
+                      ? accounts.reduce((sum, a) => sum + (a.openingBalance || 0), 0)
+                      : (accounts.find(a => a.id === selectedAccount)?.openingBalance || 0)
+                    )}
+                  </p>
+                  {selectedAccount !== "ALL" && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-5 w-5 text-muted-foreground hover:text-foreground opacity-50 hover:opacity-100"
+                      onClick={() => {
+                        const currentOB = accounts.find(a => a.id === selectedAccount)?.openingBalance || 0;
+                        setTempOpeningBalance(currentOB.toString());
+                        setIsEditingOB(true);
+                      }}
+                    >
+                      <Edit className="h-3 w-3" />
+                    </Button>
+                  )}
                 </div>
               )}
             </div>
@@ -589,13 +655,23 @@ export default function CashBookPage() {
                     className="h-8 text-xs"
                   />
                 </div>
-                <div className="space-y-1.5">
+                 <div className="space-y-1.5">
                   <label className="text-[10px] font-bold text-muted-foreground uppercase">Phone Number</label>
                   <Input
                     value={accountPhone}
                     onChange={e => setAccountPhone(e.target.value)}
                     placeholder="Optional"
                     className="h-8 text-xs"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-muted-foreground uppercase">Opening Balance (₹)</label>
+                  <Input
+                    type="number"
+                    value={accountOpeningBalance}
+                    onChange={e => setAccountOpeningBalance(e.target.value)}
+                    placeholder="0.00"
+                    className="h-8 text-xs font-bold tabular-nums"
                   />
                 </div>
                 <div className="flex gap-3 pt-2">
@@ -640,7 +716,7 @@ export default function CashBookPage() {
                       <SelectValue placeholder="Select Account" />
                     </SelectTrigger>
                     <SelectContent>
-                      {accounts.map(a => <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>)}
+                      {accounts.map(a => <SelectItem key={a.id || ''} value={a.id || ''}>{a.name}</SelectItem>)}
                     </SelectContent>
                   </Select>
                 </div>
