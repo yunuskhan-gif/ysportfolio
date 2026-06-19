@@ -29,6 +29,7 @@ export default function NextAppShell({ children }: { children: React.ReactNode }
   const [isCommandOpen, setIsCommandOpen] = useState(false);
 
   const getPageTitle = () => {
+    if (pathname === "/") return "Home & Guide";
     if (pathname.includes("/portfolio")) return "Portfolio";
     if (pathname.includes("/dashboard")) return "Dashboard";
     if (pathname.includes("/search")) return "Market Search";
@@ -50,6 +51,10 @@ export default function NextAppShell({ children }: { children: React.ReactNode }
   const isMFPage = pathname.includes("/mutual-funds");
   const isAllPage = pathname.includes("/dashboard");
   const uploadType = isMFPage ? "mf" : "stock";
+
+  if (pathname === "/") {
+    return <PrimeReactProvider>{children}</PrimeReactProvider>;
+  }
 
   return (
     <SidebarProvider defaultOpen={true}>

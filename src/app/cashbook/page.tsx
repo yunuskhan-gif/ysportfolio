@@ -571,7 +571,7 @@ export default function CashBookPage() {
                           {new Date(entry.date).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
                         </div>
                         <div className="text-[10px] text-muted-foreground">
-                          {new Date(entry.createdAt).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
+                          {entry.createdAt ? new Date(entry.createdAt).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }) : ""}
                         </div>
                       </td>
                       
@@ -621,7 +621,7 @@ export default function CashBookPage() {
                           variant="ghost"
                           size="icon"
                           className="h-6 w-6 text-muted-foreground hover:text-destructive"
-                          onClick={() => handleDeleteEntry(entry.id)}
+                          onClick={() => entry.id && handleDeleteEntry(entry.id)}
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </Button>

@@ -1,0 +1,6 @@
+- [x] Refactor `PasswordGate.tsx` to redirect unauthorized users to `/` and remove the old "Protected Access" card layout.
+- [/] Refactor `fii-dii-tracker/page.tsx` to completely delete separate login states, functions, and layout elements.
+- [ ] Verify build and execution:
+  - [ ] Run typescript compilation checks.
+  - [ ] Run Next.js production build check.
+  - [ ] Test public welcome page load, direct login flow, and redirect behavior.

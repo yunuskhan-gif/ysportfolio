@@ -1,4 +1,3 @@
-// src/menudata/SidebarMenuItem.ts
 import { Home, Wallet, KeyRound, History as HistoryIcon, Search, Book, PieChart, Settings, BrainCircuit, Landmark, Coins, TrendingUp } from "lucide-react";
 
 export const items = [

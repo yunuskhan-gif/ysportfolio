@@ -1,7 +1,9 @@
 import fs from "fs";
 import path from "path";
 
-const DB_FILE = path.join(process.cwd(), "data_db.json");
+const REPO_DB_FILE = path.join(process.cwd(), "data_db.json");
+const isVercel = process.env.VERCEL === "1" || process.env.NOW_BUILDER !== undefined;
+const DB_FILE = isVercel ? path.join("/tmp", "data_db.json") : REPO_DB_FILE;
 
 // Sector list with realistic base AUC (Assets Under Custody) in Crores Rs
 const SECTORS_BASE = [
@@ -263,6 +265,18 @@ export function generateHistoricalDatabase() {
 // Retrieve DB. Creates if not present.
 export function getDB() {
   let db: any;
+
+  if (isVercel && !fs.existsSync(DB_FILE)) {
+    try {
+      if (fs.existsSync(REPO_DB_FILE)) {
+        console.log("[DB] Copying pre-built database to /tmp for Vercel write access...");
+        fs.copyFileSync(REPO_DB_FILE, DB_FILE);
+      }
+    } catch (err) {
+      console.error("[DB] Failed to copy pre-built database to /tmp", err);
+    }
+  }
+
   if (fs.existsSync(DB_FILE)) {
     try {
       db = JSON.parse(fs.readFileSync(DB_FILE, "utf-8"));
@@ -329,12 +343,19 @@ export function getDB() {
   if (!db.watchlists["default_user"]) {
     db.watchlists["default_user"] = [];
   }
-  
   // Persist enhancements if we had to initialize them
-  fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2), "utf-8");
+  try {
+    fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2), "utf-8");
+  } catch (err) {
+    console.error("[DB] Failed to write database update", err);
+  }
   return db;
 }
 
 export function saveDB(db: any) {
-  fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2), "utf-8");
+  try {
+    fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2), "utf-8");
+  } catch (err) {
+    console.error("[DB] Failed to save database", err);
+  }
 }

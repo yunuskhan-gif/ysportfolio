@@ -77,13 +77,6 @@ export default function FiiDiiTracker() {
   const [mounted, setMounted] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<{ id: string; username: string } | null>(null);
-  const [authLoading, setAuthLoading] = useState(true);
-
-  // Auth inputs
-  const [isLogin, setIsLogin] = useState(true);
-  const [usernameInput, setUsernameInput] = useState("");
-  const [passwordInput, setPasswordInput] = useState("");
-  const [submitLoading, setSubmitLoading] = useState(false);
 
   // App states
   const [activeTab, setActiveTab] = useState<"report" | "trends" | "scheduler">("report");
@@ -132,80 +125,7 @@ export default function FiiDiiTracker() {
     setUser({ id: "default_user", username: "Admin" });
     fetchWatchlist(mockToken);
     fetchFortnights();
-    setAuthLoading(false);
   }, []);
-
-  const fetchUser = async (authToken: string) => {
-    try {
-      const res = await fetch("/api/fii-dii/auth/me", {
-        headers: { Authorization: `Bearer ${authToken}` }
-      });
-      if (res.ok) {
-        const userData = await res.json();
-        setUser(userData);
-        fetchWatchlist(authToken);
-        fetchFortnights();
-      } else {
-        localStorage.removeItem("fii_dii_token");
-        setToken(null);
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setAuthLoading(false);
-    }
-  };
-
-  const handleAuthSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!usernameInput || !passwordInput) return;
-
-    setSubmitLoading(true);
-    const endpoint = isLogin ? "/api/fii-dii/auth/login" : "/api/fii-dii/auth/register";
-
-    try {
-      const res = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: usernameInput, password: passwordInput })
-      });
-      const data = await res.json();
-
-      if (res.ok) {
-        if (isLogin) {
-          localStorage.setItem("fii_dii_token", data.token);
-          setToken(data.token);
-          setUser(data.user);
-          fetchWatchlist(data.token);
-          fetchFortnights();
-          toast.success(`Logged in as ${data.user.username}`);
-        } else {
-          toast.success("Registration successful! Please log in.");
-          setIsLogin(true);
-          setPasswordInput("");
-        }
-      } else {
-        toast.error(data.error || "Authentication failed");
-      }
-    } catch (err) {
-      toast.error("Network error. Please try again.");
-    } finally {
-      setSubmitLoading(false);
-    }
-  };
-
-  const handleLogout = async () => {
-    if (token) {
-      await fetch("/api/fii-dii/auth/logout", {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` }
-      });
-    }
-    localStorage.removeItem("fii_dii_token");
-    setToken(null);
-    setUser(null);
-    toast.success("Logged out from tracker");
-  };
 
   const fetchWatchlist = async (authToken: string) => {
     try {
@@ -450,13 +370,7 @@ export default function FiiDiiTracker() {
 
   if (!mounted) return null;
 
-  if (authLoading) {
-    return (
-      <div className="flex h-[80vh] items-center justify-center bg-black">
-        <Loader2 className="h-8 w-8 animate-spin text-primary opacity-30" />
-      </div>
-    );
-  }
+
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto p-4 md:p-6 text-white selection:bg-primary/20 selection:text-white">
