@@ -138,7 +138,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenuButton
               onClick={async () => {
                 await fetch("/api/auth/logout", { method: "POST" });
-                window.location.reload();
+                window.location.href = "/";
               }}
               className="w-full justify-start cursor-pointer group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:ml-1 transition-all text-destructive hover:text-destructive hover:bg-destructive/10"
             >
