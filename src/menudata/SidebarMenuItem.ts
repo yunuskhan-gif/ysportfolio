@@ -1,5 +1,5 @@
 // src/menudata/SidebarMenuItem.ts
-import { Home, Wallet, KeyRound, History as HistoryIcon, Search, Book, PieChart, Settings, BrainCircuit, Landmark, Coins } from "lucide-react";
+import { Home, Wallet, KeyRound, History as HistoryIcon, Search, Book, PieChart, Settings, BrainCircuit, Landmark, Coins, TrendingUp } from "lucide-react";
 
 export const items = [
     {
@@ -26,6 +26,11 @@ export const items = [
       title: "Other Investments",
       url: "/other-investments",
       icon: Coins,
+    },
+    {
+      title: "FII DII Tracker",
+      url: "/fii-dii-tracker",
+      icon: TrendingUp,
     },
     {
       title: "Market Search",

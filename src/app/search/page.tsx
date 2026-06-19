@@ -10,6 +10,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { HOLDINGS_QUERY_KEY, type StockHolding } from "@/lib/portfolio-api";
 import toast from "react-hot-toast";
 import AddStockDialog from "@/components/portfolio/AddStockDialog";
+import StockScreenerDialog from "@/components/shared/StockScreenerDialog";
 
 interface SearchResult {
   symbol: string;
@@ -30,6 +31,17 @@ export default function MarketSearchPage() {
   const searchTimeout = useRef<NodeJS.Timeout | null>(null);
   const [isAddStockOpen, setIsAddStockOpen] = useState(false);
   const [selectedHolding, setSelectedHolding] = useState<StockHolding | null>(null);
+
+  // Screener dialog states
+  const [screenerSymbol, setScreenerSymbol] = useState<string | null>(null);
+  const [screenerName, setScreenerName] = useState<string>("");
+  const [isScreenerOpen, setIsScreenerOpen] = useState(false);
+
+  const handleOpenScreener = (stock: SearchResult) => {
+    setScreenerSymbol(stock.symbol);
+    setScreenerName(stock.name);
+    setIsScreenerOpen(true);
+  };
 
   const fetchResults = async (q: string) => {
     if (!q) {
@@ -106,10 +118,14 @@ export default function MarketSearchPage() {
           results.map((item) => (
             <Card key={item.symbol} className="group overflow-hidden border-border/40 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-300">
               <CardContent className="p-4">
-                <div className="flex items-start justify-between gap-4">
+                <div 
+                  className="flex items-start justify-between gap-4 cursor-pointer hover:bg-muted/10 p-1.5 rounded-lg transition-all animate-none"
+                  title="Click to view Screener analysis and charts"
+                  onClick={() => handleOpenScreener(item)}
+                >
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-bold truncate text-base">{item.name}</h3>
+                      <h3 className="font-bold truncate text-base group-hover:text-primary transition-colors">{item.name}</h3>
                       {item.type === "mf" ? (
                         <Badge variant="secondary" className="bg-blue-500/10 text-blue-500 text-[10px] font-bold border-none h-5 px-1.5">MF</Badge>
                       ) : (
@@ -126,7 +142,7 @@ export default function MarketSearchPage() {
                   <div className="flex flex-col items-end shrink-0">
                     {item.ltp ? (
                       <>
-                        <div className="text-lg font-black tracking-tighter">
+                        <div className="text-lg font-black tracking-tighter text-white">
                           ₹{item.ltp.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </div>
                         {item.changePercent !== undefined && (
@@ -195,6 +211,15 @@ export default function MarketSearchPage() {
           queryClient.invalidateQueries({ queryKey: HOLDINGS_QUERY_KEY });
         }}
       />
+
+      {screenerSymbol && (
+        <StockScreenerDialog
+          symbol={screenerSymbol}
+          name={screenerName}
+          open={isScreenerOpen}
+          onOpenChange={setIsScreenerOpen}
+        />
+      )}
     </div>
   );
 }
