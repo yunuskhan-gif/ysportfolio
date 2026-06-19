@@ -47,7 +47,7 @@ export class TradyticsCompany extends BaseCompany {
 
 export class DefaultCompany extends BaseCompany {
     constructor() {
-        super("default", "TradyLytics", "default", "default");
+        super("default", "YS Portfolio", "default", "default");
     }
 }
 

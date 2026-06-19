@@ -5,7 +5,7 @@ import Providers from "@/app/providers";
 import PasswordGate from "@/components/auth/PasswordGate";
 
 export const metadata: Metadata = {
-  title: "Tradylytics | Market Intelligence",
+  title: "YS Portfolio | Market Intelligence",
   description: "High-performance financial portfolio tracking and market intelligence dashboard.",
   icons: {
     icon: "/favicon.png",

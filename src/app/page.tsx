@@ -98,7 +98,7 @@ export default function Home() {
       
       {/* 1. Large Background Diagonal Watermark */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden z-0 opacity-[0.02] animate-pulse">
-        <div className="text-[15vw] font-black tracking-[1.2em] text-white -rotate-12 uppercase">
+        <div className="text-[15vw] font-black tracking-[1.2em] text-red-650 -rotate-12 uppercase">
           UNZORA
         </div>
       </div>
@@ -118,7 +118,7 @@ export default function Home() {
               <Database className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <span className="font-black text-lg tracking-wider text-white">TRADYLYTICS</span>
+              <span className="font-black text-lg tracking-wider text-white">YS PORTFOLIO</span>
               <span className="text-[9px] font-bold text-zinc-500 tracking-widest block -mt-1 uppercase">Wealth Intelligence</span>
             </div>
           </div>
@@ -152,7 +152,7 @@ export default function Home() {
         
         {/* Intro Hero Header */}
         <div className="text-center space-y-4 max-w-3xl mx-auto">
-          <Badge variant="outline" className="bg-primary/10 border-primary/20 text-primary font-bold uppercase tracking-widest text-[9px] px-3 py-1">
+          <Badge variant="outline" className="bg-red-500/10 border-red-500/20 text-red-500 font-bold uppercase tracking-widest text-[9px] px-3 py-1">
             Unzora Enterprise Wealth Portal
           </Badge>
           <h1 className="text-4xl md:text-5xl font-black tracking-tight text-white leading-tight">
@@ -271,7 +271,7 @@ export default function Home() {
                     Quick Start & System Overview
                   </h3>
                   <p className="text-zinc-400 text-xs leading-relaxed">
-                    Tradylytics is configured with an active security gate and automatic scheduler dashboard. Here is how to navigate the portal layout:
+                    YS Portfolio is configured with an active security gate and automatic scheduler dashboard. Here is how to navigate the portal layout:
                   </p>
                   <ul className="space-y-2.5 text-xs text-zinc-350">
                     <li className="flex gap-2.5 items-start">
@@ -414,7 +414,7 @@ export default function Home() {
       <div className="fixed bottom-4 right-4 z-50 pointer-events-none opacity-45 hover:opacity-100 transition-opacity">
         <div className="flex items-center gap-1.5 bg-zinc-950/85 border border-zinc-800/80 backdrop-blur-md px-3.5 py-1.5 rounded-full shadow-xl">
           <span className="text-[9px] font-bold text-zinc-500 tracking-wider">POWERED BY</span>
-          <span className="text-xs font-black tracking-widest text-primary">UNZORA</span>
+          <span className="text-xs font-black tracking-widest text-red-500">UNZORA</span>
         </div>
       </div>
 
