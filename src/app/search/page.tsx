@@ -36,10 +36,14 @@ export default function MarketSearchPage() {
   const [screenerSymbol, setScreenerSymbol] = useState<string | null>(null);
   const [screenerName, setScreenerName] = useState<string>("");
   const [isScreenerOpen, setIsScreenerOpen] = useState(false);
+  const [screenerLtp, setScreenerLtp] = useState<number | undefined>(undefined);
+  const [screenerChangePercent, setScreenerChangePercent] = useState<number | undefined>(undefined);
 
   const handleOpenScreener = (stock: SearchResult) => {
     setScreenerSymbol(stock.symbol);
     setScreenerName(stock.name);
+    setScreenerLtp(stock.ltp);
+    setScreenerChangePercent(stock.changePercent);
     setIsScreenerOpen(true);
   };
 
@@ -218,6 +222,8 @@ export default function MarketSearchPage() {
           name={screenerName}
           open={isScreenerOpen}
           onOpenChange={setIsScreenerOpen}
+          initialPrice={screenerLtp}
+          changePercent={screenerChangePercent}
         />
       )}
     </div>

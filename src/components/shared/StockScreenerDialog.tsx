@@ -26,7 +26,8 @@ import {
   XCircle,
   Activity,
   Award,
-  DollarSign
+  DollarSign,
+  Loader2
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
@@ -35,6 +36,8 @@ interface StockScreenerDialogProps {
   name: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  initialPrice?: number;
+  changePercent?: number;
 }
 
 // Deterministic data generation based on ticker symbol hash
@@ -234,20 +237,68 @@ export default function StockScreenerDialog({
   symbol,
   name,
   open,
-  onOpenChange
+  onOpenChange,
+  initialPrice,
+  changePercent
 }: StockScreenerDialogProps) {
   const [range, setRange] = useState<"1M" | "6M" | "1Y">("1Y");
   const [data, setData] = useState<ReturnType<typeof getDeterministicStockData> | null>(null);
   const [chartData, setChartData] = useState<any[]>([]);
   const [activeSection, setActiveSection] = useState<string>("chart");
+  const [chartLoading, setChartLoading] = useState(false);
+  const [chartError, setChartError] = useState<string | null>(null);
 
   useEffect(() => {
     if (open && symbol) {
       const details = getDeterministicStockData(symbol, name);
+      if (initialPrice) {
+        details.price = initialPrice;
+        
+        // Derive hash from cleanSymbol again to make calculations deterministic
+        const cleanSymbol = symbol.split(".")[0].toUpperCase();
+        let hash = 0;
+        for (let i = 0; i < cleanSymbol.length; i++) {
+          hash = cleanSymbol.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        hash = Math.abs(hash);
+        
+        details.high52 = parseFloat((initialPrice * (1.15 + (hash % 15) * 0.01)).toFixed(1));
+        details.low52 = parseFloat((initialPrice * (0.75 + (hash % 10) * 0.01)).toFixed(1));
+        details.bookValue = parseFloat((initialPrice / (1.5 + (hash % 5))).toFixed(1));
+        details.mcap = Math.round((initialPrice * (10000000 + (hash % 50000000))) / 10000000); 
+      }
       setData(details);
-      setChartData(generateChartPoints(details.price, range));
+
+      // Fetch real historical data from our chart API
+      setChartLoading(true);
+      setChartError(null);
+      
+      const queryParams = new URLSearchParams({
+        symbol,
+        name,
+        range,
+        ...(initialPrice ? { ltp: initialPrice.toString() } : {})
+      });
+
+      fetch(`/api/stock-chart?${queryParams.toString()}`)
+        .then((res) => {
+          if (!res.ok) throw new Error("Failed to load chart data");
+          return res.json();
+        })
+        .then((chartPoints) => {
+          setChartData(chartPoints);
+        })
+        .catch((err) => {
+          console.error("Chart fetch error:", err);
+          setChartError(err.message);
+          // Fallback to deterministic points
+          setChartData(generateChartPoints(details.price, range));
+        })
+        .finally(() => {
+          setChartLoading(false);
+        });
     }
-  }, [open, symbol, name, range]);
+  }, [open, symbol, name, range, initialPrice]);
 
   if (!data) return null;
 
@@ -353,7 +404,14 @@ export default function StockScreenerDialog({
             </div>
 
             {/* Recharts Chart */}
-            <div className="space-y-2">
+            <div className="space-y-2 relative min-h-[310px] flex flex-col justify-center">
+              {chartLoading && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-950/60 backdrop-blur-[1px] z-10 gap-2">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  <span className="text-xs text-zinc-400 font-medium">Fetching real-time market data...</span>
+                </div>
+              )}
+              
               <div className="h-[240px] text-[10px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={chartData} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>
