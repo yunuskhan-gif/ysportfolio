@@ -109,11 +109,13 @@ export default function FiiDiiTracker() {
   // Screener dialog states
   const [screenerSymbol, setScreenerSymbol] = useState<string | null>(null);
   const [screenerName, setScreenerName] = useState<string>("");
+  const [screenerPrice, setScreenerPrice] = useState<number | undefined>(undefined);
   const [isScreenerOpen, setIsScreenerOpen] = useState(false);
 
-  const handleOpenScreener = (symbol: string, name: string) => {
+  const handleOpenScreener = (symbol: string, name: string, price?: number) => {
     setScreenerSymbol(symbol);
     setScreenerName(name);
+    setScreenerPrice(price);
     setIsScreenerOpen(true);
   };
 
@@ -851,7 +853,7 @@ export default function FiiDiiTracker() {
                                           <td 
                                             className="py-2.5 px-4 font-bold text-white cursor-pointer hover:text-primary transition-colors"
                                             title="Click to view Screener analysis and charts"
-                                            onClick={() => handleOpenScreener(stk.ticker, stk.stockName)}
+                                            onClick={() => handleOpenScreener(stk.ticker, stk.stockName, stk.price)}
                                           >
                                             {stk.stockName}{" "}
                                             <span className="text-zinc-500 font-semibold font-mono">({stk.ticker})</span>
@@ -1250,6 +1252,7 @@ export default function FiiDiiTracker() {
           name={screenerName}
           open={isScreenerOpen}
           onOpenChange={setIsScreenerOpen}
+          initialPrice={screenerPrice}
         />
       )}
     </div>

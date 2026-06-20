@@ -54,5 +54,26 @@ We have successfully simplified the security architecture, resolved serverless d
   - Submitting the password on `/` authenticates the session globally and forwards the user directly to `/dashboard`.
   - Navigation between the dashboard, tracker, cash book, and settings operates securely and seamlessly under a single global gate.
 
+## Stock Graph Price Fix (FII DII Sector Tracker)
+
+### Bug Root Cause
+In the **FII DII Sector Tracker** page (`src/app/fii-dii-tracker/page.tsx`), clicking a stock in the sector holdings table triggered the `StockScreenerDialog` but did not pass the stock's actual walked price (`stk.price`). As a result:
+1. The dialog fell back to a randomized base price (`priceBase`) between ₹50 and ₹4,550 for the header.
+2. The `/api/stock-chart` route did not receive the `ltp` query parameter. If Yahoo Finance failed (due to network or mock symbols), it defaulted the fallback chart price to ₹100 instead of the real walked price. This caused a massive discrepancy between the header price and the chart prices.
+
+### Fix Implemented
+1. **State Update**: Added a `screenerPrice` state variable to `src/app/fii-dii-tracker/page.tsx`.
+2. **Action Update**: Modified `handleOpenScreener` to accept and store the stock's current price (`stk.price`).
+3. **Prop Binding**: Passed `initialPrice={screenerPrice}` to the `<StockScreenerDialog>` component instance.
+4. **Result**: The stock screener dialog now renders the exact current price in the header, and passes it to the chart API. If Yahoo Finance falls back, it successfully constructs the historical chart anchored perfectly to the actual stock price.
+
+---
+
+## Verification Results
+
+- **TypeScript Compilation**: Ran `npx tsc --noEmit` which completed successfully with **no compile errors** across the entire codebase.
+- **Production Build**: Verified that the app builds and runs successfully.
+
+
 
 
