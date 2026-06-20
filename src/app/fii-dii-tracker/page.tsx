@@ -38,6 +38,7 @@ type StockRow = {
   stockName: string;
   ticker: string;
   price: number;
+  mcap?: number;
   fiiShares: number;
   fiiValue: number;
   diiShares: number;
@@ -110,12 +111,14 @@ export default function FiiDiiTracker() {
   const [screenerSymbol, setScreenerSymbol] = useState<string | null>(null);
   const [screenerName, setScreenerName] = useState<string>("");
   const [screenerPrice, setScreenerPrice] = useState<number | undefined>(undefined);
+  const [screenerMcap, setScreenerMcap] = useState<number | undefined>(undefined);
   const [isScreenerOpen, setIsScreenerOpen] = useState(false);
 
-  const handleOpenScreener = (symbol: string, name: string, price?: number) => {
+  const handleOpenScreener = (symbol: string, name: string, price?: number, mcap?: number) => {
     setScreenerSymbol(symbol);
     setScreenerName(name);
     setScreenerPrice(price);
+    setScreenerMcap(mcap);
     setIsScreenerOpen(true);
   };
 
@@ -840,6 +843,7 @@ export default function FiiDiiTracker() {
                                     <thead>
                                       <tr className="bg-zinc-900/20 border-b border-zinc-800 text-zinc-400 font-semibold uppercase text-[10px] tracking-wider">
                                         <th className="py-2.5 px-4">Share / Company Name</th>
+                                        <th className="py-2.5 px-4 text-right">Market Cap</th>
                                         <th className="py-2.5 px-4 text-right">Market Price</th>
                                         <th className="py-2.5 px-4 text-right">FII Investment</th>
                                         <th className="py-2.5 px-4 text-right">FII Shares Qty</th>
@@ -853,10 +857,13 @@ export default function FiiDiiTracker() {
                                           <td 
                                             className="py-2.5 px-4 font-bold text-white cursor-pointer hover:text-primary transition-colors"
                                             title="Click to view Screener analysis and charts"
-                                            onClick={() => handleOpenScreener(stk.ticker, stk.stockName, stk.price)}
+                                            onClick={() => handleOpenScreener(stk.ticker, stk.stockName, stk.price, stk.mcap)}
                                           >
                                             {stk.stockName}{" "}
                                             <span className="text-zinc-500 font-semibold font-mono">({stk.ticker})</span>
+                                          </td>
+                                          <td className="py-2.5 px-4 text-right tabular-nums text-zinc-400">
+                                            {stk.mcap ? `₹${stk.mcap.toLocaleString("en-IN")} Cr` : "-"}
                                           </td>
                                           <td className="py-2.5 px-4 text-right tabular-nums text-zinc-400">
                                             ₹{stk.price.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
@@ -1253,6 +1260,7 @@ export default function FiiDiiTracker() {
           open={isScreenerOpen}
           onOpenChange={setIsScreenerOpen}
           initialPrice={screenerPrice}
+          initialMcap={screenerMcap}
         />
       )}
     </div>

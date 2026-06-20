@@ -1,0 +1,177 @@
+[
+  {
+    "name": "Travels & Rent.",
+    "ticker": "544242",
+    "price": 10.38,
+    "pe": 7.29,
+    "mcap": 22.17
+  },
+  {
+    "name": "U. Y. Fincorp",
+    "ticker": "UYFINCORP",
+    "price": 14.51,
+    "pe": 5.72,
+    "mcap": 276.04
+  },
+  {
+    "name": "JOJO",
+    "ticker": "531910",
+    "price": 214.95,
+    "pe": 131.88,
+    "mcap": 741.16
+  },
+  {
+    "name": "F Mec Intl. Fin.",
+    "ticker": "539552",
+    "price": 14.06,
+    "pe": 31.11,
+    "mcap": 68.76
+  },
+  {
+    "name": "Asian Energy",
+    "ticker": "ASIANENE",
+    "price": 367.25,
+    "pe": 30.92,
+    "mcap": 1785.24
+  },
+  {
+    "name": "Committed Cargo",
+    "ticker": "COMMITTED",
+    "price": 298.4,
+    "pe": 29.52,
+    "mcap": 345.39
+  },
+  {
+    "name": "CitiPort Fin.",
+    "ticker": "531235",
+    "price": 36.88,
+    "pe": 36.87,
+    "mcap": 11.43
+  },
+  {
+    "name": "Enbee Trade",
+    "ticker": "512441",
+    "price": 0.31,
+    "pe": 4.39,
+    "mcap": 54.94
+  },
+  {
+    "name": "GDL Leasing",
+    "ticker": "530855",
+    "price": 77.61,
+    "pe": 48.6,
+    "mcap": 38.88
+  },
+  {
+    "name": "eMudhra",
+    "ticker": "EMUDHRA",
+    "price": 459.85,
+    "pe": 36.41,
+    "mcap": 3808.1
+  },
+  {
+    "name": "Maxposure",
+    "ticker": "MAXPOSURE",
+    "price": 34.45,
+    "pe": 8.26,
+    "mcap": 78.34
+  },
+  {
+    "name": "Brightcom Group",
+    "ticker": "BCG",
+    "price": 10.29,
+    "pe": 2.16,
+    "mcap": 2076.44
+  },
+  {
+    "name": "Gowra Leasing",
+    "ticker": "530709",
+    "price": 134.96,
+    "pe": 18,
+    "mcap": 104.56
+  },
+  {
+    "name": "Gujarat Kidney",
+    "ticker": "GKSL",
+    "price": 128.42,
+    "pe": 65.32,
+    "mcap": 1012.51
+  },
+  {
+    "name": "Akme Fintrade",
+    "ticker": "AFIL",
+    "price": 10.91,
+    "pe": 11,
+    "mcap": 465.58
+  },
+  {
+    "name": "Cont. Securities",
+    "ticker": "538868",
+    "price": 12.74,
+    "pe": 17.72,
+    "mcap": 38.8
+  },
+  {
+    "name": "Zaggle Prepaid",
+    "ticker": "ZAGGLE",
+    "price": 213.17,
+    "pe": 21.57,
+    "mcap": 2866.25
+  },
+  {
+    "name": "Ashika Credit",
+    "ticker": "ASHIKA",
+    "price": 398.7,
+    "pe": 48.76,
+    "mcap": 2939.44
+  },
+  {
+    "name": "ITCONS E-Soluti.",
+    "ticker": "543806",
+    "price": 309,
+    "pe": 52.92,
+    "mcap": 278.36
+  },
+  {
+    "name": "Nikki Glob.Fin.",
+    "ticker": "531272",
+    "price": 21.5,
+    "pe": 35,
+    "mcap": 7.35
+  },
+  {
+    "name": "Dhruva Cap.Serv.",
+    "ticker": "531237",
+    "price": 433.95,
+    "pe": 121.41,
+    "mcap": 312.02
+  },
+  {
+    "name": "Manba Finance",
+    "ticker": "MANBA",
+    "price": 132.35,
+    "pe": 14.66,
+    "mcap": 664.92
+  },
+  {
+    "name": "Mangal Credit",
+    "ticker": "MANCREDIT",
+    "price": 217.77,
+    "pe": 30.03,
+    "mcap": 459.8
+  },
+  {
+    "name": "Pansari Develop.",
+    "ticker": "PANSARI",
+    "price": 301.25,
+    "pe": 26.42,
+    "mcap": 525.58
+  },
+  {
+    "name": "Yatharth Hospit.",
+    "ticker": "YATHARTH",
+    "price": 839.75,
+    "pe": 46.14,
+    "mcap": 8091.36
+  }
+]

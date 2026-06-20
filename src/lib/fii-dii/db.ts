@@ -25,90 +25,57 @@ const SECTORS_BASE = [
 // Mapping of NSE Sectors to their prominent stocks
 export const SECTOR_STOCKS: Record<
   string,
-  { name: string; ticker: string; price: number; fiiWeight: number; diiWeight: number }[]
+  { name: string; ticker: string; price: number; mcap: number; fiiWeight: number; diiWeight: number }[]
 > = {
   "Financial Services": [
-    { name: "HDFC Bank Ltd", ticker: "HDFCBANK", price: 1500, fiiWeight: 0.35, diiWeight: 0.30 },
-    { name: "ICICI Bank Ltd", ticker: "ICICIBANK", price: 1000, fiiWeight: 0.25, diiWeight: 0.25 },
-    { name: "State Bank of India", ticker: "SBIN", price: 750, fiiWeight: 0.18, diiWeight: 0.20 },
-    { name: "Kotak Mahindra Bank Ltd", ticker: "KOTAKBANK", price: 1800, fiiWeight: 0.12, diiWeight: 0.15 },
-    { name: "Axis Bank Ltd", ticker: "AXISBANK", price: 1100, fiiWeight: 0.10, diiWeight: 0.10 }
+    { name: "U. Y. Fincorp", ticker: "UYFINCORP", price: 14.51, mcap: 276.04, fiiWeight: 0.25, diiWeight: 0.25 },
+    { name: "F Mec Intl. Fin.", ticker: "539552", price: 14.06, mcap: 68.76, fiiWeight: 0.15, diiWeight: 0.15 },
+    { name: "GDL Leasing", ticker: "530855", price: 77.61, mcap: 38.88, fiiWeight: 0.15, diiWeight: 0.15 },
+    { name: "Akme Fintrade", ticker: "AFIL", price: 10.91, mcap: 465.58, fiiWeight: 0.20, diiWeight: 0.20 },
+    { name: "Manba Finance", ticker: "MANBA", price: 132.35, mcap: 664.92, fiiWeight: 0.25, diiWeight: 0.25 }
   ],
   "Information Technology": [
-    { name: "Tata Consultancy Services Ltd", ticker: "TCS", price: 3800, fiiWeight: 0.35, diiWeight: 0.30 },
-    { name: "Infosys Ltd", ticker: "INFY", price: 1500, fiiWeight: 0.30, diiWeight: 0.30 },
-    { name: "HCL Technologies Ltd", ticker: "HCLTECH", price: 1400, fiiWeight: 0.15, diiWeight: 0.20 },
-    { name: "Wipro Ltd", ticker: "WIPRO", price: 480, fiiWeight: 0.12, diiWeight: 0.10 },
-    { name: "Tech Mahindra Ltd", ticker: "TECHM", price: 1250, fiiWeight: 0.08, diiWeight: 0.10 }
+    { name: "eMudhra", ticker: "EMUDHRA", price: 459.85, mcap: 3808.1, fiiWeight: 0.40, diiWeight: 0.40 },
+    { name: "Maxposure", ticker: "MAXPOSURE", price: 34.45, mcap: 78.34, fiiWeight: 0.15, diiWeight: 0.15 },
+    { name: "Brightcom Group", ticker: "BCG", price: 10.29, mcap: 2076.44, fiiWeight: 0.25, diiWeight: 0.25 },
+    { name: "Zaggle Prepaid", ticker: "ZAGGLE", price: 213.17, mcap: 2866.25, fiiWeight: 0.20, diiWeight: 0.20 }
   ],
   "Oil, Gas & Consumable Fuels": [
-    { name: "Reliance Industries Ltd", ticker: "RELIANCE", price: 2900, fiiWeight: 0.55, diiWeight: 0.50 },
-    { name: "Oil & Natural Gas Corporation Ltd", ticker: "ONGC", price: 270, fiiWeight: 0.18, diiWeight: 0.20 },
-    { name: "Bharat Petroleum Corporation Ltd", ticker: "BPCL", price: 600, fiiWeight: 0.10, diiWeight: 0.12 },
-    { name: "Indian Oil Corporation Ltd", ticker: "IOC", price: 170, fiiWeight: 0.09, diiWeight: 0.10 },
-    { name: "Hindustan Petroleum Corporation Ltd", ticker: "HPCL", price: 500, fiiWeight: 0.08, diiWeight: 0.08 }
+    { name: "Asian Energy", ticker: "ASIANENE", price: 367.25, mcap: 1785.24, fiiWeight: 1.0, diiWeight: 1.0 }
   ],
   "FMCG": [
-    { name: "ITC Ltd", ticker: "ITC", price: 430, fiiWeight: 0.40, diiWeight: 0.35 },
-    { name: "Hindustan Unilever Ltd", ticker: "HINDUNILVR", price: 2400, fiiWeight: 0.30, diiWeight: 0.35 },
-    { name: "Nestle India Ltd", ticker: "NESTLEIND", price: 2500, fiiWeight: 0.12, diiWeight: 0.12 },
-    { name: "Britannia Industries Ltd", ticker: "BRITANNIA", price: 5000, fiiWeight: 0.10, diiWeight: 0.10 },
-    { name: "Tata Consumer Products Ltd", ticker: "TATACONSUM", price: 1100, fiiWeight: 0.08, diiWeight: 0.08 }
+    { name: "Nikki Glob.Fin.", ticker: "531272", price: 21.5, mcap: 7.35, fiiWeight: 0.5, diiWeight: 0.5 },
+    { name: "Cont. Securities", ticker: "538868", price: 12.74, mcap: 38.8, fiiWeight: 0.5, diiWeight: 0.5 }
   ],
   "Healthcare": [
-    { name: "Sun Pharmaceutical Industries Ltd", ticker: "SUNPHARMA", price: 1550, fiiWeight: 0.35, diiWeight: 0.30 },
-    { name: "Cipla Ltd", ticker: "CIPLA", price: 1400, fiiWeight: 0.22, diiWeight: 0.25 },
-    { name: "Dr. Reddy's Laboratories Ltd", ticker: "DRREDDY", price: 6100, fiiWeight: 0.18, diiWeight: 0.20 },
-    { name: "Apollo Hospitals Enterprise Ltd", ticker: "APOLLOHOSP", price: 6200, fiiWeight: 0.15, diiWeight: 0.15 },
-    { name: "Divi's Laboratories Ltd", ticker: "DIVISLAB", price: 3800, fiiWeight: 0.10, diiWeight: 0.10 }
+    { name: "Gujarat Kidney", ticker: "GKSL", price: 128.42, mcap: 1012.51, fiiWeight: 0.4, diiWeight: 0.4 },
+    { name: "Yatharth Hospit.", ticker: "YATHARTH", price: 839.75, mcap: 8091.36, fiiWeight: 0.6, diiWeight: 0.6 }
   ],
   "Automobile & Auto Components": [
-    { name: "Tata Motors Ltd", ticker: "TATAMOTORS", price: 950, fiiWeight: 0.30, diiWeight: 0.30 },
-    { name: "Mahindra & Mahindra Ltd", ticker: "M&M", price: 2100, fiiWeight: 0.25, diiWeight: 0.25 },
-    { name: "Maruti Suzuki India Ltd", ticker: "MARUTI", price: 12500, fiiWeight: 0.20, diiWeight: 0.20 },
-    { name: "Bajaj Auto Ltd", ticker: "BAJAJ-AUTO", price: 9000, fiiWeight: 0.15, diiWeight: 0.15 },
-    { name: "Eicher Motors Ltd", ticker: "EICHERMOT", price: 4600, fiiWeight: 0.10, diiWeight: 0.10 }
+    { name: "Ashika Credit", ticker: "ASHIKA", price: 398.7, mcap: 2939.44, fiiWeight: 1.0, diiWeight: 1.0 }
   ],
   "Power": [
-    { name: "NTPC Ltd", ticker: "NTPC", price: 360, fiiWeight: 0.40, diiWeight: 0.35 },
-    { name: "Power Grid Corporation of India Ltd", ticker: "POWERGRID", price: 280, fiiWeight: 0.30, diiWeight: 0.35 },
-    { name: "Adani Power Ltd", ticker: "ADANIPOWER", price: 620, fiiWeight: 0.15, diiWeight: 0.15 },
-    { name: "Tata Power Co Ltd", ticker: "TATAPOWER", price: 430, fiiWeight: 0.15, diiWeight: 0.15 }
+    { name: "JOJO", ticker: "531910", price: 214.95, mcap: 741.16, fiiWeight: 1.0, diiWeight: 1.0 }
   ],
   "Telecommunication": [
-    { name: "Bharti Airtel Ltd", ticker: "BHARTIARTL", price: 1250, fiiWeight: 0.70, diiWeight: 0.65 },
-    { name: "Vodafone Idea Ltd", ticker: "IDEA", price: 13, fiiWeight: 0.20, diiWeight: 0.20 },
-    { name: "Tata Communications Ltd", ticker: "TATACOMM", price: 1850, fiiWeight: 0.10, diiWeight: 0.15 }
+    { name: "CitiPort Fin.", ticker: "531235", price: 36.88, mcap: 11.43, fiiWeight: 1.0, diiWeight: 1.0 }
   ],
   "Capital Goods": [
-    { name: "Larsen & Toubro Ltd", ticker: "LT", price: 3600, fiiWeight: 0.50, diiWeight: 0.45 },
-    { name: "Siemens Ltd", ticker: "SIEMENS", price: 5500, fiiWeight: 0.20, diiWeight: 0.20 },
-    { name: "Bharat Electronics Ltd", ticker: "BEL", price: 230, fiiWeight: 0.18, diiWeight: 0.20 },
-    { name: "ABB India Ltd", ticker: "ABB", price: 6500, fiiWeight: 0.12, diiWeight: 0.15 }
+    { name: "Committed Cargo", ticker: "COMMITTED", price: 298.4, mcap: 345.39, fiiWeight: 0.5, diiWeight: 0.5 },
+    { name: "ITCONS E-Soluti.", ticker: "543806", price: 309, mcap: 278.36, fiiWeight: 0.5, diiWeight: 0.5 }
   ],
   "Metals & Mining": [
-    { name: "Tata Steel Ltd", ticker: "TATASTEEL", price: 155, fiiWeight: 0.35, diiWeight: 0.30 },
-    { name: "JSW Steel Ltd", ticker: "JSWSTEEL", price: 850, fiiWeight: 0.25, diiWeight: 0.25 },
-    { name: "Hindalco Industries Ltd", ticker: "HINDALCO", price: 620, fiiWeight: 0.20, diiWeight: 0.25 },
-    { name: "Coal India Ltd", ticker: "COALINDIA", price: 450, fiiWeight: 0.20, diiWeight: 0.20 }
+    { name: "Enbee Trade", ticker: "512441", price: 0.31, mcap: 54.94, fiiWeight: 1.0, diiWeight: 1.0 }
   ],
   "Chemicals": [
-    { name: "Pidilite Industries Ltd", ticker: "PIDILITIND", price: 2800, fiiWeight: 0.45, diiWeight: 0.40 },
-    { name: "SRF Ltd", ticker: "SRF", price: 2300, fiiWeight: 0.25, diiWeight: 0.25 },
-    { name: "Tata Chemicals Ltd", ticker: "TATACHEM", price: 1100, fiiWeight: 0.18, diiWeight: 0.20 },
-    { name: "Aarti Industries Ltd", ticker: "AARTIIND", price: 650, fiiWeight: 0.12, diiWeight: 0.15 }
+    { name: "Mangal Credit", ticker: "MANCREDIT", price: 217.77, mcap: 459.8, fiiWeight: 1.0, diiWeight: 1.0 }
   ],
   "Construction Materials": [
-    { name: "UltraTech Cement Ltd", ticker: "ULTRACEMCO", price: 9800, fiiWeight: 0.50, diiWeight: 0.45 },
-    { name: "Grasim Industries Ltd", ticker: "GRASIM", price: 2300, fiiWeight: 0.25, diiWeight: 0.25 },
-    { name: "Ambuja Cements Ltd", ticker: "AMBUJACEM", price: 620, fiiWeight: 0.15, diiWeight: 0.15 },
-    { name: "ACC Ltd", ticker: "ACC", price: 2500, fiiWeight: 0.10, diiWeight: 0.15 }
+    { name: "Gowra Leasing", ticker: "530709", price: 134.96, mcap: 104.56, fiiWeight: 1.0, diiWeight: 1.0 }
   ],
   "Consumer Services": [
-    { name: "Zomato Ltd", ticker: "ZOMATO", price: 180, fiiWeight: 0.40, diiWeight: 0.35 },
-    { name: "Titan Company Ltd", ticker: "TITAN", price: 3400, fiiWeight: 0.35, diiWeight: 0.35 },
-    { name: "Indian Hotels Co Ltd", ticker: "INDHOTEL", price: 580, fiiWeight: 0.15, diiWeight: 0.15 },
-    { name: "Trent Ltd", ticker: "TRENT", price: 4200, fiiWeight: 0.10, diiWeight: 0.15 }
+    { name: "Travels & Rent.", ticker: "544242", price: 10.38, mcap: 22.17, fiiWeight: 0.4, diiWeight: 0.4 },
+    { name: "Pansari Develop.", ticker: "PANSARI", price: 301.25, mcap: 525.58, fiiWeight: 0.6, diiWeight: 0.6 }
   ]
 };
 
@@ -117,6 +84,7 @@ export function getStocksForSector(sectorName: string, fiiAuc: number, diiAuc: n
   const stockTemplates = SECTOR_STOCKS[sectorName] || [];
   return stockTemplates.map(s => {
     const walkedPrice = parseFloat((s.price * priceWalkFactor).toFixed(2));
+    const walkedMcap = parseFloat((s.mcap * priceWalkFactor).toFixed(2));
     const fiiValue = parseFloat((fiiAuc * s.fiiWeight).toFixed(2));
     const diiValue = parseFloat((diiAuc * s.diiWeight).toFixed(2));
     
@@ -128,6 +96,7 @@ export function getStocksForSector(sectorName: string, fiiAuc: number, diiAuc: n
       stockName: s.name,
       ticker: s.ticker,
       price: walkedPrice,
+      mcap: walkedMcap,
       fiiShares,
       fiiValue,
       diiShares,
@@ -306,13 +275,17 @@ export function getDB() {
     };
   }
 
-  // Schema Upgrade: check if any reports lack fiiAuc. If so, regenerate.
+  // Schema Upgrade: check if any reports lack fiiAuc or use old stocks. If so, regenerate.
   const dates = Object.keys(db.reports);
   let needsRegen = false;
   if (dates.length > 0) {
     const firstReport = db.reports[dates[0]];
-    if (firstReport && firstReport.length > 0 && firstReport[0].fiiAuc === undefined) {
-      needsRegen = true;
+    if (firstReport && firstReport.length > 0) {
+      const hasOldStocks = firstReport[0].stocks && firstReport[0].stocks.some((stk: any) => stk.ticker === "HDFCBANK");
+      const lacksMcap = firstReport[0].stocks && firstReport[0].stocks.some((stk: any) => stk.mcap === undefined);
+      if (hasOldStocks || lacksMcap || firstReport[0].fiiAuc === undefined) {
+        needsRegen = true;
+      }
     }
   } else {
     needsRegen = true;

@@ -37,6 +37,7 @@ interface StockScreenerDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   initialPrice?: number;
+  initialMcap?: number;
   changePercent?: number;
 }
 
@@ -239,6 +240,7 @@ export default function StockScreenerDialog({
   open,
   onOpenChange,
   initialPrice,
+  initialMcap,
   changePercent
 }: StockScreenerDialogProps) {
   const [range, setRange] = useState<"1M" | "6M" | "1Y">("1Y");
@@ -265,7 +267,9 @@ export default function StockScreenerDialog({
         details.high52 = parseFloat((initialPrice * (1.15 + (hash % 15) * 0.01)).toFixed(1));
         details.low52 = parseFloat((initialPrice * (0.75 + (hash % 10) * 0.01)).toFixed(1));
         details.bookValue = parseFloat((initialPrice / (1.5 + (hash % 5))).toFixed(1));
-        details.mcap = Math.round((initialPrice * (10000000 + (hash % 50000000))) / 10000000); 
+        details.mcap = initialMcap ? initialMcap : Math.round((initialPrice * (10000000 + (hash % 50000000))) / 10000000); 
+      } else if (initialMcap) {
+        details.mcap = initialMcap;
       }
       setData(details);
 
@@ -298,7 +302,7 @@ export default function StockScreenerDialog({
           setChartLoading(false);
         });
     }
-  }, [open, symbol, name, range, initialPrice]);
+  }, [open, symbol, name, range, initialPrice, initialMcap]);
 
   if (!data) return null;
 

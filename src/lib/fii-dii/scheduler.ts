@@ -6,10 +6,88 @@ declare global {
   var __fiiDiiCronJob__: any;
 }
 
+let cachedStocks: { ticker: string; price: number; mcap: number }[] | null = null;
+let lastScrapeTime = 0;
+const CACHE_TTL = 3 * 60 * 1000; // 3 minutes TTL
+
+export async function scrapeAiStocks() {
+  const now = Date.now();
+  if (cachedStocks && (now - lastScrapeTime < CACHE_TTL)) {
+    console.log("[Scheduler] Returning cached AI stocks from screener.in");
+    return cachedStocks;
+  }
+
+  try {
+    const url = "https://www.screener.in/screens/1298880/ai-stocks-screener/";
+    const res = await fetch(url, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0"
+      },
+      signal: AbortSignal.timeout(6000)
+    });
+    if (!res.ok) throw new Error(`HTTP status code ${res.status}`);
+    const html = await res.text();
+    const $ = cheerio.load(html);
+    
+    const stocks: { ticker: string; price: number; mcap: number }[] = [];
+    $("tr[data-row-company-id]").each((idx, el) => {
+      const tds = $(el).find("td");
+      if (tds.length >= 5) {
+        const nameLink = $(tds[1]).find("a");
+        const href = nameLink.attr("href") || "";
+        const tickerMatch = href.match(/\/company\/([^/]+)/);
+        const ticker = tickerMatch ? tickerMatch[1] : "";
+        
+        const cmpVal = parseFloat($(tds[2]).text().trim());
+        const mcapVal = parseFloat($(tds[4]).text().trim());
+        
+        if (ticker && !isNaN(cmpVal) && !isNaN(mcapVal)) {
+          stocks.push({
+            ticker: ticker.toUpperCase(),
+            price: cmpVal,
+            mcap: mcapVal
+          });
+        }
+      }
+    });
+    if (stocks.length > 0) {
+      cachedStocks = stocks;
+      lastScrapeTime = now;
+      console.log(`[Scheduler] Scraped and cached ${stocks.length} AI stocks from screener.`);
+    }
+    return stocks;
+  } catch (err: any) {
+    console.warn(`[Scheduler] Screener AI stocks scrape failed: ${err.message || err}. Using default template fallback.`);
+    return cachedStocks;
+  }
+}
+
 export async function runScheduledFetch() {
   const db = getDB();
   const activeDates = Object.keys(db.reports).sort();
   const latestDateStr = activeDates[activeDates.length - 1];
+  
+  // Try to update SECTOR_STOCKS with live prices/mcaps from Screener
+  try {
+    const scraped = await scrapeAiStocks();
+    if (scraped && scraped.length > 0) {
+      const { SECTOR_STOCKS } = await import("./db");
+      const stockMap = new Map(scraped.map(s => [s.ticker, s]));
+      for (const sectorName of Object.keys(SECTOR_STOCKS)) {
+        const list = SECTOR_STOCKS[sectorName];
+        for (const s of list) {
+          const match = stockMap.get(s.ticker.toUpperCase());
+          if (match) {
+            s.price = match.price;
+            s.mcap = match.mcap;
+          }
+        }
+      }
+      console.log(`[Scheduler] Live AI stock prices & market caps updated from screener.`);
+    }
+  } catch (err) {
+    console.warn("[Scheduler] Failed to update SECTOR_STOCKS templates from screener:", err);
+  }
   
   let newDateStr = "";
   let isSimulated = false;
