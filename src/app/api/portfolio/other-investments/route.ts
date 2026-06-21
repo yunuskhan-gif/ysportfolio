@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
-import OtherInvestmentModel from "@/lib/models/OtherInvestment";
+import { getOtherInvestmentModel } from "@/lib/models/OtherInvestment";
 
 type InvestmentInput = {
   particulars: string;
@@ -23,6 +23,7 @@ function serializeInvestment(doc: any) {
 }
 
 async function getSerializedInvestments() {
+  const OtherInvestmentModel = await getOtherInvestmentModel();
   const investments = await OtherInvestmentModel.find({}).sort({ createdAt: 1 }).lean();
   return investments.map(serializeInvestment);
 }
@@ -37,6 +38,7 @@ export async function PUT(request: Request) {
   const body = (await request.json()) as { investments?: InvestmentInput[] };
   const investments = Array.isArray(body.investments) ? body.investments.map(normalizeInvestment) : [];
 
+  const OtherInvestmentModel = await getOtherInvestmentModel();
   await OtherInvestmentModel.deleteMany({});
 
   if (investments.length > 0) {
@@ -54,6 +56,8 @@ export async function PATCH(request: Request) {
     investment?: InvestmentInput;
     id?: string;
   };
+
+  const OtherInvestmentModel = await getOtherInvestmentModel();
 
   if (body.mode === "append") {
     const investments = Array.isArray(body.investments) ? body.investments.map(normalizeInvestment) : [];
@@ -89,6 +93,7 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ message: "Investment id is required." }, { status: 400 });
   }
 
+  const OtherInvestmentModel = await getOtherInvestmentModel();
   await OtherInvestmentModel.findByIdAndDelete(id);
   return NextResponse.json(await getSerializedInvestments());
 }

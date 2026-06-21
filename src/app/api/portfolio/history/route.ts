@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
-import PortfolioSnapshotModel from "@/lib/models/PortfolioSnapshot";
+import { getPortfolioSnapshotModel } from "@/lib/models/PortfolioSnapshot";
 
 export async function POST(request: Request) {
   try {
@@ -13,6 +13,7 @@ export async function POST(request: Request) {
 
     await connectToDatabase();
 
+    const PortfolioSnapshotModel = await getPortfolioSnapshotModel();
     const snapshot = new PortfolioSnapshotModel({
       totalInvested,
       currentValue,
@@ -35,6 +36,7 @@ export async function GET() {
     await connectToDatabase();
     
     // Get all snapshots, sorted by newest first
+    const PortfolioSnapshotModel = await getPortfolioSnapshotModel();
     const snapshots = await PortfolioSnapshotModel.find({}).sort({ createdAt: -1 });
     
     return NextResponse.json(snapshots);
@@ -53,6 +55,7 @@ export async function DELETE(request: Request) {
     }
 
     await connectToDatabase();
+    const PortfolioSnapshotModel = await getPortfolioSnapshotModel();
     const deleted = await PortfolioSnapshotModel.findByIdAndDelete(id);
 
     if (!deleted) {

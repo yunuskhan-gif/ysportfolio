@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
-import HoldingModel from "@/lib/models/Holding";
+import { getHoldingModel } from "@/lib/models/Holding";
 
 type HoldingInput = {
   symbol: string;
@@ -43,6 +43,7 @@ function serializeHolding(doc: {
 }
 
 async function getSerializedHoldings() {
+  const HoldingModel = await getHoldingModel();
   const holdings = await HoldingModel.find({}).sort({ createdAt: 1 }).lean();
   return holdings.map(serializeHolding);
 }
@@ -57,6 +58,7 @@ export async function PUT(request: Request) {
   const body = (await request.json()) as { holdings?: HoldingInput[] };
   const holdings = Array.isArray(body.holdings) ? body.holdings.map(normalizeHolding) : [];
 
+  const HoldingModel = await getHoldingModel();
   await HoldingModel.deleteMany({});
 
   if (holdings.length > 0) {
@@ -74,6 +76,8 @@ export async function PATCH(request: Request) {
     holding?: HoldingInput;
     id?: string;
   };
+
+  const HoldingModel = await getHoldingModel();
 
   if (body.mode === "append") {
     const holdings = Array.isArray(body.holdings) ? body.holdings.map(normalizeHolding) : [];
@@ -109,6 +113,7 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ message: "Holding id is required." }, { status: 400 });
   }
 
+  const HoldingModel = await getHoldingModel();
   await HoldingModel.findByIdAndDelete(id);
   return NextResponse.json(await getSerializedHoldings());
 }

@@ -1,20 +1,21 @@
 import { NextResponse } from "next/server";
 import { SignJWT } from "jose";
-import { cookies } from "next/headers";
 
 export async function POST(request: Request) {
   try {
     const { password } = await request.json();
     const correctPassword = process.env.APP_PASSWORD;
+    const isDemo = password?.trim() === "demo123";
 
-    if (password?.trim() === correctPassword?.trim()) {
+    if (password?.trim() === correctPassword?.trim() || isDemo) {
+      const username = isDemo ? "demo" : "main";
       const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-      const token = await new SignJWT({ verified: true })
+      const token = await new SignJWT({ verified: true, user: username })
         .setProtectedHeader({ alg: "HS256" })
         .setExpirationTime("30d")
         .sign(secret);
 
-      const response = NextResponse.json({ success: true });
+      const response = NextResponse.json({ success: true, user: username });
       
       // Set HttpOnly cookie
       response.cookies.set("app_auth_token", token, {

@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server";
 import axios from "axios";
 import { connectToDatabase } from "@/lib/mongodb";
-import MotilalScripModel from "@/lib/models/MotilalScrip";
+import { getMotilalScripModel } from "@/lib/models/MotilalScrip";
 
 export async function GET() {
   try {
     await connectToDatabase();
+
+    const MotilalScripModel = await getMotilalScripModel();
 
     // 1. Fetch NSE Master
     const response = await axios.get("https://openapi.motilaloswal.com/getscripmastercsv?name=NSE", {

@@ -1,4 +1,5 @@
-import { Schema, model, models, type InferSchemaType } from "mongoose";
+import { Schema, type InferSchemaType } from "mongoose";
+import { getDynamicModel } from "./dynamicHelper";
 
 const HoldingSchema = new Schema(
   {
@@ -42,6 +43,6 @@ export type HoldingDocument = InferSchemaType<typeof HoldingSchema> & {
   _id: string;
 };
 
-const HoldingModel = models.Holding || model("Holding", HoldingSchema);
-
-export default HoldingModel;
+export async function getHoldingModel() {
+  return getDynamicModel("Holding", HoldingSchema, "holdings");
+}

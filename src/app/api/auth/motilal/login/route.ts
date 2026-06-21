@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
-import MotilalConfigModel from "@/lib/models/MotilalConfig";
+import { getMotilalConfigModel } from "@/lib/models/MotilalConfig";
 
 const DEFAULT_KEY = "default";
 
@@ -10,6 +10,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const next = searchParams.get("next") || "/settings";
 
+    const MotilalConfigModel = await getMotilalConfigModel();
     const config = await MotilalConfigModel.findOne({ key: DEFAULT_KEY });
 
     if (!config?.apiKey) {

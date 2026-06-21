@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import axios from "axios";
 import { connectToDatabase } from "@/lib/mongodb";
-import MotilalConfigModel from "@/lib/models/MotilalConfig";
+import { getMotilalConfigModel } from "@/lib/models/MotilalConfig";
 
 const DEFAULT_KEY = "default";
 
@@ -18,6 +18,7 @@ export async function GET(request: Request) {
 
   try {
     await connectToDatabase();
+    const MotilalConfigModel = await getMotilalConfigModel();
     const config = await MotilalConfigModel.findOne({ key: DEFAULT_KEY });
 
     if (!config?.apiKey || !config?.apiSecretKey) {

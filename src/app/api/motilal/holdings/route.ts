@@ -3,8 +3,8 @@ import axios from "axios";
 import crypto from "crypto";
 import { connectToDatabase } from "@/lib/mongodb";
 import * as OTPAuth from "otpauth";
-import HoldingModel from "@/lib/models/Holding";
-import MotilalConfigModel from "@/lib/models/MotilalConfig";
+import { getHoldingModel } from "@/lib/models/Holding";
+import { getMotilalConfigModel } from "@/lib/models/MotilalConfig";
 
 const DEFAULT_KEY = "default";
 
@@ -36,6 +36,10 @@ export async function POST(request: Request) {
   try {
     await connectToDatabase();
     const body = (await request.json()) as MotilalRequestBody;
+
+    const MotilalConfigModel = await getMotilalConfigModel();
+    const HoldingModel = await getHoldingModel();
+
     const config = await MotilalConfigModel.findOne({ key: DEFAULT_KEY });
 
     console.log("Holdings API Config Check:", {

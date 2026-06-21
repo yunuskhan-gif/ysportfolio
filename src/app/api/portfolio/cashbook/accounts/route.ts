@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
-import CashbookAccountModel from "@/lib/models/CashbookAccount";
-import CashbookEntryModel from "@/lib/models/CashbookEntry";
+import { getCashbookAccountModel } from "@/lib/models/CashbookAccount";
+import { getCashbookEntryModel } from "@/lib/models/CashbookEntry";
 
 function serializeAccount(doc: any) {
   return {
@@ -14,6 +14,7 @@ function serializeAccount(doc: any) {
 }
 
 async function getSerializedAccounts() {
+  const CashbookAccountModel = await getCashbookAccountModel();
   const accounts = await CashbookAccountModel.find({}).sort({ createdAt: 1 }).lean();
   if (accounts.length === 0) {
     const defaultAcc = await CashbookAccountModel.create({
@@ -45,6 +46,7 @@ export async function POST(request: Request) {
     openingBalance: Number(openingBalance) || 0,
   };
 
+  const CashbookAccountModel = await getCashbookAccountModel();
   if (id) {
     await CashbookAccountModel.findByIdAndUpdate(id, payload, { new: true });
   } else {
@@ -62,6 +64,9 @@ export async function DELETE(request: Request) {
   if (!id) {
     return NextResponse.json({ message: "Account ID is required." }, { status: 400 });
   }
+
+  const CashbookAccountModel = await getCashbookAccountModel();
+  const CashbookEntryModel = await getCashbookEntryModel();
 
   // Delete the account
   await CashbookAccountModel.findByIdAndDelete(id);

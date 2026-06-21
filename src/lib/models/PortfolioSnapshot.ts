@@ -1,4 +1,5 @@
-import { Schema, model, models, type InferSchemaType } from "mongoose";
+import { Schema, type InferSchemaType } from "mongoose";
+import { getDynamicModel } from "./dynamicHelper";
 
 const SnapshotHoldingSchema = new Schema(
   {
@@ -32,7 +33,6 @@ export type PortfolioSnapshotDocument = InferSchemaType<typeof PortfolioSnapshot
   createdAt: Date;
 };
 
-const PortfolioSnapshotModel =
-  models.PortfolioSnapshot || model("PortfolioSnapshot", PortfolioSnapshotSchema);
-
-export default PortfolioSnapshotModel;
+export async function getPortfolioSnapshotModel() {
+  return getDynamicModel("PortfolioSnapshot", PortfolioSnapshotSchema, "portfoliosnapshots");
+}

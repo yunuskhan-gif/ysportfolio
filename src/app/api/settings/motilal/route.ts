@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
-import MotilalConfigModel from "@/lib/models/MotilalConfig";
+import { getMotilalConfigModel } from "@/lib/models/MotilalConfig";
 
 const DEFAULT_KEY = "default";
 
@@ -45,6 +45,7 @@ function serializeConfig(doc: {
 
 export async function GET() {
   await connectToDatabase();
+  const MotilalConfigModel = await getMotilalConfigModel();
   const config = await MotilalConfigModel.findOne({ key: DEFAULT_KEY }).lean();
   return NextResponse.json(serializeConfig(config));
 }
@@ -63,6 +64,7 @@ export async function PUT(request: Request) {
     totpSecret: body.totpSecret || "",
   };
 
+  const MotilalConfigModel = await getMotilalConfigModel();
   const config = await MotilalConfigModel.findOneAndUpdate(
     { key: DEFAULT_KEY },
     {
@@ -80,6 +82,7 @@ export async function PUT(request: Request) {
 
 export async function DELETE() {
   await connectToDatabase();
+  const MotilalConfigModel = await getMotilalConfigModel();
   await MotilalConfigModel.findOneAndDelete({ key: DEFAULT_KEY });
   return NextResponse.json({ success: true });
 }

@@ -1,4 +1,5 @@
-import { Schema, model, models, type InferSchemaType } from "mongoose";
+import { Schema, type InferSchemaType } from "mongoose";
+import { getDynamicModel } from "./dynamicHelper";
 
 const CashbookEntrySchema = new Schema(
   {
@@ -40,6 +41,6 @@ export type CashbookEntryDocument = InferSchemaType<typeof CashbookEntrySchema> 
   _id: string;
 };
 
-const CashbookEntryModel = models.CashbookEntry || model("CashbookEntry", CashbookEntrySchema);
-
-export default CashbookEntryModel;
+export async function getCashbookEntryModel() {
+  return getDynamicModel("CashbookEntry", CashbookEntrySchema, "cashbookentries");
+}

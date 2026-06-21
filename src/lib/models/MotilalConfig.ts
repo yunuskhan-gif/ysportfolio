@@ -1,4 +1,5 @@
-import { Schema, model, models, type InferSchemaType } from "mongoose";
+import { Schema, type InferSchemaType } from "mongoose";
+import { getDynamicModel } from "./dynamicHelper";
 
 const MotilalSessionSchema = new Schema(
   {
@@ -82,7 +83,6 @@ export type MotilalConfigDocument = InferSchemaType<typeof MotilalConfigSchema> 
   _id: string;
 };
 
-const MotilalConfigModel =
-  models.MotilalConfig || model("MotilalConfig", MotilalConfigSchema);
-
-export default MotilalConfigModel;
+export async function getMotilalConfigModel() {
+  return getDynamicModel("MotilalConfig", MotilalConfigSchema, "motilalconfigs");
+}

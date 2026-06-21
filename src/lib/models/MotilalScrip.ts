@@ -1,4 +1,5 @@
-import { Schema, model, models } from "mongoose";
+import { Schema } from "mongoose";
+import { getDynamicModel } from "./dynamicHelper";
 
 const MotilalScripSchema = new Schema(
   {
@@ -33,7 +34,6 @@ const MotilalScripSchema = new Schema(
 // Compound index for unique lookups
 MotilalScripSchema.index({ symbol: 1, exchange: 1 }, { unique: true });
 
-const MotilalScripModel =
-  models.MotilalScrip || model("MotilalScrip", MotilalScripSchema);
-
-export default MotilalScripModel;
+export async function getMotilalScripModel() {
+  return getDynamicModel("MotilalScrip", MotilalScripSchema, "motilalscrips");
+}

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
-import CashbookEntryModel from "@/lib/models/CashbookEntry";
+import { getCashbookEntryModel } from "@/lib/models/CashbookEntry";
 
 function serializeEntry(doc: any) {
   return {
@@ -16,6 +16,7 @@ function serializeEntry(doc: any) {
 }
 
 async function getSerializedEntries() {
+  const CashbookEntryModel = await getCashbookEntryModel();
   const entries = await CashbookEntryModel.find({}).sort({ date: 1, createdAt: 1 }).lean();
   return entries.map(serializeEntry);
 }
@@ -43,6 +44,7 @@ export async function POST(request: Request) {
     paymentMode: paymentMode || "Cash",
   };
 
+  const CashbookEntryModel = await getCashbookEntryModel();
   if (id) {
     await CashbookEntryModel.findByIdAndUpdate(id, payload, { new: true });
   } else {
@@ -61,6 +63,7 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ message: "Entry ID is required." }, { status: 400 });
   }
 
+  const CashbookEntryModel = await getCashbookEntryModel();
   await CashbookEntryModel.findByIdAndDelete(id);
 
   return NextResponse.json(await getSerializedEntries());

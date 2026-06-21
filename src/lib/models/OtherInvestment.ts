@@ -1,4 +1,5 @@
-import { Schema, model, models, type InferSchemaType } from "mongoose";
+import { Schema, type InferSchemaType } from "mongoose";
+import { getDynamicModel } from "./dynamicHelper";
 
 const OtherInvestmentSchema = new Schema(
   {
@@ -22,6 +23,6 @@ export type OtherInvestmentDocument = InferSchemaType<typeof OtherInvestmentSche
   _id: string;
 };
 
-const OtherInvestmentModel = models.OtherInvestment || model("OtherInvestment", OtherInvestmentSchema);
-
-export default OtherInvestmentModel;
+export async function getOtherInvestmentModel() {
+  return getDynamicModel("OtherInvestment", OtherInvestmentSchema, "otherinvestments");
+}

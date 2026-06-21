@@ -12,8 +12,8 @@ export async function GET() {
 
   try {
     const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-    await jwtVerify(token, secret);
-    return NextResponse.json({ verified: true });
+    const { payload } = await jwtVerify(token, secret);
+    return NextResponse.json({ verified: true, user: payload.user || "main" });
   } catch (err) {
     return NextResponse.json({ verified: false }, { status: 401 });
   }

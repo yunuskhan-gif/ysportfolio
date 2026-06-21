@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 import * as cheerio from "cheerio";
-import { connectToDatabase } from "@/lib/mongodb";
-import MotilalConfigModel from "@/lib/models/MotilalConfig";
-import MotilalScripModel from "@/lib/models/MotilalScrip";
+import { getMotilalConfigModel } from "@/lib/models/MotilalConfig";
+import { getMotilalScripModel } from "@/lib/models/MotilalScrip";
 
 const sanitizeSymbol = (symbol: string) => symbol.replace(".NS", "").replace(".BO", "");
 

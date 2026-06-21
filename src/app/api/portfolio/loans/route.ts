@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
-import LoanModel from "@/lib/models/Loan";
+import { getLoanModel } from "@/lib/models/Loan";
 
 type LoanInput = {
   bank: string;
@@ -39,6 +39,7 @@ function serializeLoan(doc: {
 }
 
 async function getSerializedLoans() {
+  const LoanModel = await getLoanModel();
   const loans = await LoanModel.find({}).sort({ createdAt: 1 }).lean();
   return loans.map(serializeLoan);
 }
@@ -53,6 +54,7 @@ export async function PUT(request: Request) {
   const body = (await request.json()) as { loans?: LoanInput[] };
   const loans = Array.isArray(body.loans) ? body.loans.map(normalizeLoan) : [];
 
+  const LoanModel = await getLoanModel();
   await LoanModel.deleteMany({});
 
   if (loans.length > 0) {
@@ -70,6 +72,8 @@ export async function PATCH(request: Request) {
     loan?: LoanInput;
     id?: string;
   };
+
+  const LoanModel = await getLoanModel();
 
   if (body.mode === "append") {
     const loans = Array.isArray(body.loans) ? body.loans.map(normalizeLoan) : [];
@@ -105,6 +109,7 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ message: "Loan id is required." }, { status: 400 });
   }
 
+  const LoanModel = await getLoanModel();
   await LoanModel.findByIdAndDelete(id);
   return NextResponse.json(await getSerializedLoans());
 }
