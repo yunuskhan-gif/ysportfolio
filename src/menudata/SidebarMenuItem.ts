@@ -1,4 +1,4 @@
-import { Home, Wallet, KeyRound, History as HistoryIcon, Search, Book, PieChart, Settings, BrainCircuit, Landmark, Coins, TrendingUp, Percent } from "lucide-react";
+import { Home, Wallet, KeyRound, History as HistoryIcon, Search, Book, PieChart, Settings, BrainCircuit, Landmark, Coins, TrendingUp } from "lucide-react";
 
 export const items = [
     {
@@ -31,11 +31,7 @@ export const items = [
       url: "/fii-dii-tracker",
       icon: TrendingUp,
     },
-    {
-      title: "Capital Gains",
-      url: "/capital-gains",
-      icon: Percent,
-    },
+
     {
       title: "Market Search",
       url: "/search",
