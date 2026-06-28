@@ -3,6 +3,9 @@
 import { useState, useMemo, useEffect } from "react";
 import { Plus, ArrowDownCircle, ArrowUpCircle, Trash2, Calendar, BookOpen, Download, FileSpreadsheet, Clipboard, RefreshCw, Check, X, Edit } from "lucide-react";
 import { toast } from "sonner";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import * as XLSX from "xlsx";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -308,6 +311,183 @@ export default function CashBookPage() {
       minimumFractionDigits: 2,
     }).format(value);
 
+  const exportToExcel = () => {
+    try {
+      if (filteredEntriesWithBalance.length === 0) {
+        toast.error("No entries to export");
+        return;
+      }
+
+      // Prepare the data
+      const data = filteredEntriesWithBalance.map((entry) => {
+        const dateStr = new Date(entry.date).toLocaleDateString("en-IN", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        });
+        const timeStr = entry.createdAt
+          ? new Date(entry.createdAt).toLocaleTimeString("en-IN", {
+              hour: "2-digit",
+              minute: "2-digit",
+            })
+          : "";
+
+        return {
+          "Date": `${dateStr} ${timeStr}`.trim(),
+          "Particulars / Remark": entry.remark || "-",
+          "Khata/Account": getAccountName(entry.accountId),
+          "Payment Mode": entry.paymentMode || "-",
+          "Cash Out (Payment)": entry.type === "CASH_OUT" ? entry.amount : 0,
+          "Cash In (Receipt)": entry.type === "CASH_IN" ? entry.amount : 0,
+          "Running Balance": entry.runningBalance,
+        };
+      });
+
+      // Add Opening Balance as the first row
+      const formattedOpeningBalance = {
+        "Date": "-",
+        "Particulars / Remark": "Opening Balance",
+        "Khata/Account": selectedAccount === "ALL" ? "All Accounts" : getAccountName(selectedAccount),
+        "Payment Mode": "-",
+        "Cash Out (Payment)": 0,
+        "Cash In (Receipt)": 0,
+        "Running Balance": periodOpeningBalance,
+      };
+
+      const finalData = [formattedOpeningBalance, ...data];
+
+      // Create Worksheet
+      const ws = XLSX.utils.json_to_sheet(finalData);
+
+      // Set column widths
+      const wscols = [
+        { wch: 20 }, // Date
+        { wch: 30 }, // Particulars
+        { wch: 20 }, // Khata
+        { wch: 15 }, // Payment Mode
+        { wch: 20 }, // Cash Out
+        { wch: 20 }, // Cash In
+        { wch: 20 }, // Running Balance
+      ];
+      ws["!cols"] = wscols;
+
+      // Create Workbook
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Cashbook Entries");
+
+      // Generate file name
+      const accountNameStr = selectedAccount === "ALL" ? "All_Accounts" : getAccountName(selectedAccount).replace(/\s+/g, "_");
+      const dateStr = new Date().toISOString().split("T")[0];
+      const fileName = `Cashbook_${accountNameStr}_${timeFilter}_${dateStr}.xlsx`;
+
+      // Write and download
+      XLSX.writeFile(wb, fileName);
+      toast.success("Excel file downloaded successfully!");
+    } catch (error) {
+      console.error("Excel export error:", error);
+      toast.error("Failed to export Excel file");
+    }
+  };
+
+  const exportToPDF = () => {
+    try {
+      if (filteredEntriesWithBalance.length === 0) {
+        toast.error("No entries to export");
+        return;
+      }
+
+      const doc = new jsPDF();
+
+      // Title & Header Information
+      const accountNameStr = selectedAccount === "ALL" ? "All Accounts" : getAccountName(selectedAccount);
+      doc.setFontSize(18);
+      doc.text("Cash Book Statement", 14, 20);
+      
+      doc.setFontSize(11);
+      doc.setTextColor(100);
+      doc.text(`Account: ${accountNameStr}`, 14, 28);
+      doc.text(`Period: ${timeFilter}`, 14, 34);
+      doc.text(`Generated On: ${new Date().toLocaleDateString("en-IN")} ${new Date().toLocaleTimeString("en-IN")}`, 14, 40);
+
+      // Summary Cards/Values in PDF
+      doc.setFontSize(10);
+      doc.setTextColor(0);
+      doc.text(`Opening Balance: ${formatINR(periodOpeningBalance)}`, 14, 48);
+      doc.text(`Total Cash In: ${formatINR(totalIn)}`, 80, 48);
+      doc.text(`Total Cash Out: ${formatINR(totalOut)}`, 140, 48);
+      doc.text(`Net Balance: ${formatINR(currentBalance)}`, 14, 54);
+
+      // Table Data
+      const tableColumn = ["Date", "Particulars / Khata", "Mode", "Payment (Out)", "Receipt (In)", "Balance"];
+      const tableRows: any[] = [];
+
+      // Add Opening Balance Row
+      tableRows.push([
+        "-",
+        "Opening Balance",
+        "-",
+        "-",
+        "-",
+        formatINR(periodOpeningBalance)
+      ]);
+
+      // Add Entries
+      filteredEntriesWithBalance.forEach((entry) => {
+        const dateStr = new Date(entry.date).toLocaleDateString("en-IN", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        });
+        const timeStr = entry.createdAt
+          ? new Date(entry.createdAt).toLocaleTimeString("en-IN", {
+              hour: "2-digit",
+              minute: "2-digit",
+            })
+          : "";
+
+        const particulars = `${entry.remark || "-"}\n(${getAccountName(entry.accountId)})`;
+        const outVal = entry.type === "CASH_OUT" ? formatINR(entry.amount) : "-";
+        const inVal = entry.type === "CASH_IN" ? formatINR(entry.amount) : "-";
+        const balVal = formatINR(entry.runningBalance);
+
+        tableRows.push([
+          `${dateStr}\n${timeStr}`.trim(),
+          particulars,
+          entry.paymentMode || "-",
+          outVal,
+          inVal,
+          balVal
+        ]);
+      });
+
+      // Generate Table
+      autoTable(doc, {
+        head: [tableColumn],
+        body: tableRows,
+        startY: 60,
+        theme: "striped",
+        headStyles: { fillColor: [79, 70, 229], textColor: [255, 255, 255], fontStyle: "bold" },
+        columnStyles: {
+          0: { cellWidth: 30 }, // Date
+          1: { cellWidth: 55 }, // Particulars
+          2: { cellWidth: 20 }, // Mode
+          3: { cellWidth: 28, halign: "right" }, // Out
+          4: { cellWidth: 28, halign: "right" }, // In
+          5: { cellWidth: 28, halign: "right" }, // Balance
+        },
+        styles: { fontSize: 9, cellPadding: 3 },
+      });
+
+      // Save PDF
+      const fileNameAccount = accountNameStr.replace(/\s+/g, "_");
+      doc.save(`Cashbook_${fileNameAccount}_${timeFilter}.pdf`);
+      toast.success("PDF statement downloaded successfully!");
+    } catch (error) {
+      console.error("PDF export error:", error);
+      toast.error("Failed to export PDF statement");
+    }
+  };
+
   if (accountsLoading || entriesLoading) {
     return (
       <div className="flex h-[50vh] items-center justify-center">
@@ -353,6 +533,29 @@ export default function CashBookPage() {
             <Plus className="h-3.5 w-3.5" />
             Add Khata
           </Button>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="h-8 gap-2 text-xs font-bold w-full sm:w-auto"
+              >
+                <Download className="h-3.5 w-3.5" />
+                Download Report
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-40">
+              <DropdownMenuItem onClick={exportToPDF} className="cursor-pointer gap-2 text-xs font-semibold">
+                <Download className="h-3.5 w-3.5 text-rose-500" />
+                Download PDF
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={exportToExcel} className="cursor-pointer gap-2 text-xs font-semibold">
+                <FileSpreadsheet className="h-3.5 w-3.5 text-emerald-500" />
+                Download Excel
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           {selectedAccount !== "ALL" && (
             <Button 
