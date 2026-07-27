@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import ExcelUploadDialog from "@/components/portfolio/ExcelUploadDialog";
 import AddStockDialog from "@/components/portfolio/AddStockDialog";
+import UserProfileMenu from "@/components/shared/UserProfileMenu";
 import { fetchMotilalHoldings, HOLDINGS_QUERY_KEY } from "@/lib/portfolio-api";
 import { MOTILAL_SYNC_EVENT } from "@/lib/motilal-storage";
 
@@ -113,6 +114,7 @@ export default function NextAppShell({ children }: { children: React.ReactNode }
                   <span className="hidden sm:inline">Upload {isMFPage ? "MFs" : "Excel"}</span>
                 </Button>
               )}
+              <UserProfileMenu />
             </div>
           </div>
         </header>

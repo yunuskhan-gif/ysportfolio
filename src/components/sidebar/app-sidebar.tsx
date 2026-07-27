@@ -1,6 +1,8 @@
 "use client";
 
-import { Moon, Sun, Plus, Palette, LogOut } from "lucide-react";
+import { Moon, Sun, Plus, Palette, LogOut, User, ShieldCheck } from "lucide-react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import {
   Sidebar,
   SidebarContent,
@@ -32,11 +34,33 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { state, isMobile } = useSidebar();
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isAddStockOpen, setIsAddStockOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<string | null>(null);
   const selectableThemes = ALL_THEMES.filter((theme) => theme.value !== "system");
 
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const res = await fetch("/api/auth/me");
+        if (res.ok) {
+          const data = await res.json();
+          setCurrentUser(data.user || null);
+        }
+      } catch (err) {
+        setCurrentUser(null);
+      }
+    }
+    fetchUser();
+  }, []);
+
+  const isAdmin = currentUser === "main";
+  const availableItems = isAdmin
+    ? items
+    : items.filter((item) => item.url !== "/users");
+
   const displayItems = isMobile
-    ? items.filter((item) => item.url !== "/search")
-    : items;
+    ? availableItems.filter((item) => item.url !== "/search")
+    : availableItems;
+
   const actionItems = [
     {
       title: "Add Stock",
@@ -83,6 +107,34 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarContent>
 
       <SidebarFooter className="space-y-2">
+        {currentUser && (
+          <div className="mx-1 my-1 p-2 rounded-xl bg-zinc-900/60 border border-zinc-800/80 transition-all">
+            <div className="flex items-center gap-2.5">
+              <div className="relative shrink-0">
+                <Avatar className="h-7 w-7 border border-red-500/30 bg-gradient-to-br from-red-500 to-rose-700 text-white font-bold text-[10px]">
+                  <AvatarFallback className="bg-transparent text-white font-bold">
+                    {currentUser.substring(0, 2).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full bg-emerald-500 ring-2 ring-zinc-950" />
+              </div>
+              {state !== "collapsed" && (
+                <div className="min-w-0 flex-1 leading-tight">
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="text-xs font-black text-white truncate">{currentUser}</span>
+                    <Badge variant="outline" className={`text-[8px] px-1 py-0 h-3.5 font-mono ${
+                      isAdmin ? "bg-red-500/10 text-red-400 border-red-500/30" : "bg-blue-500/10 text-blue-400 border-blue-500/30"
+                    }`}>
+                      {isAdmin ? "Admin" : "User"}
+                    </Badge>
+                  </div>
+                  <span className="text-[9px] text-zinc-400 truncate block">Logged in profile</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>

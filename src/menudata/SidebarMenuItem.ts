@@ -1,4 +1,4 @@
-import { Home, Wallet, KeyRound, History as HistoryIcon, Search, Book, PieChart, Settings, BrainCircuit, Landmark, Coins, TrendingUp } from "lucide-react";
+import { Home, Wallet, KeyRound, History as HistoryIcon, Search, Book, PieChart, Settings, BrainCircuit, Landmark, Coins, TrendingUp, Users } from "lucide-react";
 
 export const items = [
     {
@@ -26,11 +26,6 @@ export const items = [
       url: "/other-investments",
       icon: Coins,
     },
-    {
-      title: "FII DII Tracker",
-      url: "/fii-dii-tracker",
-      icon: TrendingUp,
-    },
 
     {
       title: "Market Search",
@@ -51,6 +46,11 @@ export const items = [
       title: "Cash Book",
       url: "/cashbook",
       icon: Book,
+    },
+    {
+      title: "Manage Users",
+      url: "/users",
+      icon: Users,
     },
     {
       title: "Settings",

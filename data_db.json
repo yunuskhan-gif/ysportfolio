@@ -5614,5 +5614,13 @@
         ]
       }
     ]
+  },
+  "appUsers": {
+    "test": {
+      "id": "6a67257081ad1be4545f7532",
+      "username": "test",
+      "password": "123",
+      "createdAt": "2026-07-27T09:31:28.670Z"
+    }
   }
 }

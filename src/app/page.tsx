@@ -46,6 +46,8 @@ export default function Home() {
 
   // Auth states
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
+  const [currentUsername, setCurrentUsername] = useState<string | null>(null);
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [authLoading, setAuthLoading] = useState(false);
   const [shake, setShake] = useState(false);
@@ -58,11 +60,14 @@ export default function Home() {
         if (res.ok) {
           const data = await res.json();
           setIsLoggedIn(data.verified);
+          setCurrentUsername(data.user || "main");
         } else {
           setIsLoggedIn(false);
+          setCurrentUsername(null);
         }
       } catch (err) {
         setIsLoggedIn(false);
+        setCurrentUsername(null);
       }
     }
     checkSession();
@@ -78,17 +83,20 @@ export default function Home() {
       const res = await fetch("/api/auth/verify-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password })
+        body: JSON.stringify({ username: username.trim() || undefined, password })
       });
 
-      if (res.ok) {
+      const data = await res.json();
+
+      if (res.ok && data.success) {
         setIsLoggedIn(true);
-        toast.success("Access Granted! Welcome back.");
+        setCurrentUsername(data.user || username.trim() || "main");
+        toast.success(`Access Granted! Welcome back ${data.user || ""}`);
         router.push("/dashboard");
       } else {
         setShake(true);
         setTimeout(() => setShake(false), 500);
-        toast.error("Invalid password. Please try again.");
+        toast.error("Invalid credentials. Please try again.");
       }
     } catch (err) {
       toast.error("Network error. Please try again.");
@@ -105,7 +113,6 @@ export default function Home() {
   const guideTabs = [
     { id: "quick-start", label: "Quick Start Guide", icon: Zap },
     { id: "portfolio-sync", label: "Portfolio & MFs", icon: Wallet },
-    { id: "fii-dii-screener", label: "FII DII & Screener", icon: TrendingUp },
     { id: "ai-ledger", label: "AI Insights & Ledgers", icon: BrainCircuit }
   ];
 
@@ -290,24 +297,49 @@ export default function Home() {
               {isLoggedIn === null ? (
                 <Loader2 className="h-6 w-6 animate-spin text-red-500 opacity-50" />
               ) : isLoggedIn ? (
-                <div className="w-full max-w-xs pt-2">
+                <div className="w-full max-w-xs space-y-4 pt-2">
+                  {currentUsername && (
+                    <div className="p-3 bg-zinc-900/80 border border-zinc-800 rounded-2xl flex items-center justify-between gap-3 shadow-lg">
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-red-500 to-rose-700 flex items-center justify-center text-white font-black text-sm shadow-md border border-red-500/30">
+                          {currentUsername.substring(0, 2).toUpperCase()}
+                        </div>
+                        <div className="text-left">
+                          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-bold block">Logged in as</span>
+                          <span className="text-sm font-black text-white block leading-tight">{currentUsername}</span>
+                        </div>
+                      </div>
+                      <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full border ${
+                        currentUsername === "main" ? "bg-red-500/10 text-red-400 border-red-500/30" : "bg-blue-500/10 text-blue-400 border-blue-500/30"
+                      }`}>
+                        {currentUsername === "main" ? "Admin" : "User"}
+                      </span>
+                    </div>
+                  )}
+
                   <Button 
                     onClick={() => router.push("/dashboard")}
-                    className="w-full h-11 text-xs font-bold gap-2 uppercase tracking-widest cursor-pointer bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white shadow-lg active:scale-95 transition-transform"
+                    className="w-full h-11 text-xs font-bold gap-2 uppercase tracking-widest cursor-pointer bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white shadow-lg active:scale-95 transition-transform rounded-xl"
                   >
                     Enter Dashboard Console
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </div>
               ) : (
-                <form onSubmit={handleHomeLogin} className={`w-full max-w-xs space-y-3.5 transition-transform ${shake ? "animate-bounce" : ""}`}>
+                <form onSubmit={handleHomeLogin} className={`w-full max-w-xs space-y-3 transition-transform ${shake ? "animate-bounce" : ""}`}>
+                  <Input
+                    type="text"
+                    placeholder="User ID / Username (Optional)"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className="bg-zinc-900/50 border-zinc-800 focus:border-red-500/50 focus:ring-red-500/10 h-10 text-center text-white placeholder:text-zinc-650 text-xs rounded-xl"
+                  />
                   <Input
                     type="password"
                     placeholder="Enter Security Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="bg-zinc-900/50 border-zinc-800 focus:border-red-500/50 focus:ring-red-500/10 h-11 text-center tracking-widest text-white placeholder:text-zinc-650 text-sm rounded-xl"
-                    autoFocus
+                    className="bg-zinc-900/50 border-zinc-800 focus:border-red-500/50 focus:ring-red-500/10 h-10 text-center tracking-widest text-white placeholder:text-zinc-650 text-xs rounded-xl"
                   />
                   <Button
                     type="submit"
@@ -362,18 +394,6 @@ export default function Home() {
               <h3 className="text-sm font-extrabold text-white uppercase tracking-wider mb-2">Mutual Fund NAV Tracker</h3>
               <p className="text-zinc-450 text-xs leading-relaxed">
                 Integrated search for Indian Mutual Funds across `api.mfapi.in` database models. Generates clean interactive NAV history charts with genuine live date-time indices.
-              </p>
-            </div>
-
-            {/* Feature 3 */}
-            <div className="bg-zinc-950/40 border border-zinc-900 p-6 rounded-2xl hover:border-zinc-850 hover:bg-zinc-900/10 transition-all group relative overflow-hidden hover:shadow-xl hover:shadow-amber-500/[0.02]">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/[0.02] rounded-full blur-xl group-hover:bg-amber-500/[0.04] transition-all" />
-              <div className="h-10 w-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 mb-4 group-hover:scale-105 transition-transform">
-                <TrendingUp className="h-5 w-5" />
-              </div>
-              <h3 className="text-sm font-extrabold text-white uppercase tracking-wider mb-2">FII & DII Flows Monitor</h3>
-              <p className="text-zinc-450 text-xs leading-relaxed">
-                Analyze net buyer/seller flows for Domestic and Foreign institutional operations in Indian markets. Expand sectors to audit specific weight indexes and stock metrics.
               </p>
             </div>
 
@@ -516,32 +536,6 @@ export default function Home() {
                       </p>
                     </div>
                   </div>
-                </div>
-              )}
-
-              {activeGuideTab === "fii-dii-screener" && (
-                <div className="space-y-4 animate-in fade-in duration-300">
-                  <h3 className="text-base font-extrabold text-white flex items-center gap-2 uppercase tracking-wide">
-                    <TrendingUp className="h-4.5 w-4.5 text-red-500" />
-                    FII DII Tracking & Screener.in Views
-                  </h3>
-                  <p className="text-zinc-450 text-xs leading-relaxed">
-                    Track large institutional investment cycles inside Indian equities:
-                  </p>
-                  <ul className="space-y-2.5 text-xs text-zinc-400">
-                    <li className="flex gap-2 items-start">
-                      <CheckCircle2 className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
-                      <span>**Historical NAV Charts:** Pulls real-time prices for MFs with precise date-times directly from Yahoo Finance and AMFI.</span>
-                    </li>
-                    <li className="flex gap-2 items-start">
-                      <CheckCircle2 className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
-                      <span>**Sectors Breakdown:** Audit FII/DII Net Flow values and expand weight tables to discover stock weight percentages inside sector logs.</span>
-                    </li>
-                    <li className="flex gap-2 items-start">
-                      <CheckCircle2 className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
-                      <span>**Screener details:** Pulls ROCE, margins, sales history, P/E ratios, and stock charts dynamically inside single layout overlay panels.</span>
-                    </li>
-                  </ul>
                 </div>
               )}
 
