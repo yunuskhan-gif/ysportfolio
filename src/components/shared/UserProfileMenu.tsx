@@ -100,23 +100,11 @@ export default function UserProfileMenu({ compact = false }: UserProfileMenuProp
             compact ? "px-1.5 sm:px-2.5" : "px-2.5"
           }`}
         >
-          <div className="relative flex items-center justify-center">
-            <Avatar className="h-6 w-6 border border-zinc-700 bg-gradient-to-br from-red-500 to-rose-700 text-white font-bold text-[10px]">
-              <AvatarFallback className="bg-transparent text-white font-bold">
-                {initials}
-              </AvatarFallback>
-            </Avatar>
-            <span className="absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full bg-emerald-500 ring-2 ring-zinc-950" />
-          </div>
+          {isAdmin ? <ShieldCheck className="h-4 w-4 text-emerald-400" /> : <User className="h-4 w-4 text-zinc-400" />}
 
-          <div className="hidden sm:flex flex-col items-start text-left leading-none">
-            <span className="text-xs font-bold text-zinc-100 max-w-[100px] truncate">
-              {currentUser}
-            </span>
-            <span className="text-[9px] text-zinc-400 font-medium">
-              {isAdmin ? "Admin" : "User"}
-            </span>
-          </div>
+          <span className="hidden sm:inline text-xs font-bold text-zinc-100">
+            {isAdmin ? "Admin" : "User"}
+          </span>
 
           <ChevronDown className="h-3.5 w-3.5 text-zinc-400 opacity-70" />
         </Button>
@@ -125,14 +113,10 @@ export default function UserProfileMenu({ compact = false }: UserProfileMenuProp
       <DropdownMenuContent align="end" className="w-64 bg-zinc-950 border-zinc-800 text-zinc-200 p-2 shadow-2xl rounded-2xl">
         <DropdownMenuLabel className="font-normal p-2 pb-3 border-b border-zinc-900">
           <div className="flex items-center gap-3">
-            <Avatar className="h-10 w-10 border border-red-500/30 bg-gradient-to-br from-red-500 to-rose-700 text-white shadow-md">
-              <AvatarFallback className="bg-transparent text-white text-xs font-black">
-                {initials}
-              </AvatarFallback>
-            </Avatar>
+            {isAdmin ? <ShieldCheck className="h-5 w-5 text-emerald-400" /> : <User className="h-5 w-5 text-zinc-400" />}
             <div className="space-y-1 min-w-0 flex-1">
               <div className="flex items-center justify-between gap-1">
-                <p className="text-sm font-black text-white truncate">{currentUser}</p>
+                <p className="text-sm font-black text-white truncate">{isAdmin ? "Admin" : "User"}</p>
                 {isAdmin ? (
                   <Badge variant="outline" className="bg-red-500/10 border-red-500/30 text-red-400 text-[9px] font-mono shrink-0">
                     Admin
@@ -183,7 +167,7 @@ export default function UserProfileMenu({ compact = false }: UserProfileMenuProp
           className="cursor-pointer rounded-xl text-red-400 hover:text-red-300 hover:bg-red-500/10 focus:bg-red-500/10 py-2 text-xs font-bold gap-2.5"
         >
           <LogOut className="h-4 w-4" />
-          <span>Log out profile ({currentUser})</span>
+          <span>Log out</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
