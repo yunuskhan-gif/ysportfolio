@@ -8,6 +8,8 @@ type LoanInput = {
   type: string;
   emi: number;
   outstanding: number;
+  roi?: number;
+  tenureMonths?: number;
 };
 
 function normalizeLoan(loan: LoanInput) {
@@ -17,6 +19,8 @@ function normalizeLoan(loan: LoanInput) {
     type: loan.type.trim().toUpperCase(),
     emi: Number(loan.emi),
     outstanding: Number(loan.outstanding),
+    roi: Number(loan.roi ?? 0),
+    tenureMonths: Number(loan.tenureMonths ?? 0),
   };
 }
 
@@ -27,6 +31,8 @@ function serializeLoan(doc: {
   type: string;
   emi: number;
   outstanding: number;
+  roi?: number;
+  tenureMonths?: number;
 }) {
   return {
     id: doc._id.toString(),
@@ -35,6 +41,8 @@ function serializeLoan(doc: {
     type: doc.type,
     emi: doc.emi,
     outstanding: doc.outstanding,
+    roi: doc.roi ?? 0,
+    tenureMonths: doc.tenureMonths ?? 0,
   };
 }
 

@@ -38,7 +38,7 @@ import {
 import * as XLSX from "xlsx";
 import { Badge } from "@/components/ui/badge";
 
-type SortField = "bank" | "type" | "sanctionLoan" | "emi" | "outstanding";
+type SortField = "bank" | "type" | "sanctionLoan" | "emi" | "outstanding" | "roi" | "tenureMonths";
 type SortDirection = "asc" | "desc";
 
 const formatINR = (value: number) =>
@@ -66,14 +66,14 @@ const LoansShimmer = () => (
       <div className="p-4">
         <div className="rounded-md border p-4 bg-muted/10">
           <div className="space-y-4">
-            <div className="grid grid-cols-6 gap-4 pb-2 border-b">
-              {Array.from({ length: 6 }).map((_, i) => (
+            <div className="grid grid-cols-8 gap-4 pb-2 border-b">
+              {Array.from({ length: 8 }).map((_, i) => (
                 <Skeleton key={i} className="h-4 w-full" />
               ))}
             </div>
             {Array.from({ length: 5 }).map((_, rowIndex) => (
-              <div key={rowIndex} className="grid grid-cols-6 gap-4 py-1">
-                {Array.from({ length: 6 }).map((_, colIndex) => (
+              <div key={rowIndex} className="grid grid-cols-8 gap-4 py-1">
+                {Array.from({ length: 8 }).map((_, colIndex) => (
                   <Skeleton key={colIndex} className="h-8 w-full rounded-md" />
                 ))}
               </div>
@@ -158,6 +158,15 @@ export default function Loans() {
   const totalSanctioned = useMemo(() => loans.reduce((sum, l) => sum + l.sanctionLoan, 0), [loans]);
   const totalEMI = useMemo(() => loans.reduce((sum, l) => sum + l.emi, 0), [loans]);
   const activeLoansCount = loans.length;
+
+  const highestRoiLoan = useMemo(() => {
+    if (!loans || loans.length === 0) return null;
+    return loans.reduce<Loan | null>((max, curr) => {
+      const currRoi = curr.roi ?? 0;
+      const maxRoi = max?.roi ?? 0;
+      return currRoi > maxRoi ? curr : max;
+    }, null);
+  }, [loans]);
 
   const selectedOnPageCount = paginatedLoans.filter((loan) =>
     loan.id ? selectedIds.includes(loan.id) : false
@@ -251,6 +260,8 @@ export default function Loans() {
         "Loan Type": l.type,
         "Sanctioned Amount": l.sanctionLoan,
         "Monthly EMI": l.emi,
+        "Rate of Interest (%)": l.roi ?? 0,
+        "Tenure (Months)": l.tenureMonths ?? 0,
         "Outstanding Amount": l.outstanding,
       }));
 
@@ -259,7 +270,7 @@ export default function Loans() {
       XLSX.utils.book_append_sheet(workbook, worksheet, "Loans");
 
       const max_width = exportData.reduce((w, r) => Math.max(w, String(r["Bank / Lender"]).length), 12);
-      worksheet["!cols"] = [{ wch: max_width }, { wch: 15 }, { wch: 15 }, { wch: 12 }, { wch: 15 }];
+      worksheet["!cols"] = [{ wch: max_width }, { wch: 15 }, { wch: 15 }, { wch: 12 }, { wch: 18 }, { wch: 15 }, { wch: 15 }];
 
       XLSX.writeFile(workbook, `Loans_Export_${new Date().toISOString().split("T")[0]}.xlsx`);
       toast.success("Excel file downloaded!");
@@ -275,8 +286,8 @@ export default function Loans() {
         return;
       }
 
-      const headers = ["Bank / Lender", "Loan Type", "Sanctioned Amount", "Monthly EMI", "Outstanding Amount"];
-      const rows = loans.map((l) => [l.bank, l.type, l.sanctionLoan, l.emi, l.outstanding]);
+      const headers = ["Bank / Lender", "Loan Type", "Sanctioned Amount", "Monthly EMI", "Rate of Interest (%)", "Tenure (Months)", "Outstanding Amount"];
+      const rows = loans.map((l) => [l.bank, l.type, l.sanctionLoan, l.emi, l.roi ? `${l.roi}%` : "0%", l.tenureMonths ? `${l.tenureMonths} mos` : "0", l.outstanding]);
       const content = [headers, ...rows].map((r) => r.join("\t")).join("\n");
 
       await navigator.clipboard.writeText(content);
@@ -489,6 +500,18 @@ export default function Loans() {
                         <SortIcon field="emi" />
                       </div>
                     </th>
+                    <th className="text-right px-4 py-2.5 font-bold uppercase tracking-tight text-muted-foreground select-none cursor-pointer" onClick={() => handleSort("roi")}>
+                      <div className="flex items-center gap-1 justify-end">
+                        ROI (%)
+                        <SortIcon field="roi" />
+                      </div>
+                    </th>
+                    <th className="text-right px-4 py-2.5 font-bold uppercase tracking-tight text-muted-foreground select-none cursor-pointer" onClick={() => handleSort("tenureMonths")}>
+                      <div className="flex items-center gap-1 justify-end">
+                        Tenure (Mo)
+                        <SortIcon field="tenureMonths" />
+                      </div>
+                    </th>
                     <th className="text-right px-4 py-2.5 font-bold uppercase tracking-tight text-muted-foreground select-none cursor-pointer" onClick={() => handleSort("outstanding")}>
                       <div className="flex items-center gap-1 justify-end">
                         Outstanding
@@ -520,6 +543,12 @@ export default function Loans() {
                       </td>
                       <td className="px-4 py-2.5 text-right font-semibold text-destructive tabular-nums">
                         {formatINR(l.emi)}
+                      </td>
+                      <td className="px-4 py-2.5 text-right font-semibold text-primary tabular-nums">
+                        {l.roi && Number(l.roi) > 0 ? `${l.roi}%` : "—"}
+                      </td>
+                      <td className="px-4 py-2.5 text-right font-medium text-muted-foreground tabular-nums">
+                        {l.tenureMonths && Number(l.tenureMonths) > 0 ? `${l.tenureMonths} mos` : "—"}
                       </td>
                       <td className="px-4 py-2.5 text-right font-black text-orange-500 tabular-nums">
                         {formatINR(l.outstanding)}

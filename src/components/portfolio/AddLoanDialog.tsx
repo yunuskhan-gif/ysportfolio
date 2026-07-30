@@ -17,6 +17,8 @@ interface LoanFormState {
   type: string;
   emi: string;
   outstanding: string;
+  roi: string;
+  tenureMonths: string;
 }
 
 interface AddLoanDialogProps {
@@ -33,6 +35,8 @@ const INITIAL_FORM: LoanFormState = {
   type: "PERSONAL LOAN",
   emi: "",
   outstanding: "",
+  roi: "",
+  tenureMonths: "",
 };
 
 const LOAN_TYPES = [
@@ -87,6 +91,8 @@ export default function AddLoanDialog({
         type: initialLoan.type,
         emi: String(initialLoan.emi),
         outstanding: String(initialLoan.outstanding),
+        roi: initialLoan.roi && Number(initialLoan.roi) > 0 ? String(initialLoan.roi) : "",
+        tenureMonths: initialLoan.tenureMonths && Number(initialLoan.tenureMonths) > 0 ? String(initialLoan.tenureMonths) : "",
       });
       return;
     }
@@ -100,6 +106,8 @@ export default function AddLoanDialog({
     const sanctionLoan = Number(formState.sanctionLoan);
     const emi = Number(formState.emi);
     const outstanding = Number(formState.outstanding);
+    const roi = Number(formState.roi || 0);
+    const tenureMonths = Number(formState.tenureMonths || 0);
 
     if (!bank || sanctionLoan <= 0 || emi < 0 || outstanding < 0) {
       toast.error("Please fill in valid loan details.");
@@ -112,6 +120,8 @@ export default function AddLoanDialog({
       type,
       emi,
       outstanding,
+      roi,
+      tenureMonths,
     };
 
     try {
@@ -186,6 +196,21 @@ export default function AddLoanDialog({
                 />
               </div>
               <div className="space-y-1.5">
+                <Label htmlFor="loan-roi" className="text-xs font-bold uppercase text-muted-foreground">Rate of Interest (%)</Label>
+                <Input
+                  id="loan-roi"
+                  type="number"
+                  step="0.01"
+                  value={formState.roi}
+                  onChange={(event) => handleFormChange("roi", event.target.value)}
+                  placeholder="e.g. 8.5"
+                  className="h-10 sm:h-11 font-bold"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
                 <Label htmlFor="loan-type" className="text-xs font-bold uppercase text-muted-foreground">Loan Type</Label>
                 <select
                   id="loan-type"
@@ -199,6 +224,17 @@ export default function AddLoanDialog({
                     </option>
                   ))}
                 </select>
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="loan-tenure" className="text-xs font-bold uppercase text-muted-foreground">Tenure (Months)</Label>
+                <Input
+                  id="loan-tenure"
+                  type="number"
+                  value={formState.tenureMonths}
+                  onChange={(event) => handleFormChange("tenureMonths", event.target.value)}
+                  placeholder="e.g. 24"
+                  className="h-10 sm:h-11 font-bold"
+                />
               </div>
             </div>
           </div>

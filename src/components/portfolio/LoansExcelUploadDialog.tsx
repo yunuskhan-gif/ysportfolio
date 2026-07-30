@@ -92,11 +92,30 @@ export default function LoansExcelUploadDialog({
             /^current balance$/,
           ]);
 
+          const roiKey = findColumn(keys, [
+            /^roi$/,
+            /^rate of interest$/,
+            /^interest rate$/,
+            /^roi %$/,
+            /^interest$/,
+          ]);
+
+          const tenureKey = findColumn(keys, [
+            /^tenure$/,
+            /^months$/,
+            /^tenure months$/,
+            /^tenure \(months\)$/,
+            /^duration$/,
+            /^loan tenure$/,
+          ]);
+
           const bank = String(row[bankKey] || "").trim();
           const sanctionLoan = parseNumber(row[sanctionKey || ""]);
           const type = typeKey ? String(row[typeKey] || "").trim().toUpperCase() : "PERSONAL LOAN";
           const emi = parseNumber(row[emiKey || ""]);
           const outstanding = parseNumber(row[outstandingKey || ""]);
+          const roi = parseNumber(row[roiKey || ""]);
+          const tenureMonths = parseNumber(row[tenureKey || ""]);
 
           if (bank && sanctionLoan > 0) {
             loans.push({
@@ -105,12 +124,14 @@ export default function LoansExcelUploadDialog({
               type: type || "PERSONAL LOAN",
               emi,
               outstanding,
+              roi,
+              tenureMonths,
             });
           }
         }
 
         if (loans.length === 0) {
-          setError("Could not find valid loan data. Make sure columns have Bank, Sanction Loan, Type, EMI, Outstanding.");
+          setError("Could not find valid loan data. Make sure columns have Bank, Sanction Loan, Type, EMI, ROI, Tenure, Outstanding.");
           toast.error("Could not find valid loan data in the file.");
           return;
         }
@@ -144,9 +165,6 @@ export default function LoansExcelUploadDialog({
   const handleConfirm = async () => {
     try {
       const existingLoans = await fetchLoans();
-      // Combine / Merge or replace. The user rules for portfolio data uploads usually suggest:
-      // "non-destructive imports that isolate mutual funds from stock holdings" or "ExcelUploadDialog component to handle data merging"
-      // For loans, merging based on Bank & Type is good, or simply appending, or overwriting if they prefer. Let's merge by bank & type so we don't duplicate, or just append. Let's merge:
       const mergedLoans = [...existingLoans];
       for (const item of preview) {
         const idx = mergedLoans.findIndex(
@@ -183,7 +201,7 @@ export default function LoansExcelUploadDialog({
         <DialogHeader>
           <DialogTitle className="text-sm font-semibold">Upload Loans Excel</DialogTitle>
           <DialogDescription className="text-xs">
-            Upload your Excel/CSV file with columns: Bank, Sanction Loan, Type, EMI, Outstanding
+            Upload your Excel/CSV file with columns: Bank, Sanction Loan, Type, EMI, ROI, Tenure, Outstanding
           </DialogDescription>
         </DialogHeader>
 
@@ -235,6 +253,8 @@ export default function LoansExcelUploadDialog({
                     <th className="text-left px-2 py-1.5 font-medium text-muted-foreground">Type</th>
                     <th className="text-right px-2 py-1.5 font-medium text-muted-foreground">Sanction</th>
                     <th className="text-right px-2 py-1.5 font-medium text-muted-foreground">EMI</th>
+                    <th className="text-right px-2 py-1.5 font-medium text-muted-foreground">ROI</th>
+                    <th className="text-right px-2 py-1.5 font-medium text-muted-foreground">Tenure</th>
                     <th className="text-right px-2 py-1.5 font-medium text-muted-foreground">Outstanding</th>
                   </tr>
                 </thead>
@@ -245,6 +265,8 @@ export default function LoansExcelUploadDialog({
                       <td className="px-2 py-1.5 text-xs text-muted-foreground">{l.type}</td>
                       <td className="px-2 py-1.5 text-right tabular-nums">₹{l.sanctionLoan.toLocaleString("en-IN")}</td>
                       <td className="px-2 py-1.5 text-right tabular-nums">₹{l.emi.toLocaleString("en-IN")}</td>
+                      <td className="px-2 py-1.5 text-right tabular-nums">{l.roi ? `${l.roi}%` : "—"}</td>
+                      <td className="px-2 py-1.5 text-right tabular-nums">{l.tenureMonths ? `${l.tenureMonths}m` : "—"}</td>
                       <td className="px-2 py-1.5 text-right tabular-nums font-semibold text-orange-500">₹{l.outstanding.toLocaleString("en-IN")}</td>
                     </tr>
                   ))}

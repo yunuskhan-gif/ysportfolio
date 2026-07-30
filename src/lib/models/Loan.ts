@@ -30,6 +30,16 @@ const LoanSchema = new Schema(
       required: true,
       min: 0,
     },
+    roi: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    tenureMonths: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
   },
   {
     timestamps: true,

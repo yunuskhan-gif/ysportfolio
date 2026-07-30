@@ -168,6 +168,8 @@ export interface Loan {
   type: string;
   emi: number;
   outstanding: number;
+  roi?: number;
+  tenureMonths?: number;
 }
 
 export const LOANS_QUERY_KEY = ["portfolio", "loans"] as const;
