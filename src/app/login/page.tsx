@@ -10,17 +10,23 @@ import {
   Loader2,
 } from "lucide-react";
 import toast from "react-hot-toast";
+import VideoBackground from "@/components/ui/VideoBackground";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("ak1119614@gmail.com");
-  const [password, setPassword] = useState("••••••••");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e?: React.FormEvent, overridePass?: string, overrideUser?: string) => {
     if (e) e.preventDefault();
-    const passToUse = overridePass !== undefined ? overridePass : (password === "••••••••" ? "demo123" : password);
-    const userToUse = overrideUser !== undefined ? overrideUser : email;
+    const passToUse = overridePass !== undefined ? overridePass : password.trim();
+    const userToUse = overrideUser !== undefined ? overrideUser : email.trim();
+
+    if (!userToUse && overrideUser === undefined) {
+      toast.error("Please enter your email or client ID");
+      return;
+    }
 
     if (!passToUse) {
       toast.error("Please enter your password");
@@ -33,7 +39,7 @@ export default function LoginPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          username: userToUse.trim() || undefined,
+          username: userToUse || undefined,
           password: passToUse,
         }),
       });
@@ -207,11 +213,10 @@ export default function LoginPage() {
             </div>
           </form>
 
-          {/* Legal note */}
           <p className="text-[11px] text-slate-500 pt-1 leading-relaxed text-center sm:text-left">
             By using YS Portfolio, you agree to our{" "}
-            <a href="#" className="underline text-slate-700 hover:text-slate-950">Privacy Policy</a> and our{" "}
-            <a href="#" className="underline text-slate-700 hover:text-slate-950">Terms of Service</a>.
+            <Link href="/privacy-policy" className="underline text-slate-700 hover:text-slate-950">Privacy Policy</Link> and our{" "}
+            <Link href="/terms" className="underline text-slate-700 hover:text-slate-950">Terms of Service</Link>.
           </p>
 
           {/* Sign up prompt */}
@@ -236,15 +241,11 @@ export default function LoginPage() {
       {/* RIGHT COLUMN: Full Screen Video Card Covering Entire Card */}
       <div className="hidden lg:flex lg:w-[55%] xl:w-[60%] h-screen sticky top-0 p-4 sm:p-6 lg:p-7 xl:p-8 bg-white">
         <div className="relative w-full h-full rounded-[28px] sm:rounded-[36px] overflow-hidden shadow-2xl bg-black border border-slate-200/60">
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
+          <VideoBackground
+            src="/loginpage.mp4"
+            poster="/login_bg.jpg"
             className="w-full h-full object-cover object-center"
-          >
-            <source src="/loginpage.mp4" type="video/mp4" />
-          </video>
+          />
         </div>
       </div>
 

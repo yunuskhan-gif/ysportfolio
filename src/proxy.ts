@@ -5,13 +5,18 @@ import { jwtVerify } from "jose";
 export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Skip verification for the auth API itself and static files
+  // Skip verification for the auth API itself, static files, and media assets
   if (
     pathname.startsWith("/api/auth") ||
     pathname.startsWith("/_next") ||
     pathname.startsWith("/favicon.ico") ||
     pathname === "/" ||
-    pathname.startsWith("/login")
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/blog") ||
+    pathname === "/privacy-policy" ||
+    pathname === "/terms" ||
+    pathname === "/refund-policy" ||
+    /\.(mp4|webm|ogg|png|jpg|jpeg|svg|ico|webp)$/i.test(pathname)
   ) {
     return NextResponse.next();
   }
@@ -19,10 +24,6 @@ export default async function proxy(request: NextRequest) {
   const token = request.cookies.get("app_auth_token")?.value;
 
   if (!token) {
-    // If no token, we don't redirect to a login page because we use a PasswordGate component.
-    // Instead, we could return a specific header or just let the layout handle it.
-    // But for a true protection, we should redirect to a login route if we had one.
-    // Since we don't have a separate /login route, we'll let the RootLayout PasswordGate handle it.
     return NextResponse.next();
   }
 
@@ -31,7 +32,6 @@ export default async function proxy(request: NextRequest) {
     await jwtVerify(token, secret);
     return NextResponse.next();
   } catch (err) {
-    // If token is invalid, we could clear the cookie
     const response = NextResponse.next();
     response.cookies.delete("app_auth_token");
     return response;
@@ -41,12 +41,11 @@ export default async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     /*
-     * Match all request paths except for the ones starting with:
+     * Match all request paths except for:
      * - api/auth (auth endpoints)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
+     * - _next/static, _next/image
+     * - static media files (mp4, webm, images, etc.)
      */
-    "/((?!api/auth|_next/static|_next/image|favicon.ico).*)",
+    "/((?!api/auth|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|mp4|webm|ico)).*)",
   ],
 };

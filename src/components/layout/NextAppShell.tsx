@@ -32,18 +32,31 @@ export default function NextAppShell({ children }: { children: React.ReactNode }
   const [isCommandOpen, setIsCommandOpen] = useState(false);
 
   const getPageTitle = () => {
-    if (pathname === "/") return "Home & Guide";
-    if (pathname.includes("/portfolio")) return "Portfolio";
-    if (pathname.includes("/dashboard")) return "Dashboard";
+    if (pathname === "/") return "Digital Portfolio & Institutional Wealth Intelligence";
+    if (pathname === "/login") return "Client Portal Login";
+    if (pathname.includes("/portfolio")) return "Direct Equity & Stocks";
+    if (pathname.includes("/mutual-funds")) return "Mutual Funds Hub & AMFI Tracker";
+    if (pathname.includes("/fii-dii-tracker")) return "FII & DII Market Flow Tracker";
+    if (pathname.includes("/ai-insights")) return "AI Portfolio Insights & Rebalancing";
+    if (pathname.includes("/cashbook")) return "Double-Entry Cash Book";
+    if (pathname.includes("/dashboard")) return "Executive Wealth Dashboard";
     if (pathname.includes("/search")) return "Market Search";
-    if (pathname.includes("/settings")) return "Motilal Settings";
+    if (pathname.includes("/settings")) return "Settings";
     if (pathname.includes("/history")) return "Portfolio History";
     if (pathname.includes("/loans")) return "Loans Tracker";
+    if (pathname.includes("/privacy-policy")) return "Privacy Policy";
+    if (pathname.includes("/terms")) return "Terms & Conditions";
+    if (pathname.includes("/refund-policy")) return "Refund & Cancellation Policy";
+    if (pathname.includes("/blog")) return "Market & Wealth Blog";
     return "Dashboard";
   };
 
   useEffect(() => {
-    document.title = `YS Portfolio | ${getPageTitle()}`;
+    if (pathname === "/") {
+      document.title = "YS CAPITAL | Digital Portfolio & Institutional Wealth Intelligence";
+    } else {
+      document.title = `${getPageTitle()} | YS CAPITAL`;
+    }
   }, [pathname]);
 
   const handleDataUploaded = async () => {
@@ -55,7 +68,11 @@ export default function NextAppShell({ children }: { children: React.ReactNode }
   const isAllPage = pathname.includes("/dashboard");
   const uploadType = isMFPage ? "mf" : "stock";
 
-  if (pathname === "/" || pathname === "/login") {
+  const isPublicPage =
+    ["/", "/login", "/privacy-policy", "/terms", "/refund-policy"].includes(pathname) ||
+    pathname.startsWith("/blog");
+
+  if (isPublicPage) {
     return <PrimeReactProvider>{children}</PrimeReactProvider>;
   }
 

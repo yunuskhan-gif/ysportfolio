@@ -33,15 +33,19 @@ export default function PasswordGate({ children }: { children: React.ReactNode }
     };
   }, [pathname]);
 
+  const isPublicRoute =
+    ["/", "/login", "/privacy-policy", "/terms", "/refund-policy"].includes(pathname) ||
+    pathname.startsWith("/blog");
+
   // Redirect to root welcome landing page if not verified on a private route
   useEffect(() => {
-    if (isVerified === false && pathname !== "/" && pathname !== "/login") {
+    if (isVerified === false && !isPublicRoute) {
       router.push("/");
     }
-  }, [isVerified, pathname, router]);
+  }, [isVerified, pathname, isPublicRoute, router]);
 
-  // Bypass password gate for root path '/' and '/login'
-  if (pathname === "/" || pathname === "/login") {
+  // Bypass password gate for public routes
+  if (isPublicRoute) {
     return <>{children}</>;
   }
 

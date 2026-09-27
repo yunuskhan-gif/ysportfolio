@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import {
   ShieldCheck,
   Building2,
@@ -46,6 +47,9 @@ import {
   ArrowUpRight,
   Activity,
   Shield,
+  RotateCcw,
+  HelpCircle,
+  Search,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -72,6 +76,8 @@ import {
 } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
 import toast from "react-hot-toast";
+import MarketTickerRibbon from "@/components/home/MarketTickerRibbon";
+import VideoBackground from "@/components/ui/VideoBackground";
 
 export default function Home() {
   const router = useRouter();
@@ -93,6 +99,8 @@ export default function Home() {
   const [expectedReturnRate, setExpectedReturnRate] = useState<number>(14);
   const [investmentYears, setInvestmentYears] = useState<number>(10);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
+  const [faqCategory, setFaqCategory] = useState<string>("All");
+  const [faqSearch, setFaqSearch] = useState<string>("");
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -181,22 +189,67 @@ export default function Home() {
 
   const faqItems = [
     {
-      q: "What is YS Digital Portfolio?",
-      a: "YS Digital Portfolio is an institutional wealth intelligence suite built by Y S CAPITAL. It consolidates your Mutual Funds across all AMCs, direct equities from any broker, cash deposits, gold bonds, and liabilities into a single unified real-time analytics command center.",
+      category: "Mutual Funds & AMFI",
+      q: "What is YS Digital Portfolio and who is it designed for?",
+      a: "YS Digital Portfolio is an institutional wealth intelligence suite built by Y S CAPITAL (ARN 145084). It is designed for high-net-worth individuals (HNIs), active retail investors, and family offices who want to consolidate multi-broker equities, all Mutual Fund schemes across AMCs, bonds, and cash ledgers into one executive real-time command center.",
     },
     {
+      category: "CAS & Broker Sync",
       q: "How does automated CAS & Excel statement parsing work?",
-      a: "You can import your Consolidated Account Statement (CAS) or broker spreadsheet with a single click. The backend engine automatically extracts scheme names, folio IDs, ISIN codes, transaction dates, quantity, and purchase prices without manual data entry.",
+      a: "You can import your Consolidated Account Statement (CAS PDF issued by CAMS or KFintech) or broker spreadsheet (.xlsx) with a single click. The backend engine automatically extracts scheme names, folio IDs, ISIN codes, transaction dates, quantity, and purchase prices without manual data entry.",
     },
     {
+      category: "Security & Privacy",
       q: "Is my personal financial data secure and private?",
-      a: "Yes, 100%. YS Portfolio operates on a strictly host-isolated architecture. Your investment values, trade history, and ledgers remain solely on your authenticated private database. No sensitive portfolio data is shared with third parties.",
+      a: "Yes, 100%. YS Portfolio operates on a strictly host-isolated architecture with 256-bit SSL encryption. Your investment values, trade history, and ledgers remain solely on your authenticated private database. We have a strict zero-monetization policy—your data is never sold, leased, or shared with third-party advertisers.",
     },
     {
+      category: "Mutual Funds & AMFI",
       q: "How are Mutual Fund NAVs and stock prices updated?",
-      a: "Mutual fund NAVs are refreshed daily through direct integration with AMFI official database API. Direct equity prices and market indices are fetched via real-time market scrapers with live intraday tracking.",
+      a: "Mutual fund NAVs are refreshed daily through direct integration with the official AMFI database API. Direct equity prices and market indices are fetched via real-time market scrapers with live intraday tracking.",
+    },
+    {
+      category: "Fees & Returns",
+      q: "How does YS Portfolio calculate XIRR, CAGR, and capital gains?",
+      a: "The platform features institutional-grade financial computation engines that calculate Extended Internal Rate of Return (XIRR) based on exact cash-flow transaction dates (SIPs, lumpsum purchases, switches, and redemptions). It automatically splits long-term (LTCG) and short-term (STCG) capital gains to simplify tax planning.",
+    },
+    {
+      category: "CAS & Broker Sync",
+      q: "Can I manage multiple family members' folios under one dashboard?",
+      a: "Yes! YS Portfolio includes Multi-Entity & Family Office management. You can create separate client profiles for family members, track individual folios and demat accounts, or view consolidated household net worth with one click.",
+    },
+    {
+      category: "Fees & Returns",
+      q: "What are the distributor commissions or platform charges?",
+      a: "As an AMFI-registered Mutual Fund Distributor (ARN 145084), YS CAPITAL receives trail commissions directly from Asset Management Companies (AMCs) out of the scheme's Total Expense Ratio (TER). Investors pay zero direct out-of-pocket transaction fees for regular mutual fund investments. Full scheme-wise commission disclosures are available upon request.",
+    },
+    {
+      category: "Fees & Returns",
+      q: "What is your Refund & Cancellation Policy?",
+      a: "Mutual fund investments are routed directly to AMCs; units can be redeemed anytime into your registered bank account at prevailing NAV without distributor penalties. For premium software reporting packages or retainers, we offer a 14-day money-back satisfaction guarantee and prorated refunds for unused billing periods.",
+    },
+    {
+      category: "Security & Privacy",
+      q: "Does YS CAPITAL hold my investment funds in its own bank account?",
+      a: "Never. As an AMFI-registered distributor, all purchase and redemption monies are routed directly between your verified bank account and SEBI-recognized clearing corporations (BSE STAR MF, NSE NMF II, ICCL) or respective AMCs. YS CAPITAL never accepts or pools client investment funds into its own corporate accounts.",
+    },
+    {
+      category: "Mutual Funds & AMFI",
+      q: "How does the AI Portfolio Rebalancing feature work?",
+      a: "The AI Insights engine evaluates your current asset weights across equities, debt, gold, and cash against recommended risk benchmarks. If a sector or asset class deviates beyond your target risk tolerance, the engine flags rebalancing suggestions to safeguard capital and optimize returns.",
     },
   ];
+
+  const filteredFaqItems = useMemo(() => {
+    return faqItems.filter((item) => {
+      const matchesCategory = faqCategory === "All" || item.category === faqCategory;
+      const matchesSearch =
+        faqSearch.trim() === "" ||
+        item.q.toLowerCase().includes(faqSearch.toLowerCase()) ||
+        item.a.toLowerCase().includes(faqSearch.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
+  }, [faqCategory, faqSearch]);
 
   const stats = [
     { icon: ShieldCheck, label: "AMFI Registered", sub: "MF Distributor", color: "text-amber-400", bg: "bg-amber-400/10" },
@@ -257,7 +310,7 @@ export default function Home() {
             className="flex items-center cursor-pointer group select-none"
           >
             <div className={`relative h-11 w-8 rounded-lg overflow-hidden flex items-center justify-center transition-all duration-300 ${scrolled ? "bg-black shadow-sm" : "bg-black/90"}`}>
-              <Image src="/ys_logo.png" alt="YS" fill className="object-contain p-0.5" priority />
+              <Image src="/ys_logo.png" alt="YS CAPITAL - Wealth Management & Digital Portfolio Logo" fill className="object-contain p-0.5" priority />
             </div>
           </div>
 
@@ -356,8 +409,26 @@ export default function Home() {
                   <span>Investor FAQ & Guides</span>
                   <ArrowRight className="h-3.5 w-3.5 opacity-0 group-hover:opacity-60 transition-opacity" />
                 </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => router.push("/blog")}
+                  className="cursor-pointer text-[13px] font-medium py-2.5 px-3 rounded-xl text-slate-700 hover:text-[#0047AB] hover:bg-blue-50/70 flex items-center justify-between group"
+                >
+                  <span>Market & Wealth Blog</span>
+                  <ArrowRight className="h-3.5 w-3.5 opacity-0 group-hover:opacity-60 transition-opacity" />
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+
+            <Link
+              href="/blog"
+              className={`px-4 py-2 text-[15px] font-semibold tracking-wide rounded-lg transition-all ${
+                scrolled
+                  ? "text-slate-600 hover:text-[#0047AB] hover:bg-slate-50"
+                  : "text-white/80 hover:text-white hover:bg-white/10"
+              }`}
+            >
+              Blog
+            </Link>
 
             <button
               onClick={() => scrollTo("contact-section")}
@@ -408,7 +479,7 @@ export default function Home() {
                 <SheetHeader className="p-6 border-b border-slate-100">
                   <div className="flex items-center gap-3">
                     <div className="relative h-10 w-8 rounded-lg overflow-hidden bg-black flex-shrink-0">
-                      <Image src="/ys_logo.png" alt="YS" fill className="object-contain p-0.5" />
+                      <Image src="/ys_logo.png" alt="YS CAPITAL Brand Logo" fill className="object-contain p-0.5" />
                     </div>
                     <div>
                       <SheetTitle className="text-base font-black font-serif text-[#0a2540] tracking-widest">YS CAPITAL</SheetTitle>
@@ -433,6 +504,13 @@ export default function Home() {
                       {item.label}
                     </button>
                   ))}
+                  <Link
+                    href="/blog"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="w-full block text-left px-4 py-3 rounded-xl text-[14px] font-semibold text-slate-700 hover:text-[#0047AB] hover:bg-blue-50 transition-all"
+                  >
+                    Market & Wealth Blog
+                  </Link>
                 </div>
 
                 <div className="p-4 border-t border-slate-100">
@@ -454,30 +532,23 @@ export default function Home() {
       </header>
 
       {/* ─────────────────────────────────────────────────────────────── */}
+      {/* MAIN CONTENT LANDMARK FOR ACCESSIBILITY & SEO                   */}
+      {/* ─────────────────────────────────────────────────────────────── */}
+      <main id="main-content">
+
+      {/* ─────────────────────────────────────────────────────────────── */}
       {/* HERO SECTION                                                    */}
       {/* ─────────────────────────────────────────────────────────────── */}
       <section className="relative min-h-screen flex flex-col justify-center overflow-hidden">
-        {/* Background Video */}
+        {/* Background Video — Optimized, Cached & Download-Blocked */}
         <div className="absolute inset-0 overflow-hidden">
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
+          <VideoBackground
+            src="/herosection.mp4"
+            poster="/hero_serene_sunset.png"
             className="absolute inset-0 w-full h-full object-cover object-center"
-          >
-            <source src="/herosection.mp4" type="video/mp4" />
-            {/* Fallback image if video fails */}
-            <Image
-              src="/hero_serene_sunset.png"
-              alt="Hero Background"
-              fill
-              className="object-cover object-center"
-              priority
-            />
-          </video>
+          />
           {/* Dark Black Overlay — subtle, lets video breathe */}
-          <div className="absolute inset-0 bg-black/55" />
+          <div className="absolute inset-0 bg-black/55 pointer-events-none" />
           {/* Subtle dot pattern */}
           <div
             className="absolute inset-0 opacity-[0.025]"
@@ -498,17 +569,18 @@ export default function Home() {
               {/* Headline */}
               <div className="space-y-2">
                 <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black font-serif tracking-tight text-white leading-[1.05]">
-                  Your Wealth.
-                </h1>
-                <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black font-serif tracking-tight leading-[1.05]"
-                  style={{
-                    background: "linear-gradient(135deg, #f5c842 0%, #e8a020 50%, #c58b35 100%)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    backgroundClip: "text",
-                  }}
-                >
-                  One Dashboard.
+                  Your Wealth.{" "}
+                  <span
+                    className="block sm:inline"
+                    style={{
+                      background: "linear-gradient(135deg, #f5c842 0%, #e8a020 50%, #c58b35 100%)",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      backgroundClip: "text",
+                    }}
+                  >
+                    One Dashboard.
+                  </span>
                 </h1>
                 <div className="flex items-center justify-center gap-3 pt-2">
                   <div className="w-12 h-[3px] bg-amber-400 rounded-full" />
@@ -581,6 +653,11 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ─────────────────────────────────────────────────────────────── */}
+      {/* LIVE MARKET TICKER RIBBON (NIFTY, SENSEX, COMMODITIES, RATES)   */}
+      {/* ─────────────────────────────────────────────────────────────── */}
+      <MarketTickerRibbon />
 
       {/* ─────────────────────────────────────────────────────────────── */}
       {/* DIGITAL PORTFOLIO SHOWCASE                                     */}
@@ -1436,47 +1513,153 @@ export default function Home() {
       {/* ─────────────────────────────────────────────────────────────── */}
       {/* FAQ SECTION                                                     */}
       {/* ─────────────────────────────────────────────────────────────── */}
-      <section id="faq-section" className="py-24 bg-slate-50">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 space-y-12">
+      <section id="faq-section" className="py-24 bg-slate-50 relative overflow-hidden">
+        {/* Subtle background flair */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-blue-500/5 rounded-full blur-3xl pointer-events-none -z-0" />
+
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10 space-y-10">
+          
+          {/* Header */}
           <div className="text-center space-y-4">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-[#0047AB] text-xs font-bold uppercase tracking-widest">
-              <Info className="h-3.5 w-3.5" />
-              Knowledge Base
+              <HelpCircle className="h-3.5 w-3.5" />
+              Investor Knowledge Center
             </div>
             <h2 className="text-4xl sm:text-5xl font-black font-serif text-[#0a2540] tracking-tight">
               Frequently Asked Questions
             </h2>
-            <p className="text-slate-500 text-sm">
-              Common questions regarding statement syncing, security, and market calculations.
+            <p className="text-slate-500 text-sm sm:text-base max-w-2xl mx-auto font-light leading-relaxed">
+              Clear, transparent answers about our multi-asset portfolio consolidation, regulatory credentials, bank-grade encryption, and statement automation.
             </p>
           </div>
 
-          <div className="space-y-3">
-            {faqItems.map((item, idx) => {
-              const isOpen = openFaqIndex === idx;
-              return (
-                <div
-                  key={idx}
-                  className={`bg-white border rounded-2xl overflow-hidden transition-all duration-200 ${isOpen ? "border-blue-200 shadow-md" : "border-slate-200 hover:border-slate-300 hover:shadow-sm"}`}
+          {/* Search & Filter Bar */}
+          <div className="space-y-4">
+            <div className="relative max-w-xl mx-auto">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <Input
+                type="text"
+                placeholder="Search questions (e.g. CAS, XIRR, AMFI, refund, security)..."
+                value={faqSearch}
+                onChange={(e) => setFaqSearch(e.target.value)}
+                className="h-12 pl-11 pr-4 bg-white rounded-2xl border-slate-200 text-sm shadow-xs focus:border-[#0047AB] focus:ring-[#0047AB]/20"
+              />
+              {faqSearch && (
+                <button
+                  onClick={() => setFaqSearch("")}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400 hover:text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md"
                 >
+                  Clear
+                </button>
+              )}
+            </div>
+
+            {/* Category Pills */}
+            <div className="flex items-center justify-center gap-2 flex-wrap pt-1">
+              {["All", "Mutual Funds & AMFI", "CAS & Broker Sync", "Security & Privacy", "Fees & Returns"].map((cat) => {
+                const isSelected = faqCategory === cat;
+                return (
                   <button
-                    onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
-                    className="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 cursor-pointer"
+                    key={cat}
+                    onClick={() => {
+                      setFaqCategory(cat);
+                      setOpenFaqIndex(null);
+                    }}
+                    className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                      isSelected
+                        ? "bg-[#0047AB] text-white shadow-md shadow-blue-900/20"
+                        : "bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-slate-200/80"
+                    }`}
                   >
-                    <span className={`font-bold text-sm ${isOpen ? "text-[#0047AB]" : "text-[#0a2540]"}`}>{item.q}</span>
-                    <div className={`h-7 w-7 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${isOpen ? "bg-[#0047AB] text-white" : "bg-slate-100 text-slate-400"}`}>
-                      <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
-                    </div>
+                    {cat}
                   </button>
-                  {isOpen && (
-                    <div className="px-5 sm:px-6 pb-5 text-sm text-slate-600 leading-relaxed border-t border-blue-50">
-                      <div className="pt-3">{item.a}</div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
+
+          {/* Questions Accordion */}
+          <div className="space-y-3.5">
+            {filteredFaqItems.length === 0 ? (
+              <div className="text-center py-12 bg-white rounded-2xl border border-slate-200 p-8 space-y-3">
+                <Info className="h-8 w-8 text-slate-300 mx-auto" />
+                <p className="text-sm font-semibold text-slate-700">No questions found matching &quot;{faqSearch}&quot;</p>
+                <button
+                  onClick={() => { setFaqSearch(""); setFaqCategory("All"); }}
+                  className="text-xs text-[#0047AB] hover:underline font-bold"
+                >
+                  Reset filters
+                </button>
+              </div>
+            ) : (
+              filteredFaqItems.map((item, idx) => {
+                const isOpen = openFaqIndex === idx;
+                return (
+                  <div
+                    key={idx}
+                    className={`bg-white border rounded-2xl overflow-hidden transition-all duration-200 ${
+                      isOpen
+                        ? "border-blue-300/80 shadow-md shadow-blue-900/5 ring-1 ring-blue-100"
+                        : "border-slate-200 hover:border-slate-300 hover:shadow-xs"
+                    }`}
+                  >
+                    <button
+                      onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
+                      className="w-full p-5 sm:p-6 text-left flex items-start justify-between gap-4 cursor-pointer"
+                    >
+                      <div className="space-y-1.5 flex-1 pr-2">
+                        <span className="inline-block px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md bg-blue-50 text-[#0047AB] border border-blue-100/60">
+                          {item.category}
+                        </span>
+                        <h3 className={`font-bold text-base sm:text-lg leading-snug transition-colors ${
+                          isOpen ? "text-[#0047AB]" : "text-[#0a2540]"
+                        }`}>
+                          {item.q}
+                        </h3>
+                      </div>
+                      <div className={`h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0 transition-colors mt-1 ${
+                        isOpen ? "bg-[#0047AB] text-white" : "bg-slate-100 text-slate-400 group-hover:bg-slate-200"
+                      }`}>
+                        <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
+                      </div>
+                    </button>
+                    {isOpen && (
+                      <div className="px-5 sm:px-6 pb-6 text-sm text-slate-600 leading-relaxed border-t border-slate-100">
+                        <p className="pt-3.5">{item.a}</p>
+                      </div>
+                    )}
+                  </div>
+                );
+              })
+            )}
+          </div>
+
+          {/* Contact Support Banner */}
+          <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-blue-900 to-[#0047AB] text-white flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl shadow-blue-900/10">
+            <div className="space-y-1 text-center sm:text-left">
+              <h4 className="text-lg font-bold">Have a specific portfolio question?</h4>
+              <p className="text-blue-100/80 text-xs sm:text-sm">
+                Our client advisory desk is available to assist with onboarding, statements, and wealth queries.
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-3">
+              <a
+                href="mailto:clientservices@yscapital.com"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-[#0047AB] hover:bg-blue-50 text-xs font-bold uppercase tracking-wider transition-all shadow-sm"
+              >
+                <Mail className="h-3.5 w-3.5" />
+                Email Desk
+              </a>
+              <a
+                href="tel:+912241523000"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold uppercase tracking-wider transition-all border border-white/20"
+              >
+                <Phone className="h-3.5 w-3.5" />
+                Call Us
+              </a>
+            </div>
+          </div>
+
         </div>
       </section>
 
@@ -1545,6 +1728,8 @@ export default function Home() {
         </div>
       </section>
 
+      </main>
+
       {/* ─────────────────────────────────────────────────────────────── */}
       {/* FOOTER                                                          */}
       {/* ─────────────────────────────────────────────────────────────── */}
@@ -1557,7 +1742,7 @@ export default function Home() {
             <div className="md:col-span-5 space-y-5">
               <div className="flex items-center gap-3">
                 <div className="relative h-11 w-9 rounded-lg overflow-hidden bg-black border border-white/10">
-                  <Image src="/ys_logo.png" alt="YS" fill className="object-contain p-0.5" />
+                  <Image src="/ys_logo.png" alt="YS CAPITAL Official Brand Logo" fill className="object-contain p-0.5" />
                 </div>
                 <div>
                   <span className="font-black text-lg font-serif text-white tracking-widest block">YS CAPITAL</span>
@@ -1594,6 +1779,15 @@ export default function Home() {
                     </button>
                   </li>
                 ))}
+                <li>
+                  <Link
+                    href="/blog"
+                    className="hover:text-white transition-colors cursor-pointer flex items-center gap-1.5 group text-slate-400"
+                  >
+                    <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-60 transition-opacity" />
+                    Market & Wealth Blog
+                  </Link>
+                </li>
               </ul>
             </div>
 
@@ -1601,21 +1795,42 @@ export default function Home() {
             <div className="md:col-span-4 space-y-4">
               <h4 className="text-[11px] font-bold text-white uppercase tracking-widest">Legal & Compliance</h4>
               <ul className="space-y-2.5 text-xs">
-                {[
-                  { label: "Terms & Conditions", type: "terms" as const, icon: Scale },
-                  { label: "Privacy Statement", type: "privacy" as const, icon: FileText },
-                  { label: "SEBI & AMFI Risk Advisory", type: "disclaimer" as const, icon: Info },
-                ].map((l) => (
-                  <li key={l.type}>
-                    <button
-                      onClick={() => openTerms(l.type)}
-                      className="hover:text-white transition-colors flex items-center gap-2 cursor-pointer group"
-                    >
-                      <l.icon className="h-3.5 w-3.5 text-slate-600 group-hover:text-slate-400 transition-colors" />
-                      {l.label}
-                    </button>
-                  </li>
-                ))}
+                <li>
+                  <Link
+                    href="/terms"
+                    className="hover:text-white transition-colors flex items-center gap-2 text-slate-400 group"
+                  >
+                    <Scale className="h-3.5 w-3.5 text-slate-500 group-hover:text-slate-300 transition-colors" />
+                    <span>Terms & Conditions</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/privacy-policy"
+                    className="hover:text-white transition-colors flex items-center gap-2 text-slate-400 group"
+                  >
+                    <FileText className="h-3.5 w-3.5 text-slate-500 group-hover:text-slate-300 transition-colors" />
+                    <span>Privacy Policy</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/refund-policy"
+                    className="hover:text-white transition-colors flex items-center gap-2 text-slate-400 group"
+                  >
+                    <RotateCcw className="h-3.5 w-3.5 text-slate-500 group-hover:text-slate-300 transition-colors" />
+                    <span>Refund & Cancellation Policy</span>
+                  </Link>
+                </li>
+                <li>
+                  <button
+                    onClick={() => openTerms("disclaimer")}
+                    className="hover:text-white transition-colors flex items-center gap-2 text-slate-400 cursor-pointer group"
+                  >
+                    <Info className="h-3.5 w-3.5 text-slate-500 group-hover:text-slate-300 transition-colors" />
+                    <span>SEBI & AMFI Risk Advisory</span>
+                  </button>
+                </li>
               </ul>
 
               <div className="pt-4">
