@@ -3,9 +3,10 @@
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Plus, Upload, Wallet, Copy, RefreshCw, Search } from "lucide-react";
+import { Plus, Upload, Wallet, Copy, RefreshCw, Search, Sun, Moon } from "lucide-react";
 import { CommandMenu } from "./CommandMenu";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTheme } from "@/hooks/useTheme";
 import { PrimeReactProvider } from "primereact/api";
 import toast from "react-hot-toast";
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
@@ -25,6 +26,7 @@ import "primeicons/primeicons.css";
 export default function NextAppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname() ?? "/";
   const queryClient = useQueryClient();
+  const { themeMode, toggleTheme } = useTheme();
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [isAddStockOpen, setIsAddStockOpen] = useState(false);
   const [isCommandOpen, setIsCommandOpen] = useState(false);
@@ -53,7 +55,7 @@ export default function NextAppShell({ children }: { children: React.ReactNode }
   const isAllPage = pathname.includes("/dashboard");
   const uploadType = isMFPage ? "mf" : "stock";
 
-  if (pathname === "/") {
+  if (pathname === "/" || pathname === "/login") {
     return <PrimeReactProvider>{children}</PrimeReactProvider>;
   }
 

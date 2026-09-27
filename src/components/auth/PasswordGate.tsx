@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import LoadingScreen from "@/components/ui/LoadingScreen";
 
 export default function PasswordGate({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -11,9 +11,12 @@ export default function PasswordGate({ children }: { children: React.ReactNode }
 
   // Check auth session
   useEffect(() => {
+    let isMounted = true;
+    setIsVerified(null);
     async function checkAuth() {
       try {
         const res = await fetch("/api/auth/me");
+        if (!isMounted) return;
         if (res.ok) {
           const data = await res.json();
           setIsVerified(data.verified);
@@ -21,30 +24,31 @@ export default function PasswordGate({ children }: { children: React.ReactNode }
           setIsVerified(false);
         }
       } catch (err) {
-        setIsVerified(false);
+        if (isMounted) setIsVerified(false);
       }
     }
     checkAuth();
+    return () => {
+      isMounted = false;
+    };
   }, [pathname]);
 
   // Redirect to root welcome landing page if not verified on a private route
   useEffect(() => {
-    if (isVerified === false && pathname !== "/") {
+    if (isVerified === false && pathname !== "/" && pathname !== "/login") {
       router.push("/");
     }
   }, [isVerified, pathname, router]);
 
-  // Bypass password gate for root path '/'
-  if (pathname === "/") {
+  // Bypass password gate for root path '/' and '/login'
+  if (pathname === "/" || pathname === "/login") {
     return <>{children}</>;
   }
 
   // Render loading spinner while checking auth or executing redirect
   if (isVerified === null || !isVerified) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-black">
-        <Loader2 className="h-8 w-8 animate-spin text-primary opacity-20" />
-      </div>
+      <LoadingScreen text="Securing Workspace..." subtext="Verifying host-isolated credentials & session" />
     );
   }
 

@@ -8,6 +8,7 @@ import {
 
 export type ThemeMode =
   | "default"
+  | "pure-light"
   | "system"
   | "amber-minimal"
   | "amethyst-haze"
@@ -66,6 +67,7 @@ export interface ThemeOption {
 }
 
 export const ALL_THEMES: ThemeOption[] = [
+  { value: "pure-light", label: "Pure Light", icon: Sun, colors: { primary: "oklch(0.205 0 0)", background: "oklch(1 0 0)", card: "oklch(1 0 0)" } },
   { value: "default", label: "Default", icon: Sparkles, colors: { primary: "oklch(0.205 0 0)", background: "oklch(1 0 0)", card: "oklch(1 0 0)" } },
   { value: "system", label: "System", icon: Laptop, colors: { primary: "oklch(0.205 0 0)", background: "oklch(1 0 0)", card: "oklch(1 0 0)" } },
   { value: "amber-minimal", label: "Amber Minimal", icon: Sun, colors: { primary: "oklch(0.7686 0.1647 70.0804)", background: "oklch(1 0 0)", card: "oklch(1 0 0)" } },
