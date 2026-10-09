@@ -109,6 +109,15 @@ export default function LoansExcelUploadDialog({
             /^loan tenure$/,
           ]);
 
+          const emiDayKey = findColumn(keys, [
+            /^emi day$/,
+            /^due day$/,
+            /^due date$/,
+            /^cut date$/,
+            /^emi cut date$/,
+            /^emi date$/,
+          ]);
+
           const bank = String(row[bankKey] || "").trim();
           const sanctionLoan = parseNumber(row[sanctionKey || ""]);
           const type = typeKey ? String(row[typeKey] || "").trim().toUpperCase() : "PERSONAL LOAN";
@@ -116,6 +125,8 @@ export default function LoansExcelUploadDialog({
           const outstanding = parseNumber(row[outstandingKey || ""]);
           const roi = parseNumber(row[roiKey || ""]);
           const tenureMonths = parseNumber(row[tenureKey || ""]);
+          const parsedEmiDay = parseNumber(row[emiDayKey || ""]);
+          const emiDay = parsedEmiDay >= 1 && parsedEmiDay <= 31 ? parsedEmiDay : 5;
 
           if (bank && sanctionLoan > 0) {
             loans.push({
@@ -126,6 +137,7 @@ export default function LoansExcelUploadDialog({
               outstanding,
               roi,
               tenureMonths,
+              emiDay,
             });
           }
         }

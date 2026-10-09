@@ -19,6 +19,7 @@ interface LoanFormState {
   outstanding: string;
   roi: string;
   tenureMonths: string;
+  emiDay: string;
 }
 
 interface AddLoanDialogProps {
@@ -37,6 +38,7 @@ const INITIAL_FORM: LoanFormState = {
   outstanding: "",
   roi: "",
   tenureMonths: "",
+  emiDay: "5",
 };
 
 const LOAN_TYPES = [
@@ -93,6 +95,7 @@ export default function AddLoanDialog({
         outstanding: String(initialLoan.outstanding),
         roi: initialLoan.roi && Number(initialLoan.roi) > 0 ? String(initialLoan.roi) : "",
         tenureMonths: initialLoan.tenureMonths && Number(initialLoan.tenureMonths) > 0 ? String(initialLoan.tenureMonths) : "",
+        emiDay: String(initialLoan.emiDay ?? 5),
       });
       return;
     }
@@ -108,6 +111,7 @@ export default function AddLoanDialog({
     const outstanding = Number(formState.outstanding);
     const roi = Number(formState.roi || 0);
     const tenureMonths = Number(formState.tenureMonths || 0);
+    const emiDay = Math.min(31, Math.max(1, Number(formState.emiDay) || 5));
 
     if (!bank || sanctionLoan <= 0 || emi < 0 || outstanding < 0) {
       toast.error("Please fill in valid loan details.");
@@ -122,6 +126,8 @@ export default function AddLoanDialog({
       outstanding,
       roi,
       tenureMonths,
+      emiDay,
+      payments: initialLoan?.payments || [],
     };
 
     try {
@@ -236,6 +242,28 @@ export default function AddLoanDialog({
                   className="h-10 sm:h-11 font-bold"
                 />
               </div>
+            </div>
+
+            <div className="space-y-1.5 p-3 rounded-lg border bg-muted/20">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="loan-emiday" className="text-xs font-bold uppercase text-foreground">
+                  Monthly EMI Due Day (1 - 31)
+                </Label>
+                <span className="text-[11px] font-semibold text-primary">Notification Alert Day</span>
+              </div>
+              <Input
+                id="loan-emiday"
+                type="number"
+                min="1"
+                max="31"
+                value={formState.emiDay}
+                onChange={(event) => handleFormChange("emiDay", event.target.value)}
+                placeholder="e.g. 5 (5th of each month)"
+                className="h-10 sm:h-11 font-bold"
+              />
+              <p className="text-[10px] text-muted-foreground">
+                Is date ko system automatically notification popup dikhayega ki aaj is loan ki EMI cut honi hai.
+              </p>
             </div>
           </div>
         </div>

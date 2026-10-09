@@ -20,6 +20,9 @@ import {
 } from "@/lib/portfolio-api";
 import AddLoanDialog from "@/components/portfolio/AddLoanDialog";
 import LoansExcelUploadDialog from "@/components/portfolio/LoansExcelUploadDialog";
+import PayEmiDialog from "@/components/portfolio/PayEmiDialog";
+import LoanPaymentHistoryDialog from "@/components/portfolio/LoanPaymentHistoryDialog";
+import EmiDueNotificationModal from "@/components/portfolio/EmiDueNotificationModal";
 import {
   Search,
   ChevronDown,
@@ -34,6 +37,9 @@ import {
   FileSpreadsheet,
   Clipboard,
   Landmark,
+  ReceiptText,
+  History,
+  BellRing,
 } from "lucide-react";
 import * as XLSX from "xlsx";
 import { Badge } from "@/components/ui/badge";
@@ -98,6 +104,22 @@ export default function Loans() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
+  // EMI Payment & History states
+  const [payEmiLoan, setPayEmiLoan] = useState<Loan | null>(null);
+  const [isPayEmiOpen, setIsPayEmiOpen] = useState(false);
+  const [historyLoan, setHistoryLoan] = useState<Loan | null>(null);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+
+  const handlePayEmi = (loan: Loan) => {
+    setPayEmiLoan(loan);
+    setIsPayEmiOpen(true);
+  };
+
+  const handleViewHistory = (loan: Loan) => {
+    setHistoryLoan(loan);
+    setIsHistoryOpen(true);
+  };
+
   const { data: loans = [], isLoading: loading } = useQuery({
     queryKey: LOANS_QUERY_KEY,
     queryFn: fetchLoans,
@@ -158,6 +180,12 @@ export default function Loans() {
   const totalSanctioned = useMemo(() => loans.reduce((sum, l) => sum + l.sanctionLoan, 0), [loans]);
   const totalEMI = useMemo(() => loans.reduce((sum, l) => sum + l.emi, 0), [loans]);
   const activeLoansCount = loans.length;
+
+  const todayDate = new Date().getDate();
+  const dueTodayLoans = useMemo(
+    () => loans.filter((l) => Number(l.emiDay ?? 5) === todayDate && l.outstanding > 0),
+    [loans, todayDate]
+  );
 
   const highestRoiLoan = useMemo(() => {
     if (!loans || loans.length === 0) return null;
@@ -315,6 +343,38 @@ export default function Loans() {
 
   return (
     <div className="w-full space-y-4 pb-20">
+      {/* Due Today Notification Banner */}
+      {dueTodayLoans.length > 0 && (
+        <div className="p-4 rounded-xl border border-amber-500/40 bg-gradient-to-r from-amber-500/15 via-amber-500/5 to-transparent flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm animate-in fade-in duration-300">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400">
+              <BellRing className="w-5 h-5 animate-pulse" />
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
+                <span>EMI Deduction Alert: {dueTodayLoans.length} Loan{dueTodayLoans.length > 1 ? "s" : ""} Due Today ({todayDate}th)</span>
+                <Badge variant="destructive" className="text-[10px] uppercase font-bold animate-pulse">
+                  Due Today
+                </Badge>
+              </h4>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Total Due: <strong className="text-foreground">{formatINR(dueTodayLoans.reduce((s, l) => s + l.emi, 0))}</strong>. Bank account mein sufficient balance verify karein ya UTR se payment record karein.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <Button
+              size="sm"
+              onClick={() => handlePayEmi(dueTodayLoans[0])}
+              className="h-8 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5 w-full sm:w-auto shadow-sm"
+            >
+              <ReceiptText className="w-3.5 h-3.5" />
+              Pay EMI ({dueTodayLoans[0].bank})
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Metric Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Card 1: Outstanding Debt */}
@@ -518,7 +578,7 @@ export default function Loans() {
                         <SortIcon field="outstanding" />
                       </div>
                     </th>
-                    <th className="w-20 text-center py-2.5 font-bold uppercase tracking-tight text-muted-foreground">Actions</th>
+                    <th className="w-36 text-center py-2.5 font-bold uppercase tracking-tight text-muted-foreground">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -532,7 +592,20 @@ export default function Loans() {
                           className="rounded border-gray-300 text-primary focus:ring-primary h-3.5 w-3.5"
                         />
                       </td>
-                      <td className="px-4 py-2.5 font-bold uppercase">{l.bank}</td>
+                      <td className="px-4 py-2.5">
+                        <div className="font-bold uppercase flex items-center gap-1.5 flex-wrap">
+                          <span>{l.bank}</span>
+                          {Number(l.emiDay ?? 5) === todayDate && l.outstanding > 0 ? (
+                            <Badge variant="destructive" className="text-[9px] px-1 py-0 font-bold animate-pulse">
+                              Due Today
+                            </Badge>
+                          ) : (
+                            <span className="text-[10px] font-normal text-muted-foreground">
+                              ({l.emiDay ?? 5}th)
+                            </span>
+                          )}
+                        </div>
+                      </td>
                       <td className="px-4 py-2.5 font-medium">
                         <Badge variant="outline" className="text-[10px] font-bold py-0.5">
                           {l.type}
@@ -556,10 +629,35 @@ export default function Loans() {
                       <td className="text-center py-2.5">
                         <div className="flex items-center justify-center gap-1">
                           <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-7 px-2 text-[10px] font-bold gap-1 text-emerald-600 border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20"
+                            onClick={() => handlePayEmi(l)}
+                            title="Pay / Record EMI Installment"
+                          >
+                            <ReceiptText className="w-3 h-3" />
+                            <span>Pay</span>
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7 text-primary hover:text-primary hover:bg-primary/10 relative"
+                            onClick={() => handleViewHistory(l)}
+                            title={`Payment History & UTRs (${(l.payments || []).length} paid)`}
+                          >
+                            <History className="w-3.5 h-3.5" />
+                            {(l.payments || []).length > 0 && (
+                              <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-[8px] font-black rounded-full h-3.5 w-3.5 flex items-center justify-center">
+                                {(l.payments || []).length}
+                              </span>
+                            )}
+                          </Button>
+                          <Button
                             variant="ghost"
                             size="icon"
                             className="h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-muted"
                             onClick={() => handleEditLoan(l)}
+                            title="Edit Loan"
                           >
                             <Edit2 className="w-3.5 h-3.5" />
                           </Button>
@@ -568,6 +666,7 @@ export default function Loans() {
                             size="icon"
                             className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10"
                             onClick={() => handleDeleteLoan(l.id)}
+                            title="Delete Loan"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </Button>
@@ -624,6 +723,23 @@ export default function Loans() {
         onDataUploaded={() => {
           queryClient.invalidateQueries({ queryKey: LOANS_QUERY_KEY });
         }}
+      />
+      <PayEmiDialog
+        open={isPayEmiOpen}
+        onOpenChange={setIsPayEmiOpen}
+        loan={payEmiLoan}
+        onPaymentRecorded={async () => {
+          await queryClient.invalidateQueries({ queryKey: LOANS_QUERY_KEY });
+        }}
+      />
+      <LoanPaymentHistoryDialog
+        open={isHistoryOpen}
+        onOpenChange={setIsHistoryOpen}
+        loan={historyLoan}
+      />
+      <EmiDueNotificationModal
+        loans={loans}
+        onPayEmi={handlePayEmi}
       />
     </div>
   );

@@ -40,6 +40,43 @@ const LoanSchema = new Schema(
       default: 0,
       min: 0,
     },
+    emiDay: {
+      type: Number,
+      default: 5,
+      min: 1,
+      max: 31,
+    },
+    payments: [
+      {
+        amount: {
+          type: Number,
+          required: true,
+          min: 0,
+        },
+        paymentDate: {
+          type: String,
+          required: true,
+        },
+        utrNumber: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        paymentMode: {
+          type: String,
+          default: "Auto Debit",
+        },
+        remarks: {
+          type: String,
+          default: "",
+          trim: true,
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   {
     timestamps: true,

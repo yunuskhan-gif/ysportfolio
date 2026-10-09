@@ -10,6 +10,16 @@ type LoanInput = {
   outstanding: number;
   roi?: number;
   tenureMonths?: number;
+  emiDay?: number;
+  payments?: Array<{
+    id?: string;
+    amount: number;
+    paymentDate: string;
+    utrNumber: string;
+    paymentMode?: string;
+    remarks?: string;
+    createdAt?: string;
+  }>;
 };
 
 function normalizeLoan(loan: LoanInput) {
@@ -21,19 +31,21 @@ function normalizeLoan(loan: LoanInput) {
     outstanding: Number(loan.outstanding),
     roi: Number(loan.roi ?? 0),
     tenureMonths: Number(loan.tenureMonths ?? 0),
+    emiDay: Number(loan.emiDay ?? 5),
+    payments: Array.isArray(loan.payments)
+      ? loan.payments.map((p) => ({
+          amount: Number(p.amount),
+          paymentDate: String(p.paymentDate || new Date().toISOString().split("T")[0]),
+          utrNumber: String(p.utrNumber || "").trim(),
+          paymentMode: String(p.paymentMode || "Auto Debit"),
+          remarks: String(p.remarks || "").trim(),
+          createdAt: p.createdAt ? new Date(p.createdAt) : new Date(),
+        }))
+      : [],
   };
 }
 
-function serializeLoan(doc: {
-  _id: { toString: () => string };
-  bank: string;
-  sanctionLoan: number;
-  type: string;
-  emi: number;
-  outstanding: number;
-  roi?: number;
-  tenureMonths?: number;
-}) {
+function serializeLoan(doc: any) {
   return {
     id: doc._id.toString(),
     bank: doc.bank,
@@ -43,6 +55,18 @@ function serializeLoan(doc: {
     outstanding: doc.outstanding,
     roi: doc.roi ?? 0,
     tenureMonths: doc.tenureMonths ?? 0,
+    emiDay: doc.emiDay ?? 5,
+    payments: Array.isArray(doc.payments)
+      ? doc.payments.map((p: any) => ({
+          id: p._id ? p._id.toString() : p.id,
+          amount: p.amount,
+          paymentDate: p.paymentDate,
+          utrNumber: p.utrNumber,
+          paymentMode: p.paymentMode || "Auto Debit",
+          remarks: p.remarks || "",
+          createdAt: p.createdAt ? new Date(p.createdAt).toISOString() : new Date().toISOString(),
+        }))
+      : [],
   };
 }
 

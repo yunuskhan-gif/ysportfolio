@@ -161,6 +161,16 @@ export async function fetchMotilalHoldings(
   return parseJson<MotilalHoldingsResponse>(response);
 }
 
+export interface LoanPayment {
+  id?: string;
+  amount: number;
+  paymentDate: string;
+  utrNumber: string;
+  paymentMode?: string;
+  remarks?: string;
+  createdAt?: string;
+}
+
 export interface Loan {
   id?: string;
   bank: string;
@@ -170,6 +180,8 @@ export interface Loan {
   outstanding: number;
   roi?: number;
   tenureMonths?: number;
+  emiDay?: number;
+  payments?: LoanPayment[];
 }
 
 export const LOANS_QUERY_KEY = ["portfolio", "loans"] as const;

@@ -1,12 +1,15 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Wallet, Layers, TrendingDown, TrendingUp, Landmark, RefreshCw, CheckCircle2, Coins } from "lucide-react";
+import { Wallet, Layers, TrendingDown, TrendingUp, Landmark, RefreshCw, CheckCircle2, Coins, BellRing, ReceiptText } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import PortfolioValueChart from "@/components/dashboard/PortfolioValueChart";
 import PortfolioMetricCards from "@/components/blocks/stats/PortfolioMetricCards";
-import { fetchHoldings, HOLDINGS_QUERY_KEY, type StockHolding, fetchLoans, LOANS_QUERY_KEY, fetchOtherInvestments, OTHER_INVESTMENTS_QUERY_KEY } from "@/lib/portfolio-api";
+import { fetchHoldings, HOLDINGS_QUERY_KEY, type StockHolding, fetchLoans, LOANS_QUERY_KEY, fetchOtherInvestments, OTHER_INVESTMENTS_QUERY_KEY, type Loan } from "@/lib/portfolio-api";
 import { isMutualFund, cn } from "@/lib/utils";
+import EmiDueNotificationModal from "@/components/portfolio/EmiDueNotificationModal";
+import PayEmiDialog from "@/components/portfolio/PayEmiDialog";
 
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('en-IN', {
@@ -251,6 +254,16 @@ const Dashboard = () => {
     queryFn: fetchOtherInvestments,
   });
 
+  // EMI Due & Pay states
+  const [payEmiLoan, setPayEmiLoan] = useState<Loan | null>(null);
+  const [isPayEmiOpen, setIsPayEmiOpen] = useState(false);
+
+  const todayDate = new Date().getDate();
+  const dueTodayLoans = useMemo(
+    () => loans.filter((l) => Number(l.emiDay ?? 5) === todayDate && l.outstanding > 0),
+    [loans, todayDate]
+  );
+
   const uniqueSymbols = useMemo(
     () => [...new Set(holdings.map((holding) => holding.symbol).filter(Boolean))],
     [holdings]
@@ -347,6 +360,41 @@ const Dashboard = () => {
           Reset scenario parameters
         </Button>
       </div>
+
+      {/* EMI Due Today Alert Banner */}
+      {dueTodayLoans.length > 0 && (
+        <div className="p-4 rounded-xl border border-amber-500/40 bg-gradient-to-r from-amber-500/15 via-amber-500/5 to-transparent flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm animate-in fade-in duration-300">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400">
+              <BellRing className="w-5 h-5 animate-pulse" />
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
+                <span>EMI Deduction Alert: {dueTodayLoans.length} Loan{dueTodayLoans.length > 1 ? "s" : ""} Due Today ({todayDate}th)</span>
+                <Badge variant="destructive" className="text-[10px] uppercase font-bold animate-pulse">
+                  Due Today
+                </Badge>
+              </h4>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Total Due: <strong className="text-foreground">{formatCurrency(dueTodayLoans.reduce((s, l) => s + l.emi, 0))}</strong>. Ensure bank balance or record payment with UTR.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <Button
+              size="sm"
+              onClick={() => {
+                setPayEmiLoan(dueTodayLoans[0]);
+                setIsPayEmiOpen(true);
+              }}
+              className="h-8 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5 w-full sm:w-auto shadow-sm"
+            >
+              <ReceiptText className="w-3.5 h-3.5" />
+              Pay EMI ({dueTodayLoans[0].bank})
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Top Cards Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
@@ -468,6 +516,20 @@ const Dashboard = () => {
           </div>
         )}
       </div>
+
+      {/* EMI Due Notification & Pay Dialog */}
+      <EmiDueNotificationModal
+        loans={loans}
+        onPayEmi={(loan) => {
+          setPayEmiLoan(loan);
+          setIsPayEmiOpen(true);
+        }}
+      />
+      <PayEmiDialog
+        open={isPayEmiOpen}
+        onOpenChange={setIsPayEmiOpen}
+        loan={payEmiLoan}
+      />
     </div>
   );
 };
