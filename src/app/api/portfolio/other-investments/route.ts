@@ -5,12 +5,14 @@ import { getOtherInvestmentModel } from "@/lib/models/OtherInvestment";
 type InvestmentInput = {
   particulars: string;
   amount: number;
+  remarks?: string;
 };
 
 function normalizeInvestment(inv: InvestmentInput) {
   return {
     particulars: inv.particulars.trim(),
     amount: Number(inv.amount),
+    remarks: (inv.remarks || "").trim(),
   };
 }
 
@@ -19,6 +21,7 @@ function serializeInvestment(doc: any) {
     id: doc._id.toString(),
     particulars: doc.particulars,
     amount: doc.amount,
+    remarks: doc.remarks || "",
   };
 }
 

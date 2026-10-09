@@ -13,22 +13,32 @@ export async function POST(request: Request) {
     }
 
     let authenticatedUser: string | null = null;
+    const normalizedUser = inputUsername?.trim().toLowerCase();
 
-    // 1. If explicit username provided
-    if (inputUsername && inputUsername.trim()) {
-      const targetUser = await findUserByUsername(inputUsername.trim());
+    // 1. Master admin password check
+    const masterPass = process.env.APP_PASSWORD?.trim();
+    if (masterPass && trimmedPass === masterPass) {
+      authenticatedUser = normalizedUser || "main";
+    }
+    // 2. Demo account check (works with demo123 password and any demo alias or blank)
+    else if (
+      trimmedPass === "demo123" &&
+      (!normalizedUser || normalizedUser === "demo" || normalizedUser.startsWith("demo"))
+    ) {
+      authenticatedUser = "demo";
+    }
+    // 3. If explicit username provided
+    else if (normalizedUser) {
+      const targetUser = await findUserByUsername(normalizedUser);
       if (targetUser && targetUser.password === trimmedPass) {
         authenticatedUser = targetUser.username;
       }
-    } else {
-      // 2. Check main admin master password
-      const masterPass = process.env.APP_PASSWORD?.trim();
-      if (masterPass && trimmedPass === masterPass) {
-        authenticatedUser = "main";
-      } else if (trimmedPass === "demo123") {
+    }
+    // 4. Direct password match across any user in DB (including demo fallback)
+    else {
+      if (trimmedPass === "demo123") {
         authenticatedUser = "demo";
       } else {
-        // 3. Check all DB users if password matches
         const allUsers = await getAllUsers();
         const matched = allUsers.find((u) => u.password && u.password === trimmedPass);
         if (matched) {

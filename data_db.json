@@ -5622,5 +5622,32 @@
       "password": "123",
       "createdAt": "2026-07-27T09:31:28.670Z"
     }
+  },
+  "stockWatchlists": {
+    "main": [
+      {
+        "id": "TCS",
+        "symbol": "TCS",
+        "name": "Tata Consultancy Services",
+        "sector": "Information Technology",
+        "type": "stock",
+        "ltp": 3840,
+        "change": 42,
+        "changePercent": 1.1,
+        "createdAt": "2026-10-09T07:24:07.278Z"
+      },
+      {
+        "id": "RELIANCE",
+        "symbol": "RELIANCE",
+        "name": "Reliance Industries Ltd",
+        "sector": "Energy",
+        "type": "stock",
+        "ltp": 2950,
+        "change": 15,
+        "changePercent": 0.51,
+        "createdAt": "2026-10-09T07:21:44.166Z"
+      }
+    ],
+    "demo": []
   }
 }

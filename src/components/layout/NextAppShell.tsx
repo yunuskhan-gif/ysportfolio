@@ -16,6 +16,7 @@ import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import ExcelUploadDialog from "@/components/portfolio/ExcelUploadDialog";
 import AddStockDialog from "@/components/portfolio/AddStockDialog";
 import UserProfileMenu from "@/components/shared/UserProfileMenu";
+import MarketTickerRibbon from "@/components/home/MarketTickerRibbon";
 import { fetchMotilalHoldings, HOLDINGS_QUERY_KEY } from "@/lib/portfolio-api";
 import { MOTILAL_SYNC_EVENT } from "@/lib/motilal-storage";
 
@@ -80,7 +81,8 @@ export default function NextAppShell({ children }: { children: React.ReactNode }
     <SidebarProvider defaultOpen={true}>
       <AppSidebar variant="inset" />
 
-      <SidebarInset>
+      <SidebarInset className="min-w-0 max-w-full overflow-x-hidden">
+        <MarketTickerRibbon compact={true} />
         <header className="sticky top-0 z-40 lg:static flex h-12 shrink-0 items-center gap-2 border-b border-border/50 bg-background/90 backdrop-blur-md transition-[width,height] ease-linear">
           <div className="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6">
             <SidebarTrigger className="-ml-1" />
@@ -138,7 +140,7 @@ export default function NextAppShell({ children }: { children: React.ReactNode }
           </div>
         </header>
 
-        <div className="scrollbar-hide flex-1 overflow-y-auto p-2">
+        <div className="scrollbar-hide flex-1 overflow-y-auto overflow-x-hidden min-w-0 max-w-full p-2">
           <PrimeReactProvider>{children}</PrimeReactProvider>
         </div>
 

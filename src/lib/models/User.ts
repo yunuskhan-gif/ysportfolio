@@ -43,10 +43,16 @@ export interface UserRecord {
 export async function getAllUsers(): Promise<UserRecord[]> {
   const usersMap: Map<string, UserRecord> = new Map();
 
-  // Always include 'main' default user
+  // Always include 'main' and 'demo' default users
   usersMap.set("main", {
     id: "main",
     username: "main",
+    createdAt: new Date().toISOString(),
+  });
+  usersMap.set("demo", {
+    id: "demo",
+    username: "demo",
+    password: "demo123",
     createdAt: new Date().toISOString(),
   });
 
@@ -108,7 +114,7 @@ export async function findUserByUsername(username: string): Promise<UserRecord |
     };
   }
 
-  if (normalized === "demo") {
+  if (normalized === "demo" || normalized === "demo@ysportfolio.com" || normalized === "demo@example.com") {
     return {
       id: "demo",
       username: "demo",

@@ -231,6 +231,7 @@ export interface OtherInvestment {
   id?: string;
   particulars: string;
   amount: number;
+  remarks?: string;
 }
 
 export const OTHER_INVESTMENTS_QUERY_KEY = ["portfolio", "other-investments"] as const;

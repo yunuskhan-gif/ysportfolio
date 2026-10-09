@@ -129,20 +129,22 @@ export default function Home() {
     checkSession();
   }, []);
 
-  const handleLoginSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!password) return;
+  const handleLoginSubmit = async (e?: React.FormEvent, overrideUser?: string, overridePass?: string) => {
+    if (e) e.preventDefault();
+    const passToUse = overridePass !== undefined ? overridePass : password;
+    const userToUse = overrideUser !== undefined ? overrideUser : username;
+    if (!passToUse) return;
     setAuthLoading(true);
     try {
       const res = await fetch("/api/auth/verify-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: username.trim() || undefined, password }),
+        body: JSON.stringify({ username: userToUse.trim() || undefined, password: passToUse }),
       });
       const data = await res.json();
       if (res.ok && data.success) {
         setIsLoggedIn(true);
-        setCurrentUsername(data.user || username.trim() || "main");
+        setCurrentUsername(data.user || userToUse.trim() || "main");
         toast.success(`Welcome ${data.user || "Investor"}!`);
         setIsLoginModalOpen(false);
         router.push("/dashboard");
@@ -290,7 +292,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="relative min-h-screen w-full bg-white text-[#0a2540] font-sans antialiased">
+    <div className="relative min-h-screen w-full max-w-full overflow-x-hidden bg-white text-[#0a2540] font-sans antialiased">
 
       {/* ─────────────────────────────────────────────────────────────── */}
       {/* NAVBAR                                                          */}
@@ -1902,6 +1904,19 @@ export default function Home() {
               className="w-full h-12 bg-[#0047AB] hover:bg-[#003882] text-white font-bold text-sm uppercase tracking-wider rounded-xl shadow-lg shadow-blue-900/20 cursor-pointer transition-all mt-2"
             >
               {authLoading ? <Loader2 className="h-4 w-4 animate-spin mx-auto" /> : "Unlock Portfolio & Enter"}
+            </Button>
+
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setUsername("demo");
+                setPassword("demo123");
+                handleLoginSubmit(undefined, "demo", "demo123");
+              }}
+              className="w-full h-11 border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold text-xs rounded-xl cursor-pointer transition-all"
+            >
+              1-Click Demo Login (demo / demo123)
             </Button>
           </form>
 

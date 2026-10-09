@@ -201,10 +201,20 @@
   *::-webkit-scrollbar {
     display: none;
   }
+  html {
+    max-width: 100vw;
+    overflow-x: hidden;
+    width: 100%;
+    -webkit-text-size-adjust: 100%;
+  }
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-sans) !important;
     letter-spacing: var(--tracking-normal);
+    max-width: 100vw;
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
   }
   .custom-scrollbar::-webkit-scrollbar {
     width: 6px;

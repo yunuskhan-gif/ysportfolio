@@ -13,6 +13,11 @@ const OtherInvestmentSchema = new Schema(
       required: true,
       min: 0,
     },
+    remarks: {
+      type: String,
+      default: "",
+      trim: true,
+    },
   },
   {
     timestamps: true,

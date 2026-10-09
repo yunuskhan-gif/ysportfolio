@@ -2,12 +2,13 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { jwtVerify } from "jose";
 
-export default async function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Skip verification for the auth API itself, static files, and media assets
   if (
     pathname.startsWith("/api/auth") ||
+    pathname.startsWith("/api/market") ||
     pathname.startsWith("/_next") ||
     pathname.startsWith("/favicon.ico") ||
     pathname === "/" ||
@@ -37,6 +38,8 @@ export default async function proxy(request: NextRequest) {
     return response;
   }
 }
+
+export default proxy;
 
 export const config = {
   matcher: [

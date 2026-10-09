@@ -31,7 +31,7 @@ import {
   Briefcase,
 } from "lucide-react";
 
-type SortField = "particulars" | "amount";
+type SortField = "particulars" | "amount" | "remarks";
 type SortDirection = "asc" | "desc";
 
 const formatINR = (value: number) =>
@@ -91,6 +91,7 @@ export default function OtherInvestments() {
 
   // Dialog fields
   const [particularsVal, setParticularsVal] = useState("");
+  const [remarksVal, setRemarksVal] = useState("");
   const [amountVal, setAmountVal] = useState("");
 
   const { data: items = [], isLoading: loading } = useQuery({
@@ -139,7 +140,8 @@ export default function OtherInvestments() {
   const filtered = useMemo(() => {
     return items
       .filter((item) =>
-        item.particulars.toLowerCase().includes(searchTerm.toLowerCase())
+        item.particulars.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (item.remarks && item.remarks.toLowerCase().includes(searchTerm.toLowerCase()))
       )
       .sort((a, b) => {
         const aVal = a[sortField];
@@ -236,6 +238,7 @@ export default function OtherInvestments() {
     setSelectedItem(item);
     setSelectedId(item.id || null);
     setParticularsVal(item.particulars);
+    setRemarksVal(item.remarks || "");
     setAmountVal(item.amount.toString());
     setIsAddOpen(true);
   };
@@ -244,6 +247,7 @@ export default function OtherInvestments() {
     setSelectedItem(null);
     setSelectedId(null);
     setParticularsVal("");
+    setRemarksVal("");
     setAmountVal("");
     setIsAddOpen(true);
   };
@@ -251,6 +255,7 @@ export default function OtherInvestments() {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     const particulars = particularsVal.trim();
+    const remarks = remarksVal.trim();
     const amount = Number(amountVal);
 
     if (!particulars || isNaN(amount) || amount < 0) {
@@ -259,7 +264,7 @@ export default function OtherInvestments() {
     }
 
     await saveMutation.mutateAsync({
-      item: { particulars, amount },
+      item: { particulars, amount, remarks },
       id: selectedId,
     });
   };
@@ -271,8 +276,8 @@ export default function OtherInvestments() {
         return;
       }
 
-      const headers = ["Particulars", "Amount"];
-      const rows = items.map((item) => [item.particulars, item.amount]);
+      const headers = ["Particulars", "Remarks / Location", "Amount"];
+      const rows = items.map((item) => [item.particulars, item.remarks || "—", item.amount]);
       const content = [headers, ...rows].map((r) => r.join("\t")).join("\n");
 
       await navigator.clipboard.writeText(content);
@@ -427,6 +432,12 @@ export default function OtherInvestments() {
                         <SortIcon field="particulars" />
                       </div>
                     </th>
+                    <th className="text-left px-4 py-2.5 font-bold uppercase tracking-tight text-muted-foreground select-none cursor-pointer" onClick={() => handleSort("remarks")}>
+                      <div className="flex items-center gap-1">
+                        Remarks / Where Invested
+                        <SortIcon field="remarks" />
+                      </div>
+                    </th>
                     <th className="text-right px-4 py-2.5 font-bold uppercase tracking-tight text-muted-foreground select-none cursor-pointer" onClick={() => handleSort("amount")}>
                       <div className="flex items-center gap-1 justify-end">
                         Amount
@@ -448,6 +459,15 @@ export default function OtherInvestments() {
                         />
                       </td>
                       <td className="px-4 py-2.5 font-bold uppercase">{item.particulars}</td>
+                      <td className="px-4 py-2.5 text-xs">
+                        {item.remarks ? (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-muted/70 text-foreground font-medium border border-border/50 text-[11px]">
+                            {item.remarks}
+                          </span>
+                        ) : (
+                          <span className="text-muted-foreground/40 italic">—</span>
+                        )}
+                      </td>
                       <td className="px-4 py-2.5 text-right font-black text-primary tabular-nums">
                         {formatINR(item.amount)}
                       </td>
@@ -529,6 +549,15 @@ export default function OtherInvestments() {
                     onChange={(e) => setParticularsVal(e.target.value)}
                     placeholder="e.g. Gold, Real Estate, Crypto"
                     className="h-10 text-sm font-semibold uppercase"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-muted-foreground uppercase">Remarks / Where Invested (Optional)</label>
+                  <Input
+                    value={remarksVal}
+                    onChange={(e) => setRemarksVal(e.target.value)}
+                    placeholder="e.g. Tanishq Digital Gold, Bandra Flat, CoinDCX"
+                    className="h-10 text-sm"
                   />
                 </div>
                 <div className="space-y-1.5">

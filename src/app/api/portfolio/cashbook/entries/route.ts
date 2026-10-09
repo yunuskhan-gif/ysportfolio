@@ -46,10 +46,12 @@ export async function POST(request: Request) {
 
   const CashbookEntryModel = await getCashbookEntryModel();
   if (id) {
-    await CashbookEntryModel.findByIdAndUpdate(id, payload, { new: true });
-  } else {
-    await CashbookEntryModel.create(payload);
+    return NextResponse.json(
+      { message: "Editing cashbook entries is disabled for ledger integrity." },
+      { status: 400 }
+    );
   }
+  await CashbookEntryModel.create(payload);
 
   return NextResponse.json(await getSerializedEntries());
 }
