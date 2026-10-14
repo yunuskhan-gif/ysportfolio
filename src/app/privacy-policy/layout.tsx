@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | YS CAPITAL",
+  title: "Privacy Policy | YS PORTFOLIO",
   description:
-    "Read the official Privacy Policy of YS CAPITAL (ARN 145084). Learn how we protect, store, and safeguard your financial data, CAS statements, and portfolio ledgers with strict host-isolation and 256-bit encryption.",
+    "Read the official Privacy Policy of YS PORTFOLIO (ARN 145084). Learn how we protect, store, and safeguard your financial data, CAS statements, and portfolio ledgers with strict host-isolation and 256-bit encryption.",
   alternates: {
     canonical: "/privacy-policy",
   },
@@ -12,8 +12,8 @@ export const metadata: Metadata = {
     follow: true,
   },
   openGraph: {
-    title: "Privacy Policy | YS CAPITAL",
-    description: "Learn how YS CAPITAL safeguards investor portfolio data and privacy under SEBI & AMFI standards.",
+    title: "Privacy Policy | YS PORTFOLIO",
+    description: "Learn how YS PORTFOLIO safeguards investor portfolio data and privacy under SEBI & AMFI standards.",
     url: "/privacy-policy",
     type: "website",
   },

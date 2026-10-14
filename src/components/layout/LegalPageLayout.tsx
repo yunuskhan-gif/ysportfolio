@@ -56,11 +56,11 @@ export default function LegalPageLayout({
           <div className="flex items-center gap-4">
             <Link href="/" className="flex items-center gap-3 group select-none">
               <div className="relative h-10 w-8 rounded-lg overflow-hidden bg-black flex items-center justify-center shadow-xs">
-                <Image src="/ys_logo.png" alt="YS CAPITAL Logo" fill className="object-contain p-0.5" priority />
+                <Image src="/ys_logo.png" alt="YS PORTFOLIO Logo" fill className="object-contain p-0.5" priority />
               </div>
               <div>
                 <span className="font-black text-base sm:text-lg font-serif text-[#0a2540] tracking-wider block">
-                  YS CAPITAL
+                  YS PORTFOLIO
                 </span>
                 <span className="text-[10px] text-slate-500 font-mono">ARN 145084 · AMFI · APMI</span>
               </div>
@@ -164,7 +164,7 @@ export default function LegalPageLayout({
                 SEBI & AMFI Registered
               </div>
               <p className="text-slate-600 leading-relaxed text-[11px]">
-                YS CAPITAL complies with all applicable regulations under SEBI (Mutual Funds) Regulations, 1996 and AMFI Code of Conduct.
+                YS PORTFOLIO complies with all applicable regulations under SEBI (Mutual Funds) Regulations, 1996 and AMFI Code of Conduct.
               </p>
               <div className="pt-1 text-[11px] font-mono text-slate-500">
                 ARN: 145084 · EUIN: E248911
@@ -214,11 +214,11 @@ export default function LegalPageLayout({
             <div className="md:col-span-5 space-y-4">
               <div className="flex items-center gap-3">
                 <div className="relative h-10 w-8 rounded-lg overflow-hidden bg-black border border-white/10">
-                  <Image src="/ys_logo.png" alt="YS CAPITAL Logo" fill className="object-contain p-0.5" />
+                  <Image src="/ys_logo.png" alt="YS PORTFOLIO Logo" fill className="object-contain p-0.5" />
                 </div>
                 <div>
                   <span className="font-black text-base font-serif text-white tracking-widest block">
-                    YS CAPITAL
+                    YS PORTFOLIO
                   </span>
                   <span className="text-[10px] text-slate-500">ARN 145084 · AMFI · APMI</span>
                 </div>
@@ -268,7 +268,7 @@ export default function LegalPageLayout({
           </div>
 
           <div className="border-t border-white/5 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-slate-600">
-            <div>© {new Date().getFullYear()} Y S CAPITAL. All Rights Reserved.</div>
+            <div>© {new Date().getFullYear()} YS PORTFOLIO. All Rights Reserved.</div>
             <div className="flex items-center gap-4">
               <span>ARN-145084</span>
               <span>•</span>

@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Terms and Conditions | YS CAPITAL",
+  title: "Terms and Conditions | YS PORTFOLIO",
   description:
-    "Review the Terms and Conditions for accessing YS CAPITAL (ARN 145084) digital portfolio tracking, investment distribution services, and wealth management platform.",
+    "Review the Terms and Conditions for accessing YS PORTFOLIO (ARN 145084) digital portfolio tracking, investment distribution services, and wealth management platform.",
   alternates: {
     canonical: "/terms",
   },
@@ -12,8 +12,8 @@ export const metadata: Metadata = {
     follow: true,
   },
   openGraph: {
-    title: "Terms & Conditions | YS CAPITAL",
-    description: "Official Terms and Conditions for YS CAPITAL wealth management services.",
+    title: "Terms & Conditions | YS PORTFOLIO",
+    description: "Official Terms and Conditions for YS PORTFOLIO wealth management services.",
     url: "/terms",
     type: "website",
   },

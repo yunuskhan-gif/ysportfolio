@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Refund & Cancellation Policy | YS CAPITAL",
+  title: "Refund & Cancellation Policy | YS PORTFOLIO",
   description:
-    "Official Refund & Cancellation Policy of YS CAPITAL (ARN 145084). Learn about mutual fund redemptions, direct AMC fund routing, advisory subscription cancellations, and grievance resolution SLAs.",
+    "Official Refund & Cancellation Policy of YS PORTFOLIO (ARN 145084). Learn about mutual fund redemptions, direct AMC fund routing, advisory subscription cancellations, and grievance resolution SLAs.",
   alternates: {
     canonical: "/refund-policy",
   },
@@ -12,8 +12,8 @@ export const metadata: Metadata = {
     follow: true,
   },
   openGraph: {
-    title: "Refund & Cancellation Policy | YS CAPITAL",
-    description: "Official Refund and Cancellation Guidelines for YS CAPITAL wealth management and distribution services.",
+    title: "Refund & Cancellation Policy | YS PORTFOLIO",
+    description: "Official Refund and Cancellation Guidelines for YS PORTFOLIO wealth management and distribution services.",
     url: "/refund-policy",
     type: "website",
   },

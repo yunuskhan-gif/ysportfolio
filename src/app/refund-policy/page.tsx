@@ -21,7 +21,7 @@ export default function RefundPolicyPage() {
           <Building2 className="h-5 w-5 text-[#0047AB] mt-0.5 flex-shrink-0" />
           <div className="text-xs space-y-1">
             <span className="font-bold block text-sm text-[#0047AB]">Direct Investor-to-AMC Fund Routing</span>
-            As an AMFI-registered distributor (ARN 145084), <strong>YS CAPITAL never accepts or pools investment funds into its own corporate accounts</strong>. All purchase and redemption monies are transferred directly between your bank account and SEBI-recognized clearing houses (e.g. BSE STAR MF, NSE NMF II, ICCL) or respective Mutual Fund AMCs.
+            As an AMFI-registered distributor (ARN 145084), <strong>YS PORTFOLIO never accepts or pools investment funds into its own corporate accounts</strong>. All purchase and redemption monies are transferred directly between your bank account and SEBI-recognized clearing houses (e.g. BSE STAR MF, NSE NMF II, ICCL) or respective Mutual Fund AMCs.
           </div>
         </div>
 
@@ -56,7 +56,7 @@ export default function RefundPolicyPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
             <div className="p-3.5 rounded-xl border border-slate-200 bg-slate-50 space-y-1">
               <span className="font-bold text-xs text-slate-900 block">No Cancellation Penalties</span>
-              <p className="text-[11px] text-slate-500">YS CAPITAL charges zero penalty or exit fees for stopping or pausing an active SIP.</p>
+              <p className="text-[11px] text-slate-500">YS PORTFOLIO charges zero penalty or exit fees for stopping or pausing an active SIP.</p>
             </div>
             <div className="p-3.5 rounded-xl border border-slate-200 bg-slate-50 space-y-1">
               <span className="font-bold text-xs text-slate-900 block">Notice Period for Banking Mandates</span>
@@ -131,7 +131,7 @@ export default function RefundPolicyPage() {
           <h2 className="text-xl font-bold font-serif text-[#0a2540]">6. Contact Desk for Settlements</h2>
           <div className="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-1.5 text-xs text-slate-700">
             <p><strong>Department:</strong> Settlements & Redemptions Support Desk</p>
-            <p><strong>Entity:</strong> Y S CAPITAL (ARN 145084)</p>
+            <p><strong>Entity:</strong> YS PORTFOLIO (ARN 145084)</p>
             <p><strong>Email:</strong> <a href="mailto:clientservices@yscapital.com" className="text-[#0047AB] underline">clientservices@yscapital.com</a></p>
             <p><strong>Direct Helpline:</strong> +91 22 4152 3000</p>
             <p><strong>Operating Hours:</strong> Monday through Friday, 9:00 AM – 6:00 PM IST</p>

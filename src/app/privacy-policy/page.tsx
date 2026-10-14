@@ -10,7 +10,7 @@ export default function PrivacyPolicyPage() {
       badge="Data Protection & Privacy"
       badgeIcon={ShieldCheck}
       title="Privacy Policy"
-      subtitle="How YS CAPITAL safeguards your financial records, portfolio holdings, and personal information across our digital wealth intelligence suite."
+      subtitle="How YS PORTFOLIO safeguards your financial records, portfolio holdings, and personal information across our digital wealth intelligence suite."
       lastUpdated="September 2026"
       activePath="/privacy-policy"
     >
@@ -21,7 +21,7 @@ export default function PrivacyPolicyPage() {
           <Lock className="h-5 w-5 text-[#0047AB] mt-0.5 flex-shrink-0" />
           <div className="text-xs space-y-1">
             <span className="font-bold block text-sm text-[#0047AB]">Our Core Privacy Promise</span>
-            YS CAPITAL operates on a <strong>strictly host-isolated architecture</strong>. Your uploaded CAS statements, stock quantities, buy prices, cash ledgers, and transaction history are stored securely and are never sold, rented, or shared with commercial advertising networks.
+            YS PORTFOLIO operates on a <strong>strictly host-isolated architecture</strong>. Your uploaded CAS statements, stock quantities, buy prices, cash ledgers, and transaction history are stored securely and are never sold, rented, or shared with commercial advertising networks.
           </div>
         </div>
 
@@ -29,7 +29,7 @@ export default function PrivacyPolicyPage() {
         <section className="space-y-3">
           <h2 className="text-xl font-bold font-serif text-[#0a2540]">1. Introduction & Regulatory Scope</h2>
           <p>
-            Welcome to <strong>YS CAPITAL</strong> (operating through ARN 145084, AMFI Registered Mutual Fund Distributor and APMI Registered PMS Distributor). This Privacy Policy explains our practices regarding the collection, storage, processing, and protection of financial records and personal data when you access <strong>YS Digital Portfolio</strong>.
+            Welcome to <strong>YS PORTFOLIO</strong> (operating through ARN 145084, AMFI Registered Mutual Fund Distributor and APMI Registered PMS Distributor). This Privacy Policy explains our practices regarding the collection, storage, processing, and protection of financial records and personal data when you access <strong>YS Digital Portfolio</strong>.
           </p>
           <p>
             We adhere strictly to the <em>Information Technology Act, 2000</em>, the <em>Information Technology (Reasonable Security Practices and Procedures and Sensitive Personal Data or Information) Rules, 2011</em>, and guidelines set forth by the Securities and Exchange Board of India (SEBI) and the Association of Mutual Funds in India (AMFI).
@@ -89,7 +89,7 @@ export default function PrivacyPolicyPage() {
               Strict No-Sale Commitment
             </div>
             <p className="text-xs text-emerald-900 leading-relaxed">
-              YS CAPITAL does not sell, trade, license, or lease your personal financial records or portfolio balances to third-party telemarketers, credit card issuers, loan aggregators, or external advertisers under any circumstances.
+              YS PORTFOLIO does not sell, trade, license, or lease your personal financial records or portfolio balances to third-party telemarketers, credit card issuers, loan aggregators, or external advertisers under any circumstances.
             </p>
           </div>
         </section>
@@ -136,7 +136,7 @@ export default function PrivacyPolicyPage() {
           </p>
           <div className="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-1.5 text-xs text-slate-700">
             <p><strong>Grievance Officer:</strong> Client Services & Compliance Desk</p>
-            <p><strong>Entity:</strong> Y S CAPITAL (ARN 145084)</p>
+            <p><strong>Entity:</strong> YS PORTFOLIO (ARN 145084)</p>
             <p><strong>Address:</strong> Sewree, Mumbai, Maharashtra 400015, India</p>
             <p><strong>Email:</strong> <a href="mailto:clientservices@yscapital.com" className="text-[#0047AB] underline">clientservices@yscapital.com</a></p>
             <p><strong>Phone:</strong> +91 22 4152 3000</p>

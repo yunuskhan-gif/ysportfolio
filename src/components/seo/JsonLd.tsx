@@ -7,9 +7,9 @@ export default function JsonLd() {
     "@context": "https://schema.org",
     "@type": "FinancialService",
     "@id": `${baseUrl}/#organization`,
-    name: "YS CAPITAL",
+    name: "YS PORTFOLIO",
     alternateName: ["YS Digital Portfolio", "Y S Capital Wealth Management", "YS Wealth"],
-    legalName: "Y S CAPITAL",
+    legalName: "YS PORTFOLIO",
     url: baseUrl,
     logo: `${baseUrl}/ys_logo.png`,
     image: `${baseUrl}/showcase_dashboard.png`,
@@ -100,7 +100,7 @@ export default function JsonLd() {
         name: "What is YS Digital Portfolio and who is it designed for?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "YS Digital Portfolio is an institutional wealth intelligence suite built by Y S CAPITAL (ARN 145084). It is designed for high-net-worth individuals (HNIs), active retail investors, and family offices who want to consolidate multi-broker equities, all Mutual Fund schemes across AMCs, bonds, and cash ledgers into one executive real-time command center.",
+          text: "YS Digital Portfolio is an institutional wealth intelligence suite built by YS PORTFOLIO (ARN 145084). It is designed for high-net-worth individuals (HNIs), active retail investors, and family offices who want to consolidate multi-broker equities, all Mutual Fund schemes across AMCs, bonds, and cash ledgers into one executive real-time command center.",
         },
       },
       {
@@ -148,7 +148,7 @@ export default function JsonLd() {
         name: "What are the distributor commissions or platform charges?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "As an AMFI-registered Mutual Fund Distributor (ARN 145084), YS CAPITAL receives trail commissions directly from Asset Management Companies (AMCs) out of the scheme's Total Expense Ratio (TER). Investors pay zero direct out-of-pocket transaction fees for regular mutual fund investments. Full scheme-wise commission disclosures are available upon request.",
+          text: "As an AMFI-registered Mutual Fund Distributor (ARN 145084), YS PORTFOLIO receives trail commissions directly from Asset Management Companies (AMCs) out of the scheme's Total Expense Ratio (TER). Investors pay zero direct out-of-pocket transaction fees for regular mutual fund investments. Full scheme-wise commission disclosures are available upon request.",
         },
       },
       {
@@ -161,10 +161,10 @@ export default function JsonLd() {
       },
       {
         "@type": "Question",
-        name: "Does YS CAPITAL hold my investment funds in its own bank account?",
+        name: "Does YS PORTFOLIO hold my investment funds in its own bank account?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Never. As an AMFI-registered distributor, all purchase and redemption monies are routed directly between your verified bank account and SEBI-recognized clearing corporations (BSE STAR MF, NSE NMF II, ICCL) or respective AMCs. YS CAPITAL never accepts or pools client investment funds into its own corporate accounts.",
+          text: "Never. As an AMFI-registered distributor, all purchase and redemption monies are routed directly between your verified bank account and SEBI-recognized clearing corporations (BSE STAR MF, NSE NMF II, ICCL) or respective AMCs. YS PORTFOLIO never accepts or pools client investment funds into its own corporate accounts.",
         },
       },
       {
@@ -183,7 +183,7 @@ export default function JsonLd() {
     "@type": "WebSite",
     "@id": `${baseUrl}/#website`,
     url: baseUrl,
-    name: "YS CAPITAL | Institutional Wealth Intelligence",
+    name: "YS PORTFOLIO | Institutional Wealth Intelligence",
     publisher: {
       "@id": `${baseUrl}/#organization`,
     },

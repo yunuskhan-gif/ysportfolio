@@ -54,9 +54,9 @@ export default function NextAppShell({ children }: { children: React.ReactNode }
 
   useEffect(() => {
     if (pathname === "/") {
-      document.title = "YS CAPITAL | Digital Portfolio & Institutional Wealth Intelligence";
+      document.title = "YS PORTFOLIO | Digital Portfolio & Institutional Wealth Intelligence";
     } else {
-      document.title = `${getPageTitle()} | YS CAPITAL`;
+      document.title = `${getPageTitle()} | YS PORTFOLIO`;
     }
   }, [pathname]);
 

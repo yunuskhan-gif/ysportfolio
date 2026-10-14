@@ -64,11 +64,11 @@ export default function BlogIndexPage() {
           <div className="flex items-center gap-4">
             <Link href="/" className="flex items-center gap-3 group select-none">
               <div className="relative h-10 w-8 rounded-lg overflow-hidden bg-black flex items-center justify-center shadow-xs">
-                <Image src="/ys_logo.png" alt="YS CAPITAL Logo" fill className="object-contain p-0.5" priority />
+                <Image src="/ys_logo.png" alt="YS PORTFOLIO Logo" fill className="object-contain p-0.5" priority />
               </div>
               <div>
                 <span className="font-black text-base sm:text-lg font-serif text-[#0a2540] tracking-wider block">
-                  YS CAPITAL
+                  YS PORTFOLIO
                 </span>
                 <span className="text-[10px] text-slate-500 font-mono">ARN 145084 · AMFI · APMI</span>
               </div>
@@ -319,7 +319,7 @@ export default function BlogIndexPage() {
               Personalized Family Office Advisory
             </span>
             <h3 className="text-2xl sm:text-3xl font-black font-serif">
-              Consolidate Your Portfolio with YS CAPITAL
+              Consolidate Your Portfolio with YS PORTFOLIO
             </h3>
             <p className="text-blue-100/80 text-xs sm:text-sm max-w-xl font-light">
               Get an expert second opinion on your mutual fund allocations, XIRR trajectory, and tax harvesting opportunities.
@@ -355,11 +355,11 @@ export default function BlogIndexPage() {
             <div className="md:col-span-5 space-y-4">
               <div className="flex items-center gap-3">
                 <div className="relative h-10 w-8 rounded-lg overflow-hidden bg-black border border-white/10">
-                  <Image src="/ys_logo.png" alt="YS CAPITAL Logo" fill className="object-contain p-0.5" />
+                  <Image src="/ys_logo.png" alt="YS PORTFOLIO Logo" fill className="object-contain p-0.5" />
                 </div>
                 <div>
                   <span className="font-black text-base font-serif text-white tracking-widest block">
-                    YS CAPITAL
+                    YS PORTFOLIO
                   </span>
                   <span className="text-[10px] text-slate-500">ARN 145084 · AMFI · APMI</span>
                 </div>
@@ -395,7 +395,7 @@ export default function BlogIndexPage() {
           </div>
 
           <div className="border-t border-white/5 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-slate-600">
-            <div>© {new Date().getFullYear()} Y S CAPITAL. All Rights Reserved.</div>
+            <div>© {new Date().getFullYear()} YS PORTFOLIO. All Rights Reserved.</div>
             <div className="flex items-center gap-4">
               <span>ARN-145084</span>
               <span>•</span>

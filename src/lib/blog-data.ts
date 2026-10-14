@@ -153,7 +153,7 @@ export const BLOG_POSTS: BlogPost[] = [
     featured: true,
     author: {
       name: "Senior Wealth Strategist",
-      role: "YS CAPITAL Family Office",
+      role: "YS PORTFOLIO Family Office",
       avatar: "YS",
     },
     date: "Sep 15, 2026",
@@ -244,7 +244,7 @@ export const BLOG_POSTS: BlogPost[] = [
     category: "Personal Finance",
     author: {
       name: "Advisory Desk",
-      role: "YS CAPITAL Wealth Management",
+      role: "YS PORTFOLIO Wealth Management",
       avatar: "YS",
     },
     date: "Sep 05, 2026",

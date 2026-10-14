@@ -10,7 +10,7 @@ export default function TermsPage() {
       badge="Client Agreement & Terms"
       badgeIcon={Scale}
       title="Terms & Conditions"
-      subtitle="Governing rules, regulatory disclosures, and terms of service for utilizing YS CAPITAL wealth management platforms and distributor services."
+      subtitle="Governing rules, regulatory disclosures, and terms of service for utilizing YS PORTFOLIO wealth management platforms and distributor services."
       lastUpdated="September 2026"
       activePath="/terms"
     >
@@ -29,7 +29,7 @@ export default function TermsPage() {
         <section className="space-y-3">
           <h2 className="text-xl font-bold font-serif text-[#0a2540]">1. Regulatory Status & Acceptance of Terms</h2>
           <p>
-            These Terms & Conditions constitute a legally binding agreement between you (&quot;Client&quot;, &quot;Investor&quot;, or &quot;User&quot;) and <strong>Y S CAPITAL</strong> (&quot;YS CAPITAL&quot;, &quot;we&quot;, or &quot;us&quot;), an <strong>AMFI Registered Mutual Fund Distributor (ARN-145084)</strong> and <strong>APMI Registered Portfolio Management Services (PMS) Distributor</strong>.
+            These Terms & Conditions constitute a legally binding agreement between you (&quot;Client&quot;, &quot;Investor&quot;, or &quot;User&quot;) and <strong>YS PORTFOLIO</strong> (&quot;YS PORTFOLIO&quot;, &quot;we&quot;, or &quot;us&quot;), an <strong>AMFI Registered Mutual Fund Distributor (ARN-145084)</strong> and <strong>APMI Registered Portfolio Management Services (PMS) Distributor</strong>.
           </p>
           <p>
             By accessing or using the <strong>YS Digital Portfolio</strong> application, importing statements, viewing wealth dashboards, or engaging our distribution services, you unconditionally agree to be bound by these Terms. If you disagree with any provision, you must immediately discontinue use of the platform.
@@ -39,7 +39,7 @@ export default function TermsPage() {
         {/* Section 2 */}
         <section className="space-y-3">
           <h2 className="text-xl font-bold font-serif text-[#0a2540]">2. Scope of Services</h2>
-          <p>YS CAPITAL provides integrated multi-asset distribution and digital tracking utilities, including:</p>
+          <p>YS PORTFOLIO provides integrated multi-asset distribution and digital tracking utilities, including:</p>
           <ul className="list-disc pl-5 space-y-2 text-slate-600">
             <li><strong>Mutual Fund Distribution:</strong> Facilitating investments in schemes of Asset Management Companies (AMCs) registered with SEBI.</li>
             <li><strong>PMS & AIF Distribution:</strong> Providing access to accredited Portfolio Management Services and Alternative Investment Funds in compliance with APMI and SEBI regulations.</li>
@@ -56,7 +56,7 @@ export default function TermsPage() {
             YS Digital Portfolio is an analytical intelligence suite designed to monitor historical transactions and compute mathematical returns. Nothing contained within this platform constitutes a guarantee, warranty, or promise of positive investment returns.
           </p>
           <p>
-            Investors retain sole discretion over investment execution. YS CAPITAL acts strictly in its statutory capacity as an AMFI/APMI registered distributor and does not operate as an unregistered discretionary portfolio manager.
+            Investors retain sole discretion over investment execution. YS PORTFOLIO acts strictly in its statutory capacity as an AMFI/APMI registered distributor and does not operate as an unregistered discretionary portfolio manager.
           </p>
         </section>
 
@@ -64,7 +64,7 @@ export default function TermsPage() {
         <section className="space-y-3">
           <h2 className="text-xl font-bold font-serif text-[#0a2540]">4. Distributor Commission Disclosure</h2>
           <p>
-            In strict compliance with <em>SEBI Circular SEBI/IMD/CIR No. 4/168230/09</em> and subsequent amendments, YS CAPITAL discloses that it receives trail commissions from respective Asset Management Companies (AMCs) for distributing mutual fund schemes.
+            In strict compliance with <em>SEBI Circular SEBI/IMD/CIR No. 4/168230/09</em> and subsequent amendments, YS PORTFOLIO discloses that it receives trail commissions from respective Asset Management Companies (AMCs) for distributing mutual fund schemes.
           </p>
           <p>
             The commission structure varies across scheme categories (Equity, Hybrid, Debt, Liquid, Index) and is paid directly by the AMC out of the scheme&apos;s Total Expense Ratio (TER) without any additional direct out-of-pocket fee charged to the investor for regular mutual fund transactions. Full category-wise commission rates are available upon client request.
@@ -78,8 +78,8 @@ export default function TermsPage() {
             Access to client portfolios is protected via master password verification gates. You are exclusively responsible for maintaining the confidentiality of your session keys and passwords.
           </p>
           <ul className="list-disc pl-5 space-y-1.5 text-slate-600">
-            <li>You agree to notify YS CAPITAL immediately if you suspect unauthorized access or compromised credentials.</li>
-            <li>YS CAPITAL shall not be liable for any losses arising from negligence or sharing of passwords with unauthorized individuals.</li>
+            <li>You agree to notify YS PORTFOLIO immediately if you suspect unauthorized access or compromised credentials.</li>
+            <li>YS PORTFOLIO shall not be liable for any losses arising from negligence or sharing of passwords with unauthorized individuals.</li>
           </ul>
         </section>
 
@@ -90,7 +90,7 @@ export default function TermsPage() {
             Mutual Fund Net Asset Values (NAVs) are fetched directly from the official AMFI database API. Stock market quotations are obtained via live market scrapers.
           </p>
           <p>
-            While YS CAPITAL exercises due care to ensure high precision, we shall not be held liable for temporary server downtime, upstream AMFI API delays, or inaccuracies resulting from corrupt or altered third-party statement uploads.
+            While YS PORTFOLIO exercises due care to ensure high precision, we shall not be held liable for temporary server downtime, upstream AMFI API delays, or inaccuracies resulting from corrupt or altered third-party statement uploads.
           </p>
         </section>
 
@@ -98,7 +98,7 @@ export default function TermsPage() {
         <section className="space-y-3">
           <h2 className="text-xl font-bold font-serif text-[#0a2540]">7. Intellectual Property</h2>
           <p>
-            All brand assets, software architecture, UI design, analytics algorithms, and proprietary parsing engines comprising YS Digital Portfolio are the exclusive intellectual property of YS CAPITAL. Unauthorized copying, reverse engineering, scraping, or commercial sub-licensing is strictly prohibited under Indian and international copyright laws.
+            All brand assets, software architecture, UI design, analytics algorithms, and proprietary parsing engines comprising YS Digital Portfolio are the exclusive intellectual property of YS PORTFOLIO. Unauthorized copying, reverse engineering, scraping, or commercial sub-licensing is strictly prohibited under Indian and international copyright laws.
           </p>
         </section>
 
@@ -106,7 +106,7 @@ export default function TermsPage() {
         <section className="space-y-3">
           <h2 className="text-xl font-bold font-serif text-[#0a2540]">8. Limitation of Liability</h2>
           <p>
-            To the maximum extent permitted by Indian law, YS CAPITAL, its directors, employees, and authorized affiliates shall not be liable for any indirect, incidental, punitive, or consequential damages resulting from investment decisions made by the client, market losses, or third-party banking failures.
+            To the maximum extent permitted by Indian law, YS PORTFOLIO, its directors, employees, and authorized affiliates shall not be liable for any indirect, incidental, punitive, or consequential damages resulting from investment decisions made by the client, market losses, or third-party banking failures.
           </p>
         </section>
 

@@ -32,10 +32,10 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
   const post = BLOG_POSTS.find((p) => p.slug === slug);
-  if (!post) return { title: "Article Not Found | YS CAPITAL" };
+  if (!post) return { title: "Article Not Found | YS PORTFOLIO" };
 
   return {
-    title: `${post.title} | YS CAPITAL Blog`,
+    title: `${post.title} | YS PORTFOLIO Blog`,
     description: post.excerpt,
     alternates: {
       canonical: `/blog/${post.slug}`,
@@ -72,11 +72,11 @@ export default async function BlogPostPage({ params }: PageProps) {
           <div className="flex items-center gap-4">
             <Link href="/" className="flex items-center gap-3 group select-none">
               <div className="relative h-10 w-8 rounded-lg overflow-hidden bg-black flex items-center justify-center shadow-xs">
-                <Image src="/ys_logo.png" alt="YS CAPITAL Logo" fill className="object-contain p-0.5" priority />
+                <Image src="/ys_logo.png" alt="YS PORTFOLIO Logo" fill className="object-contain p-0.5" priority />
               </div>
               <div>
                 <span className="font-black text-base sm:text-lg font-serif text-[#0a2540] tracking-wider block">
-                  YS CAPITAL
+                  YS PORTFOLIO
                 </span>
                 <span className="text-[10px] text-slate-500 font-mono">ARN 145084 · AMFI · APMI</span>
               </div>
@@ -288,11 +288,11 @@ export default async function BlogPostPage({ params }: PageProps) {
             <div className="md:col-span-5 space-y-4">
               <div className="flex items-center gap-3">
                 <div className="relative h-10 w-8 rounded-lg overflow-hidden bg-black border border-white/10">
-                  <Image src="/ys_logo.png" alt="YS CAPITAL Logo" fill className="object-contain p-0.5" />
+                  <Image src="/ys_logo.png" alt="YS PORTFOLIO Logo" fill className="object-contain p-0.5" />
                 </div>
                 <div>
                   <span className="font-black text-base font-serif text-white tracking-widest block">
-                    YS CAPITAL
+                    YS PORTFOLIO
                   </span>
                   <span className="text-[10px] text-slate-500">ARN 145084 · AMFI · APMI</span>
                 </div>
@@ -324,7 +324,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           </div>
 
           <div className="border-t border-white/5 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-slate-600">
-            <div>© {new Date().getFullYear()} Y S CAPITAL. All Rights Reserved.</div>
+            <div>© {new Date().getFullYear()} YS PORTFOLIO. All Rights Reserved.</div>
             <div className="flex items-center gap-4">
               <span>ARN-145084</span>
               <span>•</span>

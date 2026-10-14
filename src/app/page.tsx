@@ -193,7 +193,7 @@ export default function Home() {
     {
       category: "Mutual Funds & AMFI",
       q: "What is YS Digital Portfolio and who is it designed for?",
-      a: "YS Digital Portfolio is an institutional wealth intelligence suite built by Y S CAPITAL (ARN 145084). It is designed for high-net-worth individuals (HNIs), active retail investors, and family offices who want to consolidate multi-broker equities, all Mutual Fund schemes across AMCs, bonds, and cash ledgers into one executive real-time command center.",
+      a: "YS Digital Portfolio is an institutional wealth intelligence suite built by YS PORTFOLIO (ARN 145084). It is designed for high-net-worth individuals (HNIs), active retail investors, and family offices who want to consolidate multi-broker equities, all Mutual Fund schemes across AMCs, bonds, and cash ledgers into one executive real-time command center.",
     },
     {
       category: "CAS & Broker Sync",
@@ -223,7 +223,7 @@ export default function Home() {
     {
       category: "Fees & Returns",
       q: "What are the distributor commissions or platform charges?",
-      a: "As an AMFI-registered Mutual Fund Distributor (ARN 145084), YS CAPITAL receives trail commissions directly from Asset Management Companies (AMCs) out of the scheme's Total Expense Ratio (TER). Investors pay zero direct out-of-pocket transaction fees for regular mutual fund investments. Full scheme-wise commission disclosures are available upon request.",
+      a: "As an AMFI-registered Mutual Fund Distributor (ARN 145084), YS PORTFOLIO receives trail commissions directly from Asset Management Companies (AMCs) out of the scheme's Total Expense Ratio (TER). Investors pay zero direct out-of-pocket transaction fees for regular mutual fund investments. Full scheme-wise commission disclosures are available upon request.",
     },
     {
       category: "Fees & Returns",
@@ -232,8 +232,8 @@ export default function Home() {
     },
     {
       category: "Security & Privacy",
-      q: "Does YS CAPITAL hold my investment funds in its own bank account?",
-      a: "Never. As an AMFI-registered distributor, all purchase and redemption monies are routed directly between your verified bank account and SEBI-recognized clearing corporations (BSE STAR MF, NSE NMF II, ICCL) or respective AMCs. YS CAPITAL never accepts or pools client investment funds into its own corporate accounts.",
+      q: "Does YS PORTFOLIO hold my investment funds in its own bank account?",
+      a: "Never. As an AMFI-registered distributor, all purchase and redemption monies are routed directly between your verified bank account and SEBI-recognized clearing corporations (BSE STAR MF, NSE NMF II, ICCL) or respective AMCs. YS PORTFOLIO never accepts or pools client investment funds into its own corporate accounts.",
     },
     {
       category: "Mutual Funds & AMFI",
@@ -312,7 +312,7 @@ export default function Home() {
             className="flex items-center cursor-pointer group select-none"
           >
             <div className={`relative h-11 w-8 rounded-lg overflow-hidden flex items-center justify-center transition-all duration-300 ${scrolled ? "bg-black shadow-sm" : "bg-black/90"}`}>
-              <Image src="/ys_logo.png" alt="YS CAPITAL - Wealth Management & Digital Portfolio Logo" fill className="object-contain p-0.5" priority />
+              <Image src="/ys_logo.png" alt="YS PORTFOLIO - Wealth Management & Digital Portfolio Logo" fill className="object-contain p-0.5" priority />
             </div>
           </div>
 
@@ -481,10 +481,10 @@ export default function Home() {
                 <SheetHeader className="p-6 border-b border-slate-100">
                   <div className="flex items-center gap-3">
                     <div className="relative h-10 w-8 rounded-lg overflow-hidden bg-black flex-shrink-0">
-                      <Image src="/ys_logo.png" alt="YS CAPITAL Brand Logo" fill className="object-contain p-0.5" />
+                      <Image src="/ys_logo.png" alt="YS PORTFOLIO Brand Logo" fill className="object-contain p-0.5" />
                     </div>
                     <div>
-                      <SheetTitle className="text-base font-black font-serif text-[#0a2540] tracking-widest">YS CAPITAL</SheetTitle>
+                      <SheetTitle className="text-base font-black font-serif text-[#0a2540] tracking-widest">YS PORTFOLIO</SheetTitle>
                       <span className="text-[10px] text-slate-400">ARN 145084 · AMFI · APMI</span>
                     </div>
                   </div>
@@ -1744,10 +1744,10 @@ export default function Home() {
             <div className="md:col-span-5 space-y-5">
               <div className="flex items-center gap-3">
                 <div className="relative h-11 w-9 rounded-lg overflow-hidden bg-black border border-white/10">
-                  <Image src="/ys_logo.png" alt="YS CAPITAL Official Brand Logo" fill className="object-contain p-0.5" />
+                  <Image src="/ys_logo.png" alt="YS PORTFOLIO Official Brand Logo" fill className="object-contain p-0.5" />
                 </div>
                 <div>
-                  <span className="font-black text-lg font-serif text-white tracking-widest block">YS CAPITAL</span>
+                  <span className="font-black text-lg font-serif text-white tracking-widest block">YS PORTFOLIO</span>
                   <span className="text-[10px] text-slate-500">ARN 145084 · AMFI · APMI</span>
                 </div>
               </div>
@@ -1848,7 +1848,7 @@ export default function Home() {
 
           {/* Divider & bottom bar */}
           <div className="border-t border-white/5 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-600">
-            <div>© {new Date().getFullYear()} Y S CAPITAL. All Rights Reserved.</div>
+            <div>© {new Date().getFullYear()} YS PORTFOLIO. All Rights Reserved.</div>
             <div className="flex items-center gap-5">
               <div className="flex items-center gap-2">
                 <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -1922,7 +1922,7 @@ export default function Home() {
 
           <div className="text-center text-[11px] text-slate-400 flex items-center justify-center gap-2 pt-1">
             <Shield className="h-3.5 w-3.5" />
-            YS CAPITAL Private Host Verification
+            YS PORTFOLIO Private Host Verification
           </div>
         </DialogContent>
       </Dialog>
