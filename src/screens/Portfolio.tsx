@@ -255,7 +255,7 @@ const Portfolio = ({ filterType = "all" }: PortfolioProps = {}) => {
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
   const router = useRouter();
-  const pageSize = 20;
+  const [pageSize, setPageSize] = useState<number | "all">("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [sortField, setSortField] = useState<SortField>("pnl");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
@@ -470,11 +470,11 @@ const Portfolio = ({ filterType = "all" }: PortfolioProps = {}) => {
         : Number(bVal ?? -Infinity) - Number(aVal ?? -Infinity);
     });
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
-  const paginatedHoldings = filtered.slice(
-    (currentPage - 1) * pageSize,
-    currentPage * pageSize
-  );
+  const numericPageSize = pageSize === "all" ? filtered.length || 1 : pageSize;
+  const totalPages = Math.max(1, Math.ceil(filtered.length / numericPageSize));
+  const paginatedHoldings = pageSize === "all" 
+    ? filtered 
+    : filtered.slice((currentPage - 1) * numericPageSize, currentPage * numericPageSize);
 
   const totalInvestment = enrichedHoldings.reduce((sum, holding) => sum + holding.investment, 0);
   const totalQuantity = enrichedHoldings.reduce((sum, holding) => sum + holding.qty, 0);
@@ -941,7 +941,7 @@ const Portfolio = ({ filterType = "all" }: PortfolioProps = {}) => {
                           className="h-3.5 w-3.5 accent-primary"
                         />
                       </td>
-                      <td className="px-3 py-2 text-muted-foreground/60">{(currentPage - 1) * pageSize + index + 1}</td>
+                      <td className="px-3 py-2 text-muted-foreground/60">{pageSize === "all" ? index + 1 : (currentPage - 1) * numericPageSize + index + 1}</td>
                       <td 
                         className="px-3 py-2 cursor-pointer hover:bg-primary/5 group/name transition-colors"
                         onClick={() => {
@@ -1045,6 +1045,59 @@ const Portfolio = ({ filterType = "all" }: PortfolioProps = {}) => {
                 )}
               </tbody>
             </table>
+          </div>
+
+          {/* Table Bottom Bar / Pagination */}
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-3 px-1 text-xs">
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <span>Showing {paginatedHoldings.length} of {filtered.length} {filterType === "mf" ? "funds" : "holdings"}</span>
+              <span className="text-border">|</span>
+              <div className="flex items-center gap-1.5">
+                <span>View:</span>
+                <select
+                  value={pageSize}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setPageSize(val === "all" ? "all" : Number(val));
+                    setCurrentPage(1);
+                  }}
+                  className="bg-background border border-border rounded px-1.5 py-0.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
+                >
+                  <option value="all">All ({filtered.length})</option>
+                  <option value="20">20</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>
+              </div>
+            </div>
+
+            {pageSize !== "all" && totalPages > 1 && (
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] text-muted-foreground">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <div className="flex gap-1.5">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={currentPage === 1}
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    className="h-7 px-2.5 text-xs font-medium"
+                  >
+                    Previous
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={currentPage === totalPages}
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    className="h-7 px-2.5 text-xs font-medium"
+                  >
+                    Next
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </Card>
