@@ -41,7 +41,7 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
-import { Download, FileSpreadsheet, Clipboard, Globe } from "lucide-react";
+import { Download, FileSpreadsheet, Clipboard, Globe, LineChart } from "lucide-react";
 import * as XLSX from "xlsx";
 import { Badge } from "@/components/ui/badge";
 import { isMutualFund } from "@/lib/utils";
@@ -1011,6 +1011,16 @@ const Portfolio = ({ filterType = "all" }: PortfolioProps = {}) => {
                       </td>
                       <td className="px-3 py-2 text-right">
                         <div className="flex items-center justify-end gap-1">
+                          <button
+                            onClick={() => {
+                              setViewHolding(stock);
+                              setIsDetailsOpen(true);
+                            }}
+                            title="View Trading Graph"
+                            className="p-1.5 rounded-md hover:bg-emerald-500/10 text-emerald-500 hover:text-emerald-400 transition-colors"
+                          >
+                            <LineChart className="h-3.5 w-3.5" />
+                          </button>
                           <button
                             onClick={() => handleEditHolding(stock)}
                             title="Edit Holding"
