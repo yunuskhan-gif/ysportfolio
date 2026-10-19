@@ -106,7 +106,7 @@ export default function RefundPolicyPage() {
               <span className="h-6 w-6 rounded-full bg-[#0047AB] text-white flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>
               <div>
                 <span className="font-bold text-xs text-slate-900 block">Submit Written Notice</span>
-                <p className="text-[11px] text-slate-500">Send an email to <a href="mailto:clientservices@yscapital.com" className="text-[#0047AB] underline font-medium">clientservices@yscapital.com</a> with the subject line <em>&quot;Refund / Cancellation Request - [Your Client Code]&quot;</em>.</p>
+                <p className="text-[11px] text-slate-500">Send an email to <a href="mailto:clientservices@ysportfolio.in" className="text-[#0047AB] underline font-medium">clientservices@ysportfolio.in</a> with the subject line <em>&quot;Refund / Cancellation Request - [Your Client Code]&quot;</em>.</p>
               </div>
             </div>
             <div className="flex items-start gap-3 p-3 rounded-xl border border-slate-200 bg-white">
@@ -132,7 +132,7 @@ export default function RefundPolicyPage() {
           <div className="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-1.5 text-xs text-slate-700">
             <p><strong>Department:</strong> Settlements & Redemptions Support Desk</p>
             <p><strong>Entity:</strong> YS PORTFOLIO (ARN 145084)</p>
-            <p><strong>Email:</strong> <a href="mailto:clientservices@yscapital.com" className="text-[#0047AB] underline">clientservices@yscapital.com</a></p>
+            <p><strong>Email:</strong> <a href="mailto:clientservices@ysportfolio.in" className="text-[#0047AB] underline">clientservices@ysportfolio.in</a></p>
             <p><strong>Direct Helpline:</strong> +91 22 4152 3000</p>
             <p><strong>Operating Hours:</strong> Monday through Friday, 9:00 AM – 6:00 PM IST</p>
           </div>

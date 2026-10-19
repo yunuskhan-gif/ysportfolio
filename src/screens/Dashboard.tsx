@@ -10,6 +10,7 @@ import { fetchHoldings, HOLDINGS_QUERY_KEY, type StockHolding, fetchLoans, LOANS
 import { isMutualFund, cn } from "@/lib/utils";
 import EmiDueNotificationModal from "@/components/portfolio/EmiDueNotificationModal";
 import PayEmiDialog from "@/components/portfolio/PayEmiDialog";
+import FIIDIISection from "@/components/dashboard/FIIDIISection";
 
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('en-IN', {
@@ -506,6 +507,9 @@ const Dashboard = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Live FII / DII Trading Activity Tracker */}
+      <FIIDIISection />
 
       <div className="w-full">
         {stockHoldings.length > 0 && <DashboardSection title="Stocks Overview" holdings={stockHoldings} />}

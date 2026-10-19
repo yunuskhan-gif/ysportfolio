@@ -5,7 +5,7 @@ import Providers from "@/app/providers";
 import PasswordGate from "@/components/auth/PasswordGate";
 import JsonLd from "@/components/seo/JsonLd";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://yscapital.in";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.ysportfolio.in";
 
 export const viewport: Viewport = {
   themeColor: "#0047AB",
@@ -16,14 +16,15 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "YS PORTFOLIO | Digital Portfolio & Institutional Wealth Intelligence",
-    template: "%s | YS PORTFOLIO",
+    default: "YS Portfolio | Digital Portfolio & Institutional Wealth Intelligence",
+    template: "%s | YS Portfolio",
   },
   description:
     "YS PORTFOLIO (ARN 145084) is India's leading integrated financial distributor. Seamlessly track Mutual Funds, Equities, Bonds, and Family Wealth with real-time AMFI NAV, automated CAS statement parsing, and AI rebalancing.",
   keywords: [
-    "YS PORTFOLIO",
     "YS Portfolio",
+    "YS PORTFOLIO",
+    "ysportfolio.in",
     "Mutual Fund Distributor ARN 145084",
     "AMFI Registered Distributor",
     "APMI Registered PMS Distributor",
@@ -38,9 +39,9 @@ export const metadata: Metadata = {
     "Mutual Fund NAV Tracking",
     "XIRR Portfolio Calculator",
   ],
-  authors: [{ name: "YS PORTFOLIO", url: siteUrl }],
-  creator: "YS PORTFOLIO",
-  publisher: "YS PORTFOLIO",
+  authors: [{ name: "YS Portfolio", url: siteUrl }],
+  creator: "YS Portfolio",
+  publisher: "YS Portfolio",
   applicationName: "YS Digital Portfolio",
   category: "finance",
   alternates: {
@@ -73,8 +74,8 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_IN",
     url: siteUrl,
-    siteName: "YS PORTFOLIO",
-    title: "YS PORTFOLIO | Digital Portfolio & Institutional Wealth Intelligence",
+    siteName: "YS Portfolio",
+    title: "YS Portfolio | Digital Portfolio & Institutional Wealth Intelligence",
     description:
       "India's premier integrated wealth distributor & portfolio suite. Manage Mutual Funds, Equities, Bonds, and Family Wealth with 23+ years of trusted expertise.",
     images: [
@@ -82,17 +83,17 @@ export const metadata: Metadata = {
         url: "/showcase_dashboard.png",
         width: 1200,
         height: 630,
-        alt: "YS PORTFOLIO Wealth Management & Digital Portfolio Dashboard",
+        alt: "YS Portfolio Wealth Management & Digital Portfolio Dashboard",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "YS PORTFOLIO | Institutional Portfolio & Wealth Intelligence",
+    title: "YS Portfolio | Institutional Portfolio & Wealth Intelligence",
     description:
       "Consolidate Mutual Funds, Equities, Bonds, and Family Wealth with 23+ years of trusted expertise and real-time market tracking.",
     images: ["/showcase_dashboard.png"],
-    creator: "@yscapital",
+    creator: "@ysportfolio",
   },
 };
 

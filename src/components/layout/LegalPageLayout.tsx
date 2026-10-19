@@ -182,8 +182,8 @@ export default function LegalPageLayout({
               <div className="space-y-2 text-slate-700 text-[11px]">
                 <div className="flex items-center gap-2">
                   <Mail className="h-3.5 w-3.5 text-[#0047AB]" />
-                  <a href="mailto:clientservices@yscapital.com" className="hover:underline font-medium">
-                    clientservices@yscapital.com
+                  <a href="mailto:clientservices@ysportfolio.in" className="hover:underline font-medium">
+                    clientservices@ysportfolio.in
                   </a>
                 </div>
                 <div className="flex items-center gap-2">

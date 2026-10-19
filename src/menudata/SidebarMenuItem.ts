@@ -28,6 +28,11 @@ export const items = [
     },
 
     {
+      title: "FII / DII Flow",
+      url: "/fii-dii-tracker",
+      icon: TrendingUp,
+    },
+    {
       title: "Market Search",
       url: "/search",
       icon: Search,

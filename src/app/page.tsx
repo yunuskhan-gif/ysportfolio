@@ -1646,7 +1646,7 @@ export default function Home() {
             </div>
             <div className="flex flex-wrap items-center gap-3">
               <a
-                href="mailto:clientservices@yscapital.com"
+                href="mailto:clientservices@ysportfolio.in"
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-[#0047AB] hover:bg-blue-50 text-xs font-bold uppercase tracking-wider transition-all shadow-sm"
               >
                 <Mail className="h-3.5 w-3.5" />
@@ -1689,7 +1689,7 @@ export default function Home() {
                   {[
                     { icon: MapPin, text: "Sewree, Mumbai, Maharashtra, India" },
                     { icon: Phone, text: "+91 22 4152 3000" },
-                    { icon: Mail, text: "clientservices@yscapital.com" },
+                    { icon: Mail, text: "clientservices@ysportfolio.in" },
                   ].map((c, i) => (
                     <div key={i} className="flex items-center gap-3 text-blue-100/80 text-sm">
                       <div className="h-9 w-9 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">

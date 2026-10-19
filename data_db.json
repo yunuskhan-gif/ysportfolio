@@ -28,12 +28,67 @@
   "schedulerInfo": {
     "frequency": "fortnightly",
     "cronExpression": "0 0 1,15 * *",
-    "lastRun": "2026-06-19T08:41:40.846Z",
+    "lastRun": "2026-10-19T06:59:35.868Z",
     "lastStatus": "success",
     "lastError": null,
-    "nextRun": "2026-07-03T08:41:40.846Z",
-    "runCount": 5,
+    "nextRun": "2026-11-02T06:59:35.868Z",
+    "runCount": 16,
     "logs": [
+      {
+        "timestamp": "2026-10-19T06:59:35.868Z",
+        "event": "scrape_success",
+        "message": "Scraped live NSDL FPI sector AUC report for date: 2026-11-30"
+      },
+      {
+        "timestamp": "2026-10-18T13:34:58.318Z",
+        "event": "scrape_success",
+        "message": "Scraped live NSDL FPI sector AUC report for date: 2026-11-15"
+      },
+      {
+        "timestamp": "2026-10-18T13:30:34.608Z",
+        "event": "scrape_success",
+        "message": "Scraped live NSDL FPI sector AUC report for date: 2026-10-31"
+      },
+      {
+        "timestamp": "2026-10-18T13:26:41.623Z",
+        "event": "scrape_success",
+        "message": "Scraped live NSDL FPI sector AUC report for date: 2026-10-15"
+      },
+      {
+        "timestamp": "2026-10-18T13:26:11.625Z",
+        "event": "scrape_success",
+        "message": "Scraped live NSDL FPI sector AUC report for date: 2026-09-30"
+      },
+      {
+        "timestamp": "2026-10-18T13:24:23.558Z",
+        "event": "scrape_success",
+        "message": "Scraped live NSDL FPI sector AUC report for date: 2026-09-15"
+      },
+      {
+        "timestamp": "2026-10-18T13:17:35.032Z",
+        "event": "scrape_success",
+        "message": "Scraped live NSDL FPI sector AUC report for date: 2026-08-31"
+      },
+      {
+        "timestamp": "2026-10-18T13:14:52.065Z",
+        "event": "scrape_success",
+        "message": "Scraped live NSDL FPI sector AUC report for date: 2026-08-15"
+      },
+      {
+        "timestamp": "2026-10-18T13:14:23.467Z",
+        "event": "simulation_run",
+        "message": "Simulated sector report generated for date: 2026-07-31"
+      },
+      {
+        "timestamp": "2026-10-18T13:08:48.092Z",
+        "event": "simulation_run",
+        "message": "Simulated sector report generated for date: 2026-07-15"
+      },
+      {
+        "timestamp": "2026-10-18T13:07:54.716Z",
+        "event": "simulation_run",
+        "message": "Simulated sector report generated for date: 2026-06-30"
+      },
       {
         "timestamp": "2026-06-19T08:41:40.846Z",
         "event": "simulation_run",
@@ -53,51 +108,6 @@
         "timestamp": "2026-06-19T08:41:31.881Z",
         "event": "config_changed",
         "message": "Frequency changed to daily. Cron expression: \"0 0 * * *\""
-      },
-      {
-        "timestamp": "2026-06-19T07:29:12.127Z",
-        "event": "simulation_run",
-        "message": "Simulated sector report generated for date: 2026-08-15"
-      },
-      {
-        "timestamp": "2026-06-19T07:27:44.631Z",
-        "event": "config_changed",
-        "message": "Frequency changed to daily. Cron expression: \"0 0 * * *\""
-      },
-      {
-        "timestamp": "2026-06-19T07:27:43.767Z",
-        "event": "config_changed",
-        "message": "Frequency changed to fortnightly. Cron expression: \"0 0 1,15 * *\""
-      },
-      {
-        "timestamp": "2026-06-19T07:27:41.534Z",
-        "event": "config_changed",
-        "message": "Frequency changed to daily. Cron expression: \"0 0 * * *\""
-      },
-      {
-        "timestamp": "2026-06-19T07:27:39.345Z",
-        "event": "config_changed",
-        "message": "Frequency changed to fortnightly. Cron expression: \"0 0 1,15 * *\""
-      },
-      {
-        "timestamp": "2026-06-19T07:20:57.161Z",
-        "event": "simulation_run",
-        "message": "Simulated sector report generated for date: 2026-07-31"
-      },
-      {
-        "timestamp": "2026-06-19T07:20:44.847Z",
-        "event": "simulation_run",
-        "message": "Simulated sector report generated for date: 2026-07-15"
-      },
-      {
-        "timestamp": "2026-06-19T07:20:38.183Z",
-        "event": "config_changed",
-        "message": "Frequency changed to daily. Cron expression: \"0 0 * * *\""
-      },
-      {
-        "timestamp": "2026-06-19T07:19:53.145Z",
-        "event": "simulation_run",
-        "message": "Simulated sector report generated for date: 2026-06-30"
       }
     ]
   },
@@ -5610,6 +5620,4670 @@
             "fiiValue": 17716.12,
             "diiShares": 40.179,
             "diiValue": 12354.23
+          }
+        ]
+      }
+    ],
+    "2026-06-30": [
+      {
+        "sectorName": "Financial Services",
+        "auc": 446928.7,
+        "netInvestment": 4813.45,
+        "percentageChange": 1.09,
+        "fiiAuc": 446928.7,
+        "fiiNetInvestment": 4813.45,
+        "fiiPercentageChange": 1.09,
+        "diiAuc": 273226.04,
+        "diiNetInvestment": 7490.62,
+        "diiPercentageChange": 2.82,
+        "stocks": [
+          {
+            "stockName": "U. Y. Fincorp",
+            "ticker": "UYFINCORP",
+            "price": 25.48,
+            "mcap": 484.76,
+            "fiiShares": 4385.0934,
+            "fiiValue": 111732.18,
+            "diiShares": 2680.7892,
+            "diiValue": 68306.51
+          },
+          {
+            "stockName": "F Mec Intl. Fin.",
+            "ticker": "539552",
+            "price": 10.64,
+            "mcap": 52.05,
+            "fiiShares": 6300.687,
+            "fiiValue": 67039.31,
+            "diiShares": 3851.8712,
+            "diiValue": 40983.91
+          },
+          {
+            "stockName": "GDL Leasing",
+            "ticker": "530855",
+            "price": 83.7,
+            "mcap": 41.93,
+            "fiiShares": 800.9476,
+            "fiiValue": 67039.31,
+            "diiShares": 489.6524,
+            "diiValue": 40983.91
+          },
+          {
+            "stockName": "Akme Fintrade",
+            "ticker": "AFIL",
+            "price": 8.12,
+            "mcap": 357.29,
+            "fiiShares": 11008.0961,
+            "fiiValue": 89385.74,
+            "diiShares": 6729.7057,
+            "diiValue": 54645.21
+          },
+          {
+            "stockName": "Manba Finance",
+            "ticker": "MANBA",
+            "price": 147.96,
+            "mcap": 743.36,
+            "fiiShares": 755.1513,
+            "fiiValue": 111732.18,
+            "diiShares": 461.6552,
+            "diiValue": 68306.51
+          }
+        ]
+      },
+      {
+        "sectorName": "Information Technology",
+        "auc": 266250.94,
+        "netInvestment": 4701.95,
+        "percentageChange": 1.8,
+        "fiiAuc": 266250.94,
+        "fiiNetInvestment": 4701.95,
+        "fiiPercentageChange": 1.8,
+        "diiAuc": 206680.7,
+        "diiNetInvestment": -3087.35,
+        "diiPercentageChange": -1.47,
+        "stocks": [
+          {
+            "stockName": "eMudhra",
+            "ticker": "EMUDHRA",
+            "price": 467.02,
+            "mcap": 3867.5,
+            "fiiShares": 228.0424,
+            "fiiValue": 106500.38,
+            "diiShares": 177.0209,
+            "diiValue": 82672.28
+          },
+          {
+            "stockName": "Maxposure",
+            "ticker": "MAXPOSURE",
+            "price": 34.17,
+            "mcap": 77.71,
+            "fiiShares": 1168.7925,
+            "fiiValue": 39937.64,
+            "diiShares": 907.29,
+            "diiValue": 31002.1
+          },
+          {
+            "stockName": "Brightcom Group",
+            "ticker": "BCG",
+            "price": 9.24,
+            "mcap": 1864.95,
+            "fiiShares": 7203.7587,
+            "fiiValue": 66562.73,
+            "diiShares": 5592.0097,
+            "diiValue": 51670.17
+          },
+          {
+            "stockName": "Zaggle Prepaid",
+            "ticker": "ZAGGLE",
+            "price": 172.24,
+            "mcap": 2315.85,
+            "fiiShares": 309.1627,
+            "fiiValue": 53250.19,
+            "diiShares": 239.9915,
+            "diiValue": 41336.14
+          }
+        ]
+      },
+      {
+        "sectorName": "Oil, Gas & Consumable Fuels",
+        "auc": 223171.76,
+        "netInvestment": -5577.18,
+        "percentageChange": -2.44,
+        "fiiAuc": 223171.76,
+        "fiiNetInvestment": -5577.18,
+        "fiiPercentageChange": -2.44,
+        "diiAuc": 134318.1,
+        "diiNetInvestment": -382.77,
+        "diiPercentageChange": -0.28,
+        "stocks": [
+          {
+            "stockName": "Asian Energy",
+            "ticker": "ASIANENE",
+            "price": 462.2,
+            "mcap": 2267.1,
+            "fiiShares": 482.8467,
+            "fiiValue": 223171.76,
+            "diiShares": 290.606,
+            "diiValue": 134318.1
+          }
+        ]
+      },
+      {
+        "sectorName": "FMCG",
+        "auc": 151409.11,
+        "netInvestment": -4513.46,
+        "percentageChange": -2.89,
+        "fiiAuc": 151409.11,
+        "fiiNetInvestment": -4513.46,
+        "fiiPercentageChange": -2.89,
+        "diiAuc": 117104.14,
+        "diiNetInvestment": 812.23,
+        "diiPercentageChange": 0.7,
+        "stocks": [
+          {
+            "stockName": "Nikki Glob.Fin.",
+            "ticker": "531272",
+            "price": 21.75,
+            "mcap": 7.44,
+            "fiiShares": 3480.6694,
+            "fiiValue": 75704.56,
+            "diiShares": 2692.0492,
+            "diiValue": 58552.07
+          },
+          {
+            "stockName": "Cont. Securities",
+            "ticker": "538868",
+            "price": 22.52,
+            "mcap": 71.5,
+            "fiiShares": 3361.659,
+            "fiiValue": 75704.56,
+            "diiShares": 2600.0031,
+            "diiValue": 58552.07
+          }
+        ]
+      },
+      {
+        "sectorName": "Healthcare",
+        "auc": 109764.66,
+        "netInvestment": -3060.77,
+        "percentageChange": -2.71,
+        "fiiAuc": 109764.66,
+        "fiiNetInvestment": -3060.77,
+        "fiiPercentageChange": -2.71,
+        "diiAuc": 85638.06,
+        "diiNetInvestment": 1005.44,
+        "diiPercentageChange": 1.19,
+        "stocks": [
+          {
+            "stockName": "Gujarat Kidney",
+            "ticker": "GKSL",
+            "price": 190.29,
+            "mcap": 1500.33,
+            "fiiShares": 230.7313,
+            "fiiValue": 43905.86,
+            "diiShares": 180.0159,
+            "diiValue": 34255.23
+          },
+          {
+            "stockName": "Yatharth Hospit.",
+            "ticker": "YATHARTH",
+            "price": 1007.57,
+            "mcap": 9708.43,
+            "fiiShares": 65.364,
+            "fiiValue": 65858.8,
+            "diiShares": 50.9968,
+            "diiValue": 51382.84
+          }
+        ]
+      },
+      {
+        "sectorName": "Automobile & Auto Components",
+        "auc": 113389.43,
+        "netInvestment": 1563.27,
+        "percentageChange": 1.4,
+        "fiiAuc": 113389.43,
+        "fiiNetInvestment": 1563.27,
+        "fiiPercentageChange": 1.4,
+        "diiAuc": 70352.96,
+        "diiNetInvestment": 205.46,
+        "diiPercentageChange": 0.29,
+        "stocks": [
+          {
+            "stockName": "Ashika Credit",
+            "ticker": "ASHIKA",
+            "price": 404.92,
+            "mcap": 2985.29,
+            "fiiShares": 280.0292,
+            "fiiValue": 113389.43,
+            "diiShares": 173.7453,
+            "diiValue": 70352.96
+          }
+        ]
+      },
+      {
+        "sectorName": "Power",
+        "auc": 77842.36,
+        "netInvestment": -932.73,
+        "percentageChange": -1.18,
+        "fiiAuc": 77842.36,
+        "fiiNetInvestment": -932.73,
+        "fiiPercentageChange": -1.18,
+        "diiAuc": 55155.55,
+        "diiNetInvestment": 1013.5,
+        "diiPercentageChange": 1.87,
+        "stocks": [
+          {
+            "stockName": "JOJO",
+            "ticker": "531910",
+            "price": 121.87,
+            "mcap": 1680.89,
+            "fiiShares": 638.7327,
+            "fiiValue": 77842.36,
+            "diiShares": 452.5769,
+            "diiValue": 55155.55
+          }
+        ]
+      },
+      {
+        "sectorName": "Telecommunication",
+        "auc": 66250.17,
+        "netInvestment": 769.33,
+        "percentageChange": 1.17,
+        "fiiAuc": 66250.17,
+        "fiiNetInvestment": 769.33,
+        "fiiPercentageChange": 1.17,
+        "diiAuc": 49592.49,
+        "diiNetInvestment": 664.2,
+        "diiPercentageChange": 1.36,
+        "stocks": [
+          {
+            "stockName": "CitiPort Fin.",
+            "ticker": "531235",
+            "price": 41.94,
+            "mcap": 13,
+            "fiiShares": 1579.6416,
+            "fiiValue": 66250.17,
+            "diiShares": 1182.4628,
+            "diiValue": 49592.49
+          }
+        ]
+      },
+      {
+        "sectorName": "Capital Goods",
+        "auc": 61602.15,
+        "netInvestment": 1429.89,
+        "percentageChange": 2.38,
+        "fiiAuc": 61602.15,
+        "fiiNetInvestment": 1429.89,
+        "fiiPercentageChange": 2.38,
+        "diiAuc": 36360.85,
+        "diiNetInvestment": -546.51,
+        "diiPercentageChange": -1.48,
+        "stocks": [
+          {
+            "stockName": "Committed Cargo",
+            "ticker": "COMMITTED",
+            "price": 303.05,
+            "mcap": 350.78,
+            "fiiShares": 101.6369,
+            "fiiValue": 30801.07,
+            "diiShares": 59.9915,
+            "diiValue": 18180.42
+          },
+          {
+            "stockName": "ITCONS E-Soluti.",
+            "ticker": "543806",
+            "price": 237.24,
+            "mcap": 213.71,
+            "fiiShares": 129.8308,
+            "fiiValue": 30801.07,
+            "diiShares": 76.633,
+            "diiValue": 18180.42
+          }
+        ]
+      },
+      {
+        "sectorName": "Metals & Mining",
+        "auc": 50018.27,
+        "netInvestment": 642.61,
+        "percentageChange": 1.3,
+        "fiiAuc": 50018.27,
+        "fiiNetInvestment": 642.61,
+        "fiiPercentageChange": 1.3,
+        "diiAuc": 34451.45,
+        "diiNetInvestment": 99.22,
+        "diiPercentageChange": 0.29,
+        "stocks": [
+          {
+            "stockName": "Enbee Trade",
+            "ticker": "512441",
+            "price": 0.25,
+            "mcap": 17.7,
+            "fiiShares": 200073.08,
+            "fiiValue": 50018.27,
+            "diiShares": 137805.8,
+            "diiValue": 34451.45
+          }
+        ]
+      },
+      {
+        "sectorName": "Chemicals",
+        "auc": 41202.65,
+        "netInvestment": 210.56,
+        "percentageChange": 0.51,
+        "fiiAuc": 41202.65,
+        "fiiNetInvestment": 210.56,
+        "fiiPercentageChange": 0.51,
+        "diiAuc": 30093.05,
+        "diiNetInvestment": -569.75,
+        "diiPercentageChange": -1.86,
+        "stocks": [
+          {
+            "stockName": "Mangal Credit",
+            "ticker": "MANCREDIT",
+            "price": 220.26,
+            "mcap": 465.06,
+            "fiiShares": 187.0637,
+            "fiiValue": 41202.65,
+            "diiShares": 136.6251,
+            "diiValue": 30093.05
+          }
+        ]
+      },
+      {
+        "sectorName": "Construction Materials",
+        "auc": 33299.3,
+        "netInvestment": 661.56,
+        "percentageChange": 2.03,
+        "fiiAuc": 33299.3,
+        "fiiNetInvestment": 661.56,
+        "fiiPercentageChange": 2.03,
+        "diiAuc": 24444.83,
+        "diiNetInvestment": 305.8,
+        "diiPercentageChange": 1.27,
+        "stocks": [
+          {
+            "stockName": "Gowra Leasing",
+            "ticker": "530709",
+            "price": 90.39,
+            "mcap": 70.04,
+            "fiiShares": 368.3958,
+            "fiiValue": 33299.3,
+            "diiShares": 270.4373,
+            "diiValue": 24444.83
+          }
+        ]
+      },
+      {
+        "sectorName": "Consumer Services",
+        "auc": 29175.6,
+        "netInvestment": -351.27,
+        "percentageChange": -1.19,
+        "fiiAuc": 29175.6,
+        "fiiNetInvestment": -351.27,
+        "fiiPercentageChange": -1.19,
+        "diiAuc": 21207.26,
+        "diiNetInvestment": 616.88,
+        "diiPercentageChange": 3,
+        "stocks": [
+          {
+            "stockName": "Travels & Rent.",
+            "ticker": "544242",
+            "price": 7.87,
+            "mcap": 16.81,
+            "fiiShares": 1482.8767,
+            "fiiValue": 11670.24,
+            "diiShares": 1077.878,
+            "diiValue": 8482.9
+          },
+          {
+            "stockName": "Pansari Develop.",
+            "ticker": "PANSARI",
+            "price": 305.95,
+            "mcap": 533.78,
+            "fiiShares": 57.2164,
+            "fiiValue": 17505.36,
+            "diiShares": 41.5897,
+            "diiValue": 12724.36
+          }
+        ]
+      }
+    ],
+    "2026-07-15": [
+      {
+        "sectorName": "Financial Services",
+        "auc": 461280.3,
+        "netInvestment": 14351.6,
+        "percentageChange": 3.21,
+        "fiiAuc": 461280.3,
+        "fiiNetInvestment": 14351.6,
+        "fiiPercentageChange": 3.21,
+        "diiAuc": 270669.96,
+        "diiNetInvestment": -2556.08,
+        "diiPercentageChange": -0.94,
+        "stocks": [
+          {
+            "stockName": "U. Y. Fincorp",
+            "ticker": "UYFINCORP",
+            "price": 24.97,
+            "mcap": 475.08,
+            "fiiShares": 4618.3448,
+            "fiiValue": 115320.07,
+            "diiShares": 2709.9515,
+            "diiValue": 67667.49
+          },
+          {
+            "stockName": "F Mec Intl. Fin.",
+            "ticker": "539552",
+            "price": 10.43,
+            "mcap": 51.01,
+            "fiiShares": 6633.9444,
+            "fiiValue": 69192.04,
+            "diiShares": 3892.6644,
+            "diiValue": 40600.49
+          },
+          {
+            "stockName": "GDL Leasing",
+            "ticker": "530855",
+            "price": 82.03,
+            "mcap": 41.1,
+            "fiiShares": 843.4968,
+            "fiiValue": 69192.04,
+            "diiShares": 494.9468,
+            "diiValue": 40600.49
+          },
+          {
+            "stockName": "Akme Fintrade",
+            "ticker": "AFIL",
+            "price": 7.96,
+            "mcap": 350.16,
+            "fiiShares": 11589.9573,
+            "fiiValue": 92256.06,
+            "diiShares": 6800.7525,
+            "diiValue": 54133.99
+          },
+          {
+            "stockName": "Manba Finance",
+            "ticker": "MANBA",
+            "price": 145.01,
+            "mcap": 728.52,
+            "fiiShares": 795.256,
+            "fiiValue": 115320.07,
+            "diiShares": 466.6402,
+            "diiValue": 67667.49
+          }
+        ]
+      },
+      {
+        "sectorName": "Information Technology",
+        "auc": 270164.45,
+        "netInvestment": 3913.51,
+        "percentageChange": 1.47,
+        "fiiAuc": 270164.45,
+        "fiiNetInvestment": 3913.51,
+        "fiiPercentageChange": 1.47,
+        "diiAuc": 210087.05,
+        "diiNetInvestment": 3406.35,
+        "diiPercentageChange": 1.65,
+        "stocks": [
+          {
+            "stockName": "eMudhra",
+            "ticker": "EMUDHRA",
+            "price": 457.7,
+            "mcap": 3790.31,
+            "fiiShares": 236.1061,
+            "fiiValue": 108065.78,
+            "diiShares": 183.6024,
+            "diiValue": 84034.82
+          },
+          {
+            "stockName": "Maxposure",
+            "ticker": "MAXPOSURE",
+            "price": 33.49,
+            "mcap": 76.16,
+            "fiiShares": 1210.0529,
+            "fiiValue": 40524.67,
+            "diiShares": 940.9692,
+            "diiValue": 31513.06
+          },
+          {
+            "stockName": "Brightcom Group",
+            "ticker": "BCG",
+            "price": 9.06,
+            "mcap": 1827.73,
+            "fiiShares": 7454.8687,
+            "fiiValue": 67541.11,
+            "diiShares": 5797.1038,
+            "diiValue": 52521.76
+          },
+          {
+            "stockName": "Zaggle Prepaid",
+            "ticker": "ZAGGLE",
+            "price": 168.8,
+            "mcap": 2269.63,
+            "fiiShares": 320.1001,
+            "fiiValue": 54032.89,
+            "diiShares": 248.9183,
+            "diiValue": 42017.41
+          }
+        ]
+      },
+      {
+        "sectorName": "Oil, Gas & Consumable Fuels",
+        "auc": 225581.41,
+        "netInvestment": 2409.65,
+        "percentageChange": 1.08,
+        "fiiAuc": 225581.41,
+        "fiiNetInvestment": 2409.65,
+        "fiiPercentageChange": 1.08,
+        "diiAuc": 136939.16,
+        "diiNetInvestment": 2621.06,
+        "diiPercentageChange": 1.95,
+        "stocks": [
+          {
+            "stockName": "Asian Energy",
+            "ticker": "ASIANENE",
+            "price": 452.97,
+            "mcap": 2221.85,
+            "fiiShares": 498.0052,
+            "fiiValue": 225581.41,
+            "diiShares": 302.314,
+            "diiValue": 136939.16
+          }
+        ]
+      },
+      {
+        "sectorName": "FMCG",
+        "auc": 155631,
+        "netInvestment": 4221.89,
+        "percentageChange": 2.79,
+        "fiiAuc": 155631,
+        "fiiNetInvestment": 4221.89,
+        "fiiPercentageChange": 2.79,
+        "diiAuc": 118233.46,
+        "diiNetInvestment": 1129.32,
+        "diiPercentageChange": 0.96,
+        "stocks": [
+          {
+            "stockName": "Nikki Glob.Fin.",
+            "ticker": "531272",
+            "price": 21.32,
+            "mcap": 7.3,
+            "fiiShares": 3649.8827,
+            "fiiValue": 77815.5,
+            "diiShares": 2772.8297,
+            "diiValue": 59116.73
+          },
+          {
+            "stockName": "Cont. Securities",
+            "ticker": "538868",
+            "price": 22.07,
+            "mcap": 70.07,
+            "fiiShares": 3525.8496,
+            "fiiValue": 77815.5,
+            "diiShares": 2678.6013,
+            "diiValue": 59116.73
+          }
+        ]
+      },
+      {
+        "sectorName": "Healthcare",
+        "auc": 106484.72,
+        "netInvestment": -3279.94,
+        "percentageChange": -2.99,
+        "fiiAuc": 106484.72,
+        "fiiNetInvestment": -3279.94,
+        "fiiPercentageChange": -2.99,
+        "diiAuc": 85000.02,
+        "diiNetInvestment": -638.04,
+        "diiPercentageChange": -0.75,
+        "stocks": [
+          {
+            "stockName": "Gujarat Kidney",
+            "ticker": "GKSL",
+            "price": 186.49,
+            "mcap": 1470.39,
+            "fiiShares": 228.3977,
+            "fiiValue": 42593.89,
+            "diiShares": 182.3155,
+            "diiValue": 34000.01
+          },
+          {
+            "stockName": "Yatharth Hospit.",
+            "ticker": "YATHARTH",
+            "price": 987.47,
+            "mcap": 9514.67,
+            "fiiShares": 64.7015,
+            "fiiValue": 63890.83,
+            "diiShares": 51.6471,
+            "diiValue": 51000.01
+          }
+        ]
+      },
+      {
+        "sectorName": "Automobile & Auto Components",
+        "auc": 112348.09,
+        "netInvestment": -1041.34,
+        "percentageChange": -0.92,
+        "fiiAuc": 112348.09,
+        "fiiNetInvestment": -1041.34,
+        "fiiPercentageChange": -0.92,
+        "diiAuc": 70927.91,
+        "diiNetInvestment": 574.95,
+        "diiPercentageChange": 0.82,
+        "stocks": [
+          {
+            "stockName": "Ashika Credit",
+            "ticker": "ASHIKA",
+            "price": 396.84,
+            "mcap": 2925.71,
+            "fiiShares": 283.1068,
+            "fiiValue": 112348.09,
+            "diiShares": 178.7318,
+            "diiValue": 70927.91
+          }
+        ]
+      },
+      {
+        "sectorName": "Power",
+        "auc": 79548.02,
+        "netInvestment": 1705.66,
+        "percentageChange": 2.19,
+        "fiiAuc": 79548.02,
+        "fiiNetInvestment": 1705.66,
+        "fiiPercentageChange": 2.19,
+        "diiAuc": 56158.87,
+        "diiNetInvestment": 1003.32,
+        "diiPercentageChange": 1.82,
+        "stocks": [
+          {
+            "stockName": "JOJO",
+            "ticker": "531910",
+            "price": 119.44,
+            "mcap": 1647.34,
+            "fiiShares": 666.0082,
+            "fiiValue": 79548.02,
+            "diiShares": 470.1848,
+            "diiValue": 56158.87
+          }
+        ]
+      },
+      {
+        "sectorName": "Telecommunication",
+        "auc": 68401.64,
+        "netInvestment": 2151.47,
+        "percentageChange": 3.25,
+        "fiiAuc": 68401.64,
+        "fiiNetInvestment": 2151.47,
+        "fiiPercentageChange": 3.25,
+        "diiAuc": 50553.26,
+        "diiNetInvestment": 960.77,
+        "diiPercentageChange": 1.94,
+        "stocks": [
+          {
+            "stockName": "CitiPort Fin.",
+            "ticker": "531235",
+            "price": 41.11,
+            "mcap": 12.74,
+            "fiiShares": 1663.8686,
+            "fiiValue": 68401.64,
+            "diiShares": 1229.7071,
+            "diiValue": 50553.26
+          }
+        ]
+      },
+      {
+        "sectorName": "Capital Goods",
+        "auc": 60275.24,
+        "netInvestment": -1326.91,
+        "percentageChange": -2.15,
+        "fiiAuc": 60275.24,
+        "fiiNetInvestment": -1326.91,
+        "fiiPercentageChange": -2.15,
+        "diiAuc": 36305.08,
+        "diiNetInvestment": -55.77,
+        "diiPercentageChange": -0.15,
+        "stocks": [
+          {
+            "stockName": "Committed Cargo",
+            "ticker": "COMMITTED",
+            "price": 297.01,
+            "mcap": 343.78,
+            "fiiShares": 101.4701,
+            "fiiValue": 30137.62,
+            "diiShares": 61.1176,
+            "diiValue": 18152.54
+          },
+          {
+            "stockName": "ITCONS E-Soluti.",
+            "ticker": "543806",
+            "price": 232.51,
+            "mcap": 209.45,
+            "fiiShares": 129.6186,
+            "fiiValue": 30137.62,
+            "diiShares": 78.0721,
+            "diiValue": 18152.54
+          }
+        ]
+      },
+      {
+        "sectorName": "Metals & Mining",
+        "auc": 49522.58,
+        "netInvestment": -495.69,
+        "percentageChange": -0.99,
+        "fiiAuc": 49522.58,
+        "fiiNetInvestment": -495.69,
+        "fiiPercentageChange": -0.99,
+        "diiAuc": 34592.85,
+        "diiNetInvestment": 141.4,
+        "diiPercentageChange": 0.41,
+        "stocks": [
+          {
+            "stockName": "Enbee Trade",
+            "ticker": "512441",
+            "price": 0.25,
+            "mcap": 17.35,
+            "fiiShares": 198090.32,
+            "fiiValue": 49522.58,
+            "diiShares": 138371.4,
+            "diiValue": 34592.85
+          }
+        ]
+      },
+      {
+        "sectorName": "Chemicals",
+        "auc": 40686.94,
+        "netInvestment": -515.71,
+        "percentageChange": -1.25,
+        "fiiAuc": 40686.94,
+        "fiiNetInvestment": -515.71,
+        "fiiPercentageChange": -1.25,
+        "diiAuc": 29777.96,
+        "diiNetInvestment": -315.09,
+        "diiPercentageChange": -1.05,
+        "stocks": [
+          {
+            "stockName": "Mangal Credit",
+            "ticker": "MANCREDIT",
+            "price": 215.87,
+            "mcap": 455.78,
+            "fiiShares": 188.4789,
+            "fiiValue": 40686.94,
+            "diiShares": 137.9439,
+            "diiValue": 29777.96
+          }
+        ]
+      },
+      {
+        "sectorName": "Construction Materials",
+        "auc": 32872.18,
+        "netInvestment": -427.12,
+        "percentageChange": -1.28,
+        "fiiAuc": 32872.18,
+        "fiiNetInvestment": -427.12,
+        "fiiPercentageChange": -1.28,
+        "diiAuc": 24818.79,
+        "diiNetInvestment": 373.96,
+        "diiPercentageChange": 1.53,
+        "stocks": [
+          {
+            "stockName": "Gowra Leasing",
+            "ticker": "530709",
+            "price": 88.58,
+            "mcap": 68.64,
+            "fiiShares": 371.1016,
+            "fiiValue": 32872.18,
+            "diiShares": 280.185,
+            "diiValue": 24818.79
+          }
+        ]
+      },
+      {
+        "sectorName": "Consumer Services",
+        "auc": 28425.11,
+        "netInvestment": -750.49,
+        "percentageChange": -2.57,
+        "fiiAuc": 28425.11,
+        "fiiNetInvestment": -750.49,
+        "fiiPercentageChange": -2.57,
+        "diiAuc": 21745.54,
+        "diiNetInvestment": 538.28,
+        "diiPercentageChange": 2.54,
+        "stocks": [
+          {
+            "stockName": "Travels & Rent.",
+            "ticker": "544242",
+            "price": 7.71,
+            "mcap": 16.47,
+            "fiiShares": 1474.7134,
+            "fiiValue": 11370.04,
+            "diiShares": 1128.1738,
+            "diiValue": 8698.22
+          },
+          {
+            "stockName": "Pansari Develop.",
+            "ticker": "PANSARI",
+            "price": 299.84,
+            "mcap": 523.12,
+            "fiiShares": 56.8805,
+            "fiiValue": 17055.06,
+            "diiShares": 43.5143,
+            "diiValue": 13047.33
+          }
+        ]
+      }
+    ],
+    "2026-07-31": [
+      {
+        "sectorName": "Financial Services",
+        "auc": 456408.56,
+        "netInvestment": -4871.74,
+        "percentageChange": -1.06,
+        "fiiAuc": 456408.56,
+        "fiiNetInvestment": -4871.74,
+        "fiiPercentageChange": -1.06,
+        "diiAuc": 278272.42,
+        "diiNetInvestment": 7602.46,
+        "diiPercentageChange": 2.81,
+        "stocks": [
+          {
+            "stockName": "U. Y. Fincorp",
+            "ticker": "UYFINCORP",
+            "price": 24.8,
+            "mcap": 471.81,
+            "fiiShares": 4600.8927,
+            "fiiValue": 114102.14,
+            "diiShares": 2805.1653,
+            "diiValue": 69568.1
+          },
+          {
+            "stockName": "F Mec Intl. Fin.",
+            "ticker": "539552",
+            "price": 10.36,
+            "mcap": 50.66,
+            "fiiShares": 6608.2317,
+            "fiiValue": 68461.28,
+            "diiShares": 4029.0405,
+            "diiValue": 41740.86
+          },
+          {
+            "stockName": "GDL Leasing",
+            "ticker": "530855",
+            "price": 81.46,
+            "mcap": 40.81,
+            "fiiShares": 840.4282,
+            "fiiValue": 68461.28,
+            "diiShares": 512.4093,
+            "diiValue": 41740.86
+          },
+          {
+            "stockName": "Akme Fintrade",
+            "ticker": "AFIL",
+            "price": 7.91,
+            "mcap": 347.75,
+            "fiiShares": 11540.0392,
+            "fiiValue": 91281.71,
+            "diiShares": 7035.9646,
+            "diiValue": 55654.48
+          },
+          {
+            "stockName": "Manba Finance",
+            "ticker": "MANBA",
+            "price": 144.01,
+            "mcap": 723.51,
+            "fiiShares": 792.3209,
+            "fiiValue": 114102.14,
+            "diiShares": 483.0783,
+            "diiValue": 69568.1
+          }
+        ]
+      },
+      {
+        "sectorName": "Information Technology",
+        "auc": 273174.78,
+        "netInvestment": 3010.33,
+        "percentageChange": 1.11,
+        "fiiAuc": 273174.78,
+        "fiiNetInvestment": 3010.33,
+        "fiiPercentageChange": 1.11,
+        "diiAuc": 212448.48,
+        "diiNetInvestment": 2361.43,
+        "diiPercentageChange": 1.12,
+        "stocks": [
+          {
+            "stockName": "eMudhra",
+            "ticker": "EMUDHRA",
+            "price": 454.55,
+            "mcap": 3764.22,
+            "fiiShares": 240.3914,
+            "fiiValue": 109269.91,
+            "diiShares": 186.9528,
+            "diiValue": 84979.39
+          },
+          {
+            "stockName": "Maxposure",
+            "ticker": "MAXPOSURE",
+            "price": 33.26,
+            "mcap": 75.64,
+            "fiiShares": 1231.997,
+            "fiiValue": 40976.22,
+            "diiShares": 958.126,
+            "diiValue": 31867.27
+          },
+          {
+            "stockName": "Brightcom Group",
+            "ticker": "BCG",
+            "price": 9,
+            "mcap": 1815.15,
+            "fiiShares": 7588.1889,
+            "fiiValue": 68293.7,
+            "diiShares": 5901.3467,
+            "diiValue": 53112.12
+          },
+          {
+            "stockName": "Zaggle Prepaid",
+            "ticker": "ZAGGLE",
+            "price": 167.64,
+            "mcap": 2254.01,
+            "fiiShares": 325.9065,
+            "fiiValue": 54634.96,
+            "diiShares": 253.458,
+            "diiValue": 42489.7
+          }
+        ]
+      },
+      {
+        "sectorName": "Oil, Gas & Consumable Fuels",
+        "auc": 230648.88,
+        "netInvestment": 5067.47,
+        "percentageChange": 2.25,
+        "fiiAuc": 230648.88,
+        "fiiNetInvestment": 5067.47,
+        "fiiPercentageChange": 2.25,
+        "diiAuc": 141031.04,
+        "diiNetInvestment": 4091.88,
+        "diiPercentageChange": 2.99,
+        "stocks": [
+          {
+            "stockName": "Asian Energy",
+            "ticker": "ASIANENE",
+            "price": 449.86,
+            "mcap": 2206.56,
+            "fiiShares": 512.7126,
+            "fiiValue": 230648.88,
+            "diiShares": 313.4998,
+            "diiValue": 141031.04
+          }
+        ]
+      },
+      {
+        "sectorName": "FMCG",
+        "auc": 161037.73,
+        "netInvestment": 5406.73,
+        "percentageChange": 3.47,
+        "fiiAuc": 161037.73,
+        "fiiNetInvestment": 5406.73,
+        "fiiPercentageChange": 3.47,
+        "diiAuc": 120779.85,
+        "diiNetInvestment": 2546.39,
+        "diiPercentageChange": 2.15,
+        "stocks": [
+          {
+            "stockName": "Nikki Glob.Fin.",
+            "ticker": "531272",
+            "price": 21.17,
+            "mcap": 7.25,
+            "fiiShares": 3803.4417,
+            "fiiValue": 80518.86,
+            "diiShares": 2852.6183,
+            "diiValue": 60389.93
+          },
+          {
+            "stockName": "Cont. Securities",
+            "ticker": "538868",
+            "price": 21.91,
+            "mcap": 69.59,
+            "fiiShares": 3674.9822,
+            "fiiValue": 80518.86,
+            "diiShares": 2756.2725,
+            "diiValue": 60389.93
+          }
+        ]
+      },
+      {
+        "sectorName": "Healthcare",
+        "auc": 108377.26,
+        "netInvestment": 1892.54,
+        "percentageChange": 1.78,
+        "fiiAuc": 108377.26,
+        "fiiNetInvestment": 1892.54,
+        "fiiPercentageChange": 1.78,
+        "diiAuc": 83891.34,
+        "diiNetInvestment": -1108.68,
+        "diiPercentageChange": -1.3,
+        "stocks": [
+          {
+            "stockName": "Gujarat Kidney",
+            "ticker": "GKSL",
+            "price": 185.21,
+            "mcap": 1460.27,
+            "fiiShares": 234.0635,
+            "fiiValue": 43350.9,
+            "diiShares": 181.181,
+            "diiValue": 33556.54
+          },
+          {
+            "stockName": "Yatharth Hospit.",
+            "ticker": "YATHARTH",
+            "price": 980.67,
+            "mcap": 9449.18,
+            "fiiShares": 66.3081,
+            "fiiValue": 65026.36,
+            "diiShares": 51.3269,
+            "diiValue": 50334.8
+          }
+        ]
+      },
+      {
+        "sectorName": "Automobile & Auto Components",
+        "auc": 113321.13,
+        "netInvestment": 973.04,
+        "percentageChange": 0.87,
+        "fiiAuc": 113321.13,
+        "fiiNetInvestment": 973.04,
+        "fiiPercentageChange": 0.87,
+        "diiAuc": 69839.68,
+        "diiNetInvestment": -1088.23,
+        "diiPercentageChange": -1.53,
+        "stocks": [
+          {
+            "stockName": "Ashika Credit",
+            "ticker": "ASHIKA",
+            "price": 394.11,
+            "mcap": 2905.57,
+            "fiiShares": 287.5368,
+            "fiiValue": 113321.13,
+            "diiShares": 177.2086,
+            "diiValue": 69839.68
+          }
+        ]
+      },
+      {
+        "sectorName": "Power",
+        "auc": 78170.04,
+        "netInvestment": -1377.98,
+        "percentageChange": -1.73,
+        "fiiAuc": 78170.04,
+        "fiiNetInvestment": -1377.98,
+        "fiiPercentageChange": -1.73,
+        "diiAuc": 54927.93,
+        "diiNetInvestment": -1230.94,
+        "diiPercentageChange": -2.19,
+        "stocks": [
+          {
+            "stockName": "JOJO",
+            "ticker": "531910",
+            "price": 118.62,
+            "mcap": 1636,
+            "fiiShares": 658.9954,
+            "fiiValue": 78170.04,
+            "diiShares": 463.0579,
+            "diiValue": 54927.93
+          }
+        ]
+      },
+      {
+        "sectorName": "Telecommunication",
+        "auc": 67210.91,
+        "netInvestment": -1190.73,
+        "percentageChange": -1.74,
+        "fiiAuc": 67210.91,
+        "fiiNetInvestment": -1190.73,
+        "fiiPercentageChange": -1.74,
+        "diiAuc": 51466.9,
+        "diiNetInvestment": 913.64,
+        "diiPercentageChange": 1.81,
+        "stocks": [
+          {
+            "stockName": "CitiPort Fin.",
+            "ticker": "531235",
+            "price": 40.82,
+            "mcap": 12.65,
+            "fiiShares": 1646.5191,
+            "fiiValue": 67210.91,
+            "diiShares": 1260.8256,
+            "diiValue": 51466.9
+          }
+        ]
+      },
+      {
+        "sectorName": "Capital Goods",
+        "auc": 60763.55,
+        "netInvestment": 488.31,
+        "percentageChange": 0.81,
+        "fiiAuc": 60763.55,
+        "fiiNetInvestment": 488.31,
+        "fiiPercentageChange": 0.81,
+        "diiAuc": 37260.27,
+        "diiNetInvestment": 955.19,
+        "diiPercentageChange": 2.63,
+        "stocks": [
+          {
+            "stockName": "Committed Cargo",
+            "ticker": "COMMITTED",
+            "price": 294.96,
+            "mcap": 341.41,
+            "fiiShares": 103.0031,
+            "fiiValue": 30381.78,
+            "diiShares": 63.1616,
+            "diiValue": 18630.14
+          },
+          {
+            "stockName": "ITCONS E-Soluti.",
+            "ticker": "543806",
+            "price": 230.91,
+            "mcap": 208.01,
+            "fiiShares": 131.5741,
+            "fiiValue": 30381.78,
+            "diiShares": 80.6814,
+            "diiValue": 18630.14
+          }
+        ]
+      },
+      {
+        "sectorName": "Metals & Mining",
+        "auc": 50458.66,
+        "netInvestment": 936.08,
+        "percentageChange": 1.89,
+        "fiiAuc": 50458.66,
+        "fiiNetInvestment": 936.08,
+        "fiiPercentageChange": 1.89,
+        "diiAuc": 34531.88,
+        "diiNetInvestment": -60.97,
+        "diiPercentageChange": -0.18,
+        "stocks": [
+          {
+            "stockName": "Enbee Trade",
+            "ticker": "512441",
+            "price": 0.25,
+            "mcap": 17.23,
+            "fiiShares": 201834.64,
+            "fiiValue": 50458.66,
+            "diiShares": 138127.52,
+            "diiValue": 34531.88
+          }
+        ]
+      },
+      {
+        "sectorName": "Chemicals",
+        "auc": 42053.56,
+        "netInvestment": 1366.62,
+        "percentageChange": 3.36,
+        "fiiAuc": 42053.56,
+        "fiiNetInvestment": 1366.62,
+        "fiiPercentageChange": 3.36,
+        "diiAuc": 29317.29,
+        "diiNetInvestment": -460.67,
+        "diiPercentageChange": -1.55,
+        "stocks": [
+          {
+            "stockName": "Mangal Credit",
+            "ticker": "MANCREDIT",
+            "price": 214.38,
+            "mcap": 452.64,
+            "fiiShares": 196.1636,
+            "fiiValue": 42053.56,
+            "diiShares": 136.7538,
+            "diiValue": 29317.29
+          }
+        ]
+      },
+      {
+        "sectorName": "Construction Materials",
+        "auc": 33554.33,
+        "netInvestment": 682.15,
+        "percentageChange": 2.08,
+        "fiiAuc": 33554.33,
+        "fiiNetInvestment": 682.15,
+        "fiiPercentageChange": 2.08,
+        "diiAuc": 25563.32,
+        "diiNetInvestment": 744.53,
+        "diiPercentageChange": 3,
+        "stocks": [
+          {
+            "stockName": "Gowra Leasing",
+            "ticker": "530709",
+            "price": 87.97,
+            "mcap": 68.17,
+            "fiiShares": 381.4292,
+            "fiiValue": 33554.33,
+            "diiShares": 290.5913,
+            "diiValue": 25563.32
+          }
+        ]
+      },
+      {
+        "sectorName": "Consumer Services",
+        "auc": 27817.75,
+        "netInvestment": -607.36,
+        "percentageChange": -2.14,
+        "fiiAuc": 27817.75,
+        "fiiNetInvestment": -607.36,
+        "fiiPercentageChange": -2.14,
+        "diiAuc": 21677.55,
+        "diiNetInvestment": -67.99,
+        "diiPercentageChange": -0.31,
+        "stocks": [
+          {
+            "stockName": "Travels & Rent.",
+            "ticker": "544242",
+            "price": 7.66,
+            "mcap": 16.36,
+            "fiiShares": 1452.624,
+            "fiiValue": 11127.1,
+            "diiShares": 1131.9869,
+            "diiValue": 8671.02
+          },
+          {
+            "stockName": "Pansari Develop.",
+            "ticker": "PANSARI",
+            "price": 297.78,
+            "mcap": 519.52,
+            "fiiShares": 56.0503,
+            "fiiValue": 16690.65,
+            "diiShares": 43.6783,
+            "diiValue": 13006.53
+          }
+        ]
+      }
+    ],
+    "2026-08-15": [
+      {
+        "sectorName": "Financial Services",
+        "auc": 456819.33,
+        "netInvestment": 410.77,
+        "percentageChange": 0.09,
+        "fiiAuc": 456819.33,
+        "fiiNetInvestment": 410.77,
+        "fiiPercentageChange": 0.09,
+        "diiAuc": 278052.24,
+        "diiNetInvestment": -220.18,
+        "diiPercentageChange": -0.08,
+        "stocks": [
+          {
+            "stockName": "U. Y. Fincorp",
+            "ticker": "UYFINCORP",
+            "price": 25.11,
+            "mcap": 477.74,
+            "fiiShares": 4548.1812,
+            "fiiValue": 114204.83,
+            "diiShares": 2768.3417,
+            "diiValue": 69513.06
+          },
+          {
+            "stockName": "F Mec Intl. Fin.",
+            "ticker": "539552",
+            "price": 10.49,
+            "mcap": 51.3,
+            "fiiShares": 6532.2116,
+            "fiiValue": 68522.9,
+            "diiShares": 3975.9619,
+            "diiValue": 41707.84
+          },
+          {
+            "stockName": "GDL Leasing",
+            "ticker": "530855",
+            "price": 82.48,
+            "mcap": 41.33,
+            "fiiShares": 830.782,
+            "fiiValue": 68522.9,
+            "diiShares": 505.6722,
+            "diiValue": 41707.84
+          },
+          {
+            "stockName": "Akme Fintrade",
+            "ticker": "AFIL",
+            "price": 8.01,
+            "mcap": 352.12,
+            "fiiShares": 11406.226,
+            "fiiValue": 91363.87,
+            "diiShares": 6942.628,
+            "diiValue": 55610.45
+          },
+          {
+            "stockName": "Manba Finance",
+            "ticker": "MANBA",
+            "price": 145.82,
+            "mcap": 732.6,
+            "fiiShares": 783.1904,
+            "fiiValue": 114204.83,
+            "diiShares": 476.7046,
+            "diiValue": 69513.06
+          }
+        ]
+      },
+      {
+        "sectorName": "Information Technology",
+        "auc": 283883.23,
+        "netInvestment": 10708.45,
+        "percentageChange": 3.92,
+        "fiiAuc": 283883.23,
+        "fiiNetInvestment": 10708.45,
+        "fiiPercentageChange": 3.92,
+        "diiAuc": 207307.35,
+        "diiNetInvestment": -5141.13,
+        "diiPercentageChange": -2.42,
+        "stocks": [
+          {
+            "stockName": "eMudhra",
+            "ticker": "EMUDHRA",
+            "price": 477.88,
+            "mcap": 3957.38,
+            "fiiShares": 237.6188,
+            "fiiValue": 113553.29,
+            "diiShares": 173.5225,
+            "diiValue": 82922.94
+          },
+          {
+            "stockName": "Maxposure",
+            "ticker": "MAXPOSURE",
+            "price": 34.97,
+            "mcap": 79.52,
+            "fiiShares": 1217.686,
+            "fiiValue": 42582.48,
+            "diiShares": 889.2222,
+            "diiValue": 31096.1
+          },
+          {
+            "stockName": "Brightcom Group",
+            "ticker": "BCG",
+            "price": 9.46,
+            "mcap": 1908.29,
+            "fiiShares": 7502.1998,
+            "fiiValue": 70970.81,
+            "diiShares": 5478.5243,
+            "diiValue": 51826.84
+          },
+          {
+            "stockName": "Zaggle Prepaid",
+            "ticker": "ZAGGLE",
+            "price": 176.24,
+            "mcap": 2369.67,
+            "fiiShares": 322.1553,
+            "fiiValue": 56776.65,
+            "diiShares": 235.2557,
+            "diiValue": 41461.47
+          }
+        ]
+      },
+      {
+        "sectorName": "Oil, Gas & Consumable Fuels",
+        "auc": 229610.96,
+        "netInvestment": -1037.92,
+        "percentageChange": -0.45,
+        "fiiAuc": 229610.96,
+        "fiiNetInvestment": -1037.92,
+        "fiiPercentageChange": -0.45,
+        "diiAuc": 141398.51,
+        "diiNetInvestment": 367.47,
+        "diiPercentageChange": 0.26,
+        "stocks": [
+          {
+            "stockName": "Asian Energy",
+            "ticker": "ASIANENE",
+            "price": 453.05,
+            "mcap": 2222.23,
+            "fiiShares": 506.8115,
+            "fiiValue": 229610.96,
+            "diiShares": 312.1035,
+            "diiValue": 141398.51
+          }
+        ]
+      },
+      {
+        "sectorName": "FMCG",
+        "auc": 160409.68,
+        "netInvestment": -628.05,
+        "percentageChange": -0.39,
+        "fiiAuc": 160409.68,
+        "fiiNetInvestment": -628.05,
+        "fiiPercentageChange": -0.39,
+        "diiAuc": 120860.86,
+        "diiNetInvestment": 81.01,
+        "diiPercentageChange": 0.07,
+        "stocks": [
+          {
+            "stockName": "Nikki Glob.Fin.",
+            "ticker": "531272",
+            "price": 21.34,
+            "mcap": 7.3,
+            "fiiShares": 3758.4274,
+            "fiiValue": 80204.84,
+            "diiShares": 2831.7915,
+            "diiValue": 60430.43
+          },
+          {
+            "stockName": "Cont. Securities",
+            "ticker": "538868",
+            "price": 22.08,
+            "mcap": 70.13,
+            "fiiShares": 3632.4656,
+            "fiiValue": 80204.84,
+            "diiShares": 2736.8854,
+            "diiValue": 60430.43
+          }
+        ]
+      },
+      {
+        "sectorName": "Healthcare",
+        "auc": 108225.53,
+        "netInvestment": -151.73,
+        "percentageChange": -0.14,
+        "fiiAuc": 108225.53,
+        "fiiNetInvestment": -151.73,
+        "fiiPercentageChange": -0.14,
+        "diiAuc": 83976.74,
+        "diiNetInvestment": 85.4,
+        "diiPercentageChange": 0.1,
+        "stocks": [
+          {
+            "stockName": "Gujarat Kidney",
+            "ticker": "GKSL",
+            "price": 187.11,
+            "mcap": 1475.22,
+            "fiiShares": 231.3624,
+            "fiiValue": 43290.21,
+            "diiShares": 179.5238,
+            "diiValue": 33590.7
+          },
+          {
+            "stockName": "Yatharth Hospit.",
+            "ticker": "YATHARTH",
+            "price": 990.71,
+            "mcap": 9545.94,
+            "fiiShares": 65.5442,
+            "fiiValue": 64935.32,
+            "diiShares": 50.8585,
+            "diiValue": 50386.04
+          }
+        ]
+      },
+      {
+        "sectorName": "Automobile & Auto Components",
+        "auc": 114171.04,
+        "netInvestment": 849.91,
+        "percentageChange": 0.75,
+        "fiiAuc": 114171.04,
+        "fiiNetInvestment": 849.91,
+        "fiiPercentageChange": 0.75,
+        "diiAuc": 69687.17,
+        "diiNetInvestment": -152.51,
+        "diiPercentageChange": -0.22,
+        "stocks": [
+          {
+            "stockName": "Ashika Credit",
+            "ticker": "ASHIKA",
+            "price": 401.69,
+            "mcap": 2961.49,
+            "fiiShares": 284.2267,
+            "fiiValue": 114171.04,
+            "diiShares": 173.485,
+            "diiValue": 69687.17
+          }
+        ]
+      },
+      {
+        "sectorName": "Power",
+        "auc": 78123.14,
+        "netInvestment": -46.9,
+        "percentageChange": -0.06,
+        "fiiAuc": 78123.14,
+        "fiiNetInvestment": -46.9,
+        "fiiPercentageChange": -0.06,
+        "diiAuc": 55029.3,
+        "diiNetInvestment": 101.37,
+        "diiPercentageChange": 0.18,
+        "stocks": [
+          {
+            "stockName": "JOJO",
+            "ticker": "531910",
+            "price": 119.93,
+            "mcap": 1654.08,
+            "fiiShares": 651.4062,
+            "fiiValue": 78123.14,
+            "diiShares": 458.8452,
+            "diiValue": 55029.3
+          }
+        ]
+      },
+      {
+        "sectorName": "Telecommunication",
+        "auc": 67647.78,
+        "netInvestment": 436.87,
+        "percentageChange": 0.65,
+        "fiiAuc": 67647.78,
+        "fiiNetInvestment": 436.87,
+        "fiiPercentageChange": 0.65,
+        "diiAuc": 51531.1,
+        "diiNetInvestment": 64.2,
+        "diiPercentageChange": 0.12,
+        "stocks": [
+          {
+            "stockName": "CitiPort Fin.",
+            "ticker": "531235",
+            "price": 41.57,
+            "mcap": 12.88,
+            "fiiShares": 1627.3221,
+            "fiiValue": 67647.78,
+            "diiShares": 1239.6223,
+            "diiValue": 51531.1
+          }
+        ]
+      },
+      {
+        "sectorName": "Capital Goods",
+        "auc": 60113.38,
+        "netInvestment": -650.17,
+        "percentageChange": -1.07,
+        "fiiAuc": 60113.38,
+        "fiiNetInvestment": -650.17,
+        "fiiPercentageChange": -1.07,
+        "diiAuc": 37552.11,
+        "diiNetInvestment": 291.84,
+        "diiPercentageChange": 0.78,
+        "stocks": [
+          {
+            "stockName": "Committed Cargo",
+            "ticker": "COMMITTED",
+            "price": 295.21,
+            "mcap": 341.69,
+            "fiiShares": 101.8146,
+            "fiiValue": 30056.69,
+            "diiShares": 63.6024,
+            "diiValue": 18776.06
+          },
+          {
+            "stockName": "ITCONS E-Soluti.",
+            "ticker": "543806",
+            "price": 231.1,
+            "mcap": 208.18,
+            "fiiShares": 130.0592,
+            "fiiValue": 30056.69,
+            "diiShares": 81.2465,
+            "diiValue": 18776.06
+          }
+        ]
+      },
+      {
+        "sectorName": "Metals & Mining",
+        "auc": 50938.02,
+        "netInvestment": 479.36,
+        "percentageChange": 0.95,
+        "fiiAuc": 50938.02,
+        "fiiNetInvestment": 479.36,
+        "fiiPercentageChange": 0.95,
+        "diiAuc": 34353.51,
+        "diiNetInvestment": -178.37,
+        "diiPercentageChange": -0.52,
+        "stocks": [
+          {
+            "stockName": "Enbee Trade",
+            "ticker": "512441",
+            "price": 0.25,
+            "mcap": 17.6,
+            "fiiShares": 203752.08,
+            "fiiValue": 50938.02,
+            "diiShares": 137414.04,
+            "diiValue": 34353.51
+          }
+        ]
+      },
+      {
+        "sectorName": "Chemicals",
+        "auc": 42192.34,
+        "netInvestment": 138.78,
+        "percentageChange": 0.33,
+        "fiiAuc": 42192.34,
+        "fiiNetInvestment": 138.78,
+        "fiiPercentageChange": 0.33,
+        "diiAuc": 29162.81,
+        "diiNetInvestment": -154.48,
+        "diiPercentageChange": -0.53,
+        "stocks": [
+          {
+            "stockName": "Mangal Credit",
+            "ticker": "MANCREDIT",
+            "price": 217.6,
+            "mcap": 459.43,
+            "fiiShares": 193.8986,
+            "fiiValue": 42192.34,
+            "diiShares": 134.0203,
+            "diiValue": 29162.81
+          }
+        ]
+      },
+      {
+        "sectorName": "Construction Materials",
+        "auc": 33443.6,
+        "netInvestment": -110.73,
+        "percentageChange": -0.33,
+        "fiiAuc": 33443.6,
+        "fiiNetInvestment": -110.73,
+        "fiiPercentageChange": -0.33,
+        "diiAuc": 25730.56,
+        "diiNetInvestment": 167.24,
+        "diiPercentageChange": 0.65,
+        "stocks": [
+          {
+            "stockName": "Gowra Leasing",
+            "ticker": "530709",
+            "price": 88.71,
+            "mcap": 68.73,
+            "fiiShares": 376.9992,
+            "fiiValue": 33443.6,
+            "diiShares": 290.0525,
+            "diiValue": 25730.56
+          }
+        ]
+      },
+      {
+        "sectorName": "Consumer Services",
+        "auc": 28351.85,
+        "netInvestment": 534.1,
+        "percentageChange": 1.92,
+        "fiiAuc": 28351.85,
+        "fiiNetInvestment": 534.1,
+        "fiiPercentageChange": 1.92,
+        "diiAuc": 21489.84,
+        "diiNetInvestment": -187.71,
+        "diiPercentageChange": -0.87,
+        "stocks": [
+          {
+            "stockName": "Travels & Rent.",
+            "ticker": "544242",
+            "price": 7.9,
+            "mcap": 16.87,
+            "fiiShares": 1435.5367,
+            "fiiValue": 11340.74,
+            "diiShares": 1088.0937,
+            "diiValue": 8595.94
+          },
+          {
+            "stockName": "Pansari Develop.",
+            "ticker": "PANSARI",
+            "price": 307.03,
+            "mcap": 535.67,
+            "fiiShares": 55.4054,
+            "fiiValue": 17011.11,
+            "diiShares": 41.9956,
+            "diiValue": 12893.91
+          }
+        ]
+      }
+    ],
+    "2026-08-31": [
+      {
+        "sectorName": "Financial Services",
+        "auc": 457230.47,
+        "netInvestment": 411.14,
+        "percentageChange": 0.09,
+        "fiiAuc": 457230.47,
+        "fiiNetInvestment": 411.14,
+        "fiiPercentageChange": 0.09,
+        "diiAuc": 277337.34,
+        "diiNetInvestment": -714.9,
+        "diiPercentageChange": -0.26,
+        "stocks": [
+          {
+            "stockName": "U. Y. Fincorp",
+            "ticker": "UYFINCORP",
+            "price": 25.11,
+            "mcap": 477.74,
+            "fiiShares": 4552.2748,
+            "fiiValue": 114307.62,
+            "diiShares": 2761.2242,
+            "diiValue": 69334.34
+          },
+          {
+            "stockName": "F Mec Intl. Fin.",
+            "ticker": "539552",
+            "price": 10.49,
+            "mcap": 51.3,
+            "fiiShares": 6538.0906,
+            "fiiValue": 68584.57,
+            "diiShares": 3965.7388,
+            "diiValue": 41600.6
+          },
+          {
+            "stockName": "GDL Leasing",
+            "ticker": "530855",
+            "price": 82.48,
+            "mcap": 41.33,
+            "fiiShares": 831.5297,
+            "fiiValue": 68584.57,
+            "diiShares": 504.372,
+            "diiValue": 41600.6
+          },
+          {
+            "stockName": "Akme Fintrade",
+            "ticker": "AFIL",
+            "price": 8.01,
+            "mcap": 352.12,
+            "fiiShares": 11416.4906,
+            "fiiValue": 91446.09,
+            "diiShares": 6924.7778,
+            "diiValue": 55467.47
+          },
+          {
+            "stockName": "Manba Finance",
+            "ticker": "MANBA",
+            "price": 145.82,
+            "mcap": 732.6,
+            "fiiShares": 783.8954,
+            "fiiValue": 114307.62,
+            "diiShares": 475.4789,
+            "diiValue": 69334.34
+          }
+        ]
+      },
+      {
+        "sectorName": "Information Technology",
+        "auc": 295011.45,
+        "netInvestment": 11128.22,
+        "percentageChange": 3.92,
+        "fiiAuc": 295011.45,
+        "fiiNetInvestment": 11128.22,
+        "fiiPercentageChange": 3.92,
+        "diiAuc": 202608.25,
+        "diiNetInvestment": -4699.1,
+        "diiPercentageChange": -2.27,
+        "stocks": [
+          {
+            "stockName": "eMudhra",
+            "ticker": "EMUDHRA",
+            "price": 477.88,
+            "mcap": 3957.38,
+            "fiiShares": 246.9335,
+            "fiiValue": 118004.58,
+            "diiShares": 169.5892,
+            "diiValue": 81043.3
+          },
+          {
+            "stockName": "Maxposure",
+            "ticker": "MAXPOSURE",
+            "price": 34.97,
+            "mcap": 79.52,
+            "fiiShares": 1265.4195,
+            "fiiValue": 44251.72,
+            "diiShares": 869.0661,
+            "diiValue": 30391.24
+          },
+          {
+            "stockName": "Brightcom Group",
+            "ticker": "BCG",
+            "price": 9.46,
+            "mcap": 1908.29,
+            "fiiShares": 7796.2854,
+            "fiiValue": 73752.86,
+            "diiShares": 5354.3404,
+            "diiValue": 50652.06
+          },
+          {
+            "stockName": "Zaggle Prepaid",
+            "ticker": "ZAGGLE",
+            "price": 176.24,
+            "mcap": 2369.67,
+            "fiiShares": 334.7838,
+            "fiiValue": 59002.29,
+            "diiShares": 229.9231,
+            "diiValue": 40521.65
+          }
+        ]
+      },
+      {
+        "sectorName": "Oil, Gas & Consumable Fuels",
+        "auc": 228577.71,
+        "netInvestment": -1033.25,
+        "percentageChange": -0.45,
+        "fiiAuc": 228577.71,
+        "fiiNetInvestment": -1033.25,
+        "fiiPercentageChange": -0.45,
+        "diiAuc": 141108.18,
+        "diiNetInvestment": -290.33,
+        "diiPercentageChange": -0.21,
+        "stocks": [
+          {
+            "stockName": "Asian Energy",
+            "ticker": "ASIANENE",
+            "price": 453.05,
+            "mcap": 2222.23,
+            "fiiShares": 504.5309,
+            "fiiValue": 228577.71,
+            "diiShares": 311.4627,
+            "diiValue": 141108.18
+          }
+        ]
+      },
+      {
+        "sectorName": "FMCG",
+        "auc": 159784.08,
+        "netInvestment": -625.6,
+        "percentageChange": -0.39,
+        "fiiAuc": 159784.08,
+        "fiiNetInvestment": -625.6,
+        "fiiPercentageChange": -0.39,
+        "diiAuc": 121158.37,
+        "diiNetInvestment": 297.51,
+        "diiPercentageChange": 0.25,
+        "stocks": [
+          {
+            "stockName": "Nikki Glob.Fin.",
+            "ticker": "531272",
+            "price": 21.34,
+            "mcap": 7.3,
+            "fiiShares": 3743.7694,
+            "fiiValue": 79892.04,
+            "diiShares": 2838.7619,
+            "diiValue": 60579.18
+          },
+          {
+            "stockName": "Cont. Securities",
+            "ticker": "538868",
+            "price": 22.08,
+            "mcap": 70.13,
+            "fiiShares": 3618.2989,
+            "fiiValue": 79892.04,
+            "diiShares": 2743.6223,
+            "diiValue": 60579.18
+          }
+        ]
+      },
+      {
+        "sectorName": "Healthcare",
+        "auc": 108074.01,
+        "netInvestment": -151.52,
+        "percentageChange": -0.14,
+        "fiiAuc": 108074.01,
+        "fiiNetInvestment": -151.52,
+        "fiiPercentageChange": -0.14,
+        "diiAuc": 84360.8,
+        "diiNetInvestment": 384.06,
+        "diiPercentageChange": 0.46,
+        "stocks": [
+          {
+            "stockName": "Gujarat Kidney",
+            "ticker": "GKSL",
+            "price": 187.11,
+            "mcap": 1475.22,
+            "fiiShares": 231.0385,
+            "fiiValue": 43229.61,
+            "diiShares": 180.3448,
+            "diiValue": 33744.32
+          },
+          {
+            "stockName": "Yatharth Hospit.",
+            "ticker": "YATHARTH",
+            "price": 990.71,
+            "mcap": 9545.94,
+            "fiiShares": 65.4525,
+            "fiiValue": 64844.41,
+            "diiShares": 51.0911,
+            "diiValue": 50616.48
+          }
+        ]
+      },
+      {
+        "sectorName": "Automobile & Auto Components",
+        "auc": 115027.32,
+        "netInvestment": 856.28,
+        "percentageChange": 0.75,
+        "fiiAuc": 115027.32,
+        "fiiNetInvestment": 856.28,
+        "fiiPercentageChange": 0.75,
+        "diiAuc": 69473.13,
+        "diiNetInvestment": -214.04,
+        "diiPercentageChange": -0.31,
+        "stocks": [
+          {
+            "stockName": "Ashika Credit",
+            "ticker": "ASHIKA",
+            "price": 401.69,
+            "mcap": 2961.49,
+            "fiiShares": 286.3584,
+            "fiiValue": 115027.32,
+            "diiShares": 172.9521,
+            "diiValue": 69473.13
+          }
+        ]
+      },
+      {
+        "sectorName": "Power",
+        "auc": 78076.27,
+        "netInvestment": -46.87,
+        "percentageChange": -0.06,
+        "fiiAuc": 78076.27,
+        "fiiNetInvestment": -46.87,
+        "fiiPercentageChange": -0.06,
+        "diiAuc": 55063.73,
+        "diiNetInvestment": 34.43,
+        "diiPercentageChange": 0.06,
+        "stocks": [
+          {
+            "stockName": "JOJO",
+            "ticker": "531910",
+            "price": 119.93,
+            "mcap": 1654.08,
+            "fiiShares": 651.0153,
+            "fiiValue": 78076.27,
+            "diiShares": 459.1322,
+            "diiValue": 55063.73
+          }
+        ]
+      },
+      {
+        "sectorName": "Telecommunication",
+        "auc": 68087.49,
+        "netInvestment": 439.71,
+        "percentageChange": 0.65,
+        "fiiAuc": 68087.49,
+        "fiiNetInvestment": 439.71,
+        "fiiPercentageChange": 0.65,
+        "diiAuc": 51377.04,
+        "diiNetInvestment": -154.06,
+        "diiPercentageChange": -0.3,
+        "stocks": [
+          {
+            "stockName": "CitiPort Fin.",
+            "ticker": "531235",
+            "price": 41.57,
+            "mcap": 12.88,
+            "fiiShares": 1637.8997,
+            "fiiValue": 68087.49,
+            "diiShares": 1235.9163,
+            "diiValue": 51377.04
+          }
+        ]
+      },
+      {
+        "sectorName": "Capital Goods",
+        "auc": 59470.17,
+        "netInvestment": -643.21,
+        "percentageChange": -1.07,
+        "fiiAuc": 59470.17,
+        "fiiNetInvestment": -643.21,
+        "fiiPercentageChange": -1.07,
+        "diiAuc": 37649.33,
+        "diiNetInvestment": 97.22,
+        "diiPercentageChange": 0.26,
+        "stocks": [
+          {
+            "stockName": "Committed Cargo",
+            "ticker": "COMMITTED",
+            "price": 295.21,
+            "mcap": 341.69,
+            "fiiShares": 100.7252,
+            "fiiValue": 29735.08,
+            "diiShares": 63.767,
+            "diiValue": 18824.66
+          },
+          {
+            "stockName": "ITCONS E-Soluti.",
+            "ticker": "543806",
+            "price": 231.1,
+            "mcap": 208.18,
+            "fiiShares": 128.6676,
+            "fiiValue": 29735.08,
+            "diiShares": 81.4568,
+            "diiValue": 18824.66
+          }
+        ]
+      },
+      {
+        "sectorName": "Metals & Mining",
+        "auc": 51421.93,
+        "netInvestment": 483.91,
+        "percentageChange": 0.95,
+        "fiiAuc": 51421.93,
+        "fiiNetInvestment": 483.91,
+        "fiiPercentageChange": 0.95,
+        "diiAuc": 34300.92,
+        "diiNetInvestment": -52.59,
+        "diiPercentageChange": -0.15,
+        "stocks": [
+          {
+            "stockName": "Enbee Trade",
+            "ticker": "512441",
+            "price": 0.25,
+            "mcap": 17.6,
+            "fiiShares": 205687.72,
+            "fiiValue": 51421.93,
+            "diiShares": 137203.68,
+            "diiValue": 34300.92
+          }
+        ]
+      },
+      {
+        "sectorName": "Chemicals",
+        "auc": 42331.57,
+        "netInvestment": 139.23,
+        "percentageChange": 0.33,
+        "fiiAuc": 42331.57,
+        "fiiNetInvestment": 139.23,
+        "fiiPercentageChange": 0.33,
+        "diiAuc": 29063.12,
+        "diiNetInvestment": -99.69,
+        "diiPercentageChange": -0.34,
+        "stocks": [
+          {
+            "stockName": "Mangal Credit",
+            "ticker": "MANCREDIT",
+            "price": 217.6,
+            "mcap": 459.43,
+            "fiiShares": 194.5385,
+            "fiiValue": 42331.57,
+            "diiShares": 133.5621,
+            "diiValue": 29063.12
+          }
+        ]
+      },
+      {
+        "sectorName": "Construction Materials",
+        "auc": 33333.24,
+        "netInvestment": -110.36,
+        "percentageChange": -0.33,
+        "fiiAuc": 33333.24,
+        "fiiNetInvestment": -110.36,
+        "fiiPercentageChange": -0.33,
+        "diiAuc": 25893.09,
+        "diiNetInvestment": 162.53,
+        "diiPercentageChange": 0.63,
+        "stocks": [
+          {
+            "stockName": "Gowra Leasing",
+            "ticker": "530709",
+            "price": 88.71,
+            "mcap": 68.73,
+            "fiiShares": 375.7552,
+            "fiiValue": 33333.24,
+            "diiShares": 291.8847,
+            "diiValue": 25893.09
+          }
+        ]
+      },
+      {
+        "sectorName": "Consumer Services",
+        "auc": 28896.21,
+        "netInvestment": 544.36,
+        "percentageChange": 1.92,
+        "fiiAuc": 28896.21,
+        "fiiNetInvestment": 544.36,
+        "fiiPercentageChange": 1.92,
+        "diiAuc": 21380.89,
+        "diiNetInvestment": -108.95,
+        "diiPercentageChange": -0.51,
+        "stocks": [
+          {
+            "stockName": "Travels & Rent.",
+            "ticker": "544242",
+            "price": 7.9,
+            "mcap": 16.87,
+            "fiiShares": 1463.0987,
+            "fiiValue": 11558.48,
+            "diiShares": 1082.5772,
+            "diiValue": 8552.36
+          },
+          {
+            "stockName": "Pansari Develop.",
+            "ticker": "PANSARI",
+            "price": 307.03,
+            "mcap": 535.67,
+            "fiiShares": 56.4691,
+            "fiiValue": 17337.72,
+            "diiShares": 41.7827,
+            "diiValue": 12828.53
+          }
+        ]
+      }
+    ],
+    "2026-09-15": [
+      {
+        "sectorName": "Financial Services",
+        "auc": 457641.98,
+        "netInvestment": 411.51,
+        "percentageChange": 0.09,
+        "fiiAuc": 457641.98,
+        "fiiNetInvestment": 411.51,
+        "fiiPercentageChange": 0.09,
+        "diiAuc": 278268.19,
+        "diiNetInvestment": 930.85,
+        "diiPercentageChange": 0.34,
+        "stocks": [
+          {
+            "stockName": "U. Y. Fincorp",
+            "ticker": "UYFINCORP",
+            "price": 25.11,
+            "mcap": 477.74,
+            "fiiShares": 4556.3716,
+            "fiiValue": 114410.49,
+            "diiShares": 2770.4918,
+            "diiValue": 69567.05
+          },
+          {
+            "stockName": "F Mec Intl. Fin.",
+            "ticker": "539552",
+            "price": 10.49,
+            "mcap": 51.3,
+            "fiiShares": 6543.9752,
+            "fiiValue": 68646.3,
+            "diiShares": 3979.0496,
+            "diiValue": 41740.23
+          },
+          {
+            "stockName": "GDL Leasing",
+            "ticker": "530855",
+            "price": 82.48,
+            "mcap": 41.33,
+            "fiiShares": 832.2781,
+            "fiiValue": 68646.3,
+            "diiShares": 506.0649,
+            "diiValue": 41740.23
+          },
+          {
+            "stockName": "Akme Fintrade",
+            "ticker": "AFIL",
+            "price": 8.01,
+            "mcap": 352.12,
+            "fiiShares": 11426.7665,
+            "fiiValue": 91528.4,
+            "diiShares": 6948.02,
+            "diiValue": 55653.64
+          },
+          {
+            "stockName": "Manba Finance",
+            "ticker": "MANBA",
+            "price": 145.82,
+            "mcap": 732.6,
+            "fiiShares": 784.6008,
+            "fiiValue": 114410.49,
+            "diiShares": 477.0748,
+            "diiValue": 69567.05
+          }
+        ]
+      },
+      {
+        "sectorName": "Information Technology",
+        "auc": 306575.9,
+        "netInvestment": 11564.45,
+        "percentageChange": 3.92,
+        "fiiAuc": 306575.9,
+        "fiiNetInvestment": 11564.45,
+        "fiiPercentageChange": 3.92,
+        "diiAuc": 199604.22,
+        "diiNetInvestment": -3004.03,
+        "diiPercentageChange": -1.48,
+        "stocks": [
+          {
+            "stockName": "eMudhra",
+            "ticker": "EMUDHRA",
+            "price": 477.88,
+            "mcap": 3957.38,
+            "fiiShares": 256.6133,
+            "fiiValue": 122630.36,
+            "diiShares": 167.0748,
+            "diiValue": 79841.69
+          },
+          {
+            "stockName": "Maxposure",
+            "ticker": "MAXPOSURE",
+            "price": 34.97,
+            "mcap": 79.52,
+            "fiiShares": 1315.0237,
+            "fiiValue": 45986.38,
+            "diiShares": 856.1804,
+            "diiValue": 29940.63
+          },
+          {
+            "stockName": "Brightcom Group",
+            "ticker": "BCG",
+            "price": 9.46,
+            "mcap": 1908.29,
+            "fiiShares": 8101.8996,
+            "fiiValue": 76643.97,
+            "diiShares": 5274.9535,
+            "diiValue": 49901.06
+          },
+          {
+            "stockName": "Zaggle Prepaid",
+            "ticker": "ZAGGLE",
+            "price": 176.24,
+            "mcap": 2369.67,
+            "fiiShares": 347.9073,
+            "fiiValue": 61315.18,
+            "diiShares": 226.5141,
+            "diiValue": 39920.84
+          }
+        ]
+      },
+      {
+        "sectorName": "Oil, Gas & Consumable Fuels",
+        "auc": 227549.11,
+        "netInvestment": -1028.6,
+        "percentageChange": -0.45,
+        "fiiAuc": 227549.11,
+        "fiiNetInvestment": -1028.6,
+        "fiiPercentageChange": -0.45,
+        "diiAuc": 141060.13,
+        "diiNetInvestment": -48.05,
+        "diiPercentageChange": -0.03,
+        "stocks": [
+          {
+            "stockName": "Asian Energy",
+            "ticker": "ASIANENE",
+            "price": 453.05,
+            "mcap": 2222.23,
+            "fiiShares": 502.2605,
+            "fiiValue": 227549.11,
+            "diiShares": 311.3566,
+            "diiValue": 141060.13
+          }
+        ]
+      },
+      {
+        "sectorName": "FMCG",
+        "auc": 159160.92,
+        "netInvestment": -623.16,
+        "percentageChange": -0.39,
+        "fiiAuc": 159160.92,
+        "fiiNetInvestment": -623.16,
+        "fiiPercentageChange": -0.39,
+        "diiAuc": 121583.84,
+        "diiNetInvestment": 425.47,
+        "diiPercentageChange": 0.35,
+        "stocks": [
+          {
+            "stockName": "Nikki Glob.Fin.",
+            "ticker": "531272",
+            "price": 21.34,
+            "mcap": 7.3,
+            "fiiShares": 3729.1687,
+            "fiiValue": 79580.46,
+            "diiShares": 2848.731,
+            "diiValue": 60791.92
+          },
+          {
+            "stockName": "Cont. Securities",
+            "ticker": "538868",
+            "price": 22.08,
+            "mcap": 70.13,
+            "fiiShares": 3604.1875,
+            "fiiValue": 79580.46,
+            "diiShares": 2753.2572,
+            "diiValue": 60791.92
+          }
+        ]
+      },
+      {
+        "sectorName": "Healthcare",
+        "auc": 107922.71,
+        "netInvestment": -151.3,
+        "percentageChange": -0.14,
+        "fiiAuc": 107922.71,
+        "fiiNetInvestment": -151.3,
+        "fiiPercentageChange": -0.14,
+        "diiAuc": 84737.38,
+        "diiNetInvestment": 376.58,
+        "diiPercentageChange": 0.45,
+        "stocks": [
+          {
+            "stockName": "Gujarat Kidney",
+            "ticker": "GKSL",
+            "price": 187.11,
+            "mcap": 1475.22,
+            "fiiShares": 230.715,
+            "fiiValue": 43169.08,
+            "diiShares": 181.1499,
+            "diiValue": 33894.95
+          },
+          {
+            "stockName": "Yatharth Hospit.",
+            "ticker": "YATHARTH",
+            "price": 990.71,
+            "mcap": 9545.94,
+            "fiiShares": 65.3608,
+            "fiiValue": 64753.62,
+            "diiShares": 51.3192,
+            "diiValue": 50842.43
+          }
+        ]
+      },
+      {
+        "sectorName": "Automobile & Auto Components",
+        "auc": 115890.02,
+        "netInvestment": 862.7,
+        "percentageChange": 0.75,
+        "fiiAuc": 115890.02,
+        "fiiNetInvestment": 862.7,
+        "fiiPercentageChange": 0.75,
+        "diiAuc": 69520.48,
+        "diiNetInvestment": 47.35,
+        "diiPercentageChange": 0.07,
+        "stocks": [
+          {
+            "stockName": "Ashika Credit",
+            "ticker": "ASHIKA",
+            "price": 401.69,
+            "mcap": 2961.49,
+            "fiiShares": 288.5061,
+            "fiiValue": 115890.02,
+            "diiShares": 173.07,
+            "diiValue": 69520.48
+          }
+        ]
+      },
+      {
+        "sectorName": "Power",
+        "auc": 78029.42,
+        "netInvestment": -46.85,
+        "percentageChange": -0.06,
+        "fiiAuc": 78029.42,
+        "fiiNetInvestment": -46.85,
+        "fiiPercentageChange": -0.06,
+        "diiAuc": 54902.06,
+        "diiNetInvestment": -161.67,
+        "diiPercentageChange": -0.29,
+        "stocks": [
+          {
+            "stockName": "JOJO",
+            "ticker": "531910",
+            "price": 119.93,
+            "mcap": 1654.08,
+            "fiiShares": 650.6247,
+            "fiiValue": 78029.42,
+            "diiShares": 457.7842,
+            "diiValue": 54902.06
+          }
+        ]
+      },
+      {
+        "sectorName": "Telecommunication",
+        "auc": 68530.06,
+        "netInvestment": 442.57,
+        "percentageChange": 0.65,
+        "fiiAuc": 68530.06,
+        "fiiNetInvestment": 442.57,
+        "fiiPercentageChange": 0.65,
+        "diiAuc": 51060.57,
+        "diiNetInvestment": -316.47,
+        "diiPercentageChange": -0.62,
+        "stocks": [
+          {
+            "stockName": "CitiPort Fin.",
+            "ticker": "531235",
+            "price": 41.57,
+            "mcap": 12.88,
+            "fiiShares": 1648.5461,
+            "fiiValue": 68530.06,
+            "diiShares": 1228.3033,
+            "diiValue": 51060.57
+          }
+        ]
+      },
+      {
+        "sectorName": "Capital Goods",
+        "auc": 58833.84,
+        "netInvestment": -636.33,
+        "percentageChange": -1.07,
+        "fiiAuc": 58833.84,
+        "fiiNetInvestment": -636.33,
+        "fiiPercentageChange": -1.07,
+        "diiAuc": 38011.23,
+        "diiNetInvestment": 361.9,
+        "diiPercentageChange": 0.96,
+        "stocks": [
+          {
+            "stockName": "Committed Cargo",
+            "ticker": "COMMITTED",
+            "price": 295.21,
+            "mcap": 341.69,
+            "fiiShares": 99.6474,
+            "fiiValue": 29416.92,
+            "diiShares": 64.38,
+            "diiValue": 19005.61
+          },
+          {
+            "stockName": "ITCONS E-Soluti.",
+            "ticker": "543806",
+            "price": 231.1,
+            "mcap": 208.18,
+            "fiiShares": 127.2909,
+            "fiiValue": 29416.92,
+            "diiShares": 82.2398,
+            "diiValue": 19005.61
+          }
+        ]
+      },
+      {
+        "sectorName": "Metals & Mining",
+        "auc": 51910.44,
+        "netInvestment": 488.51,
+        "percentageChange": 0.95,
+        "fiiAuc": 51910.44,
+        "fiiNetInvestment": 488.51,
+        "fiiPercentageChange": 0.95,
+        "diiAuc": 34174.24,
+        "diiNetInvestment": -126.68,
+        "diiPercentageChange": -0.37,
+        "stocks": [
+          {
+            "stockName": "Enbee Trade",
+            "ticker": "512441",
+            "price": 0.25,
+            "mcap": 17.6,
+            "fiiShares": 207641.76,
+            "fiiValue": 51910.44,
+            "diiShares": 136696.96,
+            "diiValue": 34174.24
+          }
+        ]
+      },
+      {
+        "sectorName": "Chemicals",
+        "auc": 42471.26,
+        "netInvestment": 139.69,
+        "percentageChange": 0.33,
+        "fiiAuc": 42471.26,
+        "fiiNetInvestment": 139.69,
+        "fiiPercentageChange": 0.33,
+        "diiAuc": 28884.69,
+        "diiNetInvestment": -178.43,
+        "diiPercentageChange": -0.61,
+        "stocks": [
+          {
+            "stockName": "Mangal Credit",
+            "ticker": "MANCREDIT",
+            "price": 217.6,
+            "mcap": 459.43,
+            "fiiShares": 195.1804,
+            "fiiValue": 42471.26,
+            "diiShares": 132.7421,
+            "diiValue": 28884.69
+          }
+        ]
+      },
+      {
+        "sectorName": "Construction Materials",
+        "auc": 33223.24,
+        "netInvestment": -110,
+        "percentageChange": -0.33,
+        "fiiAuc": 33223.24,
+        "fiiNetInvestment": -110,
+        "fiiPercentageChange": -0.33,
+        "diiAuc": 25985.35,
+        "diiNetInvestment": 92.26,
+        "diiPercentageChange": 0.36,
+        "stocks": [
+          {
+            "stockName": "Gowra Leasing",
+            "ticker": "530709",
+            "price": 88.71,
+            "mcap": 68.73,
+            "fiiShares": 374.5152,
+            "fiiValue": 33223.24,
+            "diiShares": 292.9247,
+            "diiValue": 25985.35
+          }
+        ]
+      },
+      {
+        "sectorName": "Consumer Services",
+        "auc": 29451.02,
+        "netInvestment": 554.81,
+        "percentageChange": 1.92,
+        "fiiAuc": 29451.02,
+        "fiiNetInvestment": 554.81,
+        "fiiPercentageChange": 1.92,
+        "diiAuc": 21234.89,
+        "diiNetInvestment": -146,
+        "diiPercentageChange": -0.68,
+        "stocks": [
+          {
+            "stockName": "Travels & Rent.",
+            "ticker": "544242",
+            "price": 7.9,
+            "mcap": 16.87,
+            "fiiShares": 1491.1911,
+            "fiiValue": 11780.41,
+            "diiShares": 1075.1848,
+            "diiValue": 8493.96
+          },
+          {
+            "stockName": "Pansari Develop.",
+            "ticker": "PANSARI",
+            "price": 307.03,
+            "mcap": 535.67,
+            "fiiShares": 57.5534,
+            "fiiValue": 17670.61,
+            "diiShares": 41.4973,
+            "diiValue": 12740.93
+          }
+        ]
+      }
+    ],
+    "2026-09-30": [
+      {
+        "sectorName": "Financial Services",
+        "auc": 458053.86,
+        "netInvestment": 411.88,
+        "percentageChange": 0.09,
+        "fiiAuc": 458053.86,
+        "fiiNetInvestment": 411.88,
+        "fiiPercentageChange": 0.09,
+        "diiAuc": 276969.84,
+        "diiNetInvestment": -1298.35,
+        "diiPercentageChange": -0.47,
+        "stocks": [
+          {
+            "stockName": "U. Y. Fincorp",
+            "ticker": "UYFINCORP",
+            "price": 25.11,
+            "mcap": 477.74,
+            "fiiShares": 4560.4723,
+            "fiiValue": 114513.46,
+            "diiShares": 2757.5651,
+            "diiValue": 69242.46
+          },
+          {
+            "stockName": "F Mec Intl. Fin.",
+            "ticker": "539552",
+            "price": 10.49,
+            "mcap": 51.3,
+            "fiiShares": 6549.8646,
+            "fiiValue": 68708.08,
+            "diiShares": 3960.4843,
+            "diiValue": 41545.48
+          },
+          {
+            "stockName": "GDL Leasing",
+            "ticker": "530855",
+            "price": 82.48,
+            "mcap": 41.33,
+            "fiiShares": 833.0272,
+            "fiiValue": 68708.08,
+            "diiShares": 503.7037,
+            "diiValue": 41545.48
+          },
+          {
+            "stockName": "Akme Fintrade",
+            "ticker": "AFIL",
+            "price": 8.01,
+            "mcap": 352.12,
+            "fiiShares": 11437.0499,
+            "fiiValue": 91610.77,
+            "diiShares": 6915.6017,
+            "diiValue": 55393.97
+          },
+          {
+            "stockName": "Manba Finance",
+            "ticker": "MANBA",
+            "price": 145.82,
+            "mcap": 732.6,
+            "fiiShares": 785.307,
+            "fiiValue": 114513.46,
+            "diiShares": 474.8489,
+            "diiValue": 69242.46
+          }
+        ]
+      },
+      {
+        "sectorName": "Information Technology",
+        "auc": 318593.68,
+        "netInvestment": 12017.78,
+        "percentageChange": 3.92,
+        "fiiAuc": 318593.68,
+        "fiiNetInvestment": 12017.78,
+        "fiiPercentageChange": 3.92,
+        "diiAuc": 196579.27,
+        "diiNetInvestment": -3024.95,
+        "diiPercentageChange": -1.52,
+        "stocks": [
+          {
+            "stockName": "eMudhra",
+            "ticker": "EMUDHRA",
+            "price": 477.88,
+            "mcap": 3957.38,
+            "fiiShares": 266.6725,
+            "fiiValue": 127437.47,
+            "diiShares": 164.5428,
+            "diiValue": 78631.71
+          },
+          {
+            "stockName": "Maxposure",
+            "ticker": "MAXPOSURE",
+            "price": 34.97,
+            "mcap": 79.52,
+            "fiiShares": 1366.5728,
+            "fiiValue": 47789.05,
+            "diiShares": 843.2053,
+            "diiValue": 29486.89
+          },
+          {
+            "stockName": "Brightcom Group",
+            "ticker": "BCG",
+            "price": 9.46,
+            "mcap": 1908.29,
+            "fiiShares": 8419.4947,
+            "fiiValue": 79648.42,
+            "diiShares": 5195.0127,
+            "diiValue": 49144.82
+          },
+          {
+            "stockName": "Zaggle Prepaid",
+            "ticker": "ZAGGLE",
+            "price": 176.24,
+            "mcap": 2369.67,
+            "fiiShares": 361.5453,
+            "fiiValue": 63718.74,
+            "diiShares": 223.0813,
+            "diiValue": 39315.85
+          }
+        ]
+      },
+      {
+        "sectorName": "Oil, Gas & Consumable Fuels",
+        "auc": 226525.14,
+        "netInvestment": -1023.97,
+        "percentageChange": -0.45,
+        "fiiAuc": 226525.14,
+        "fiiNetInvestment": -1023.97,
+        "fiiPercentageChange": -0.45,
+        "diiAuc": 142076.46,
+        "diiNetInvestment": 1016.33,
+        "diiPercentageChange": 0.72,
+        "stocks": [
+          {
+            "stockName": "Asian Energy",
+            "ticker": "ASIANENE",
+            "price": 453.05,
+            "mcap": 2222.23,
+            "fiiShares": 500.0003,
+            "fiiValue": 226525.14,
+            "diiShares": 313.6,
+            "diiValue": 142076.46
+          }
+        ]
+      },
+      {
+        "sectorName": "FMCG",
+        "auc": 158540.19,
+        "netInvestment": -620.73,
+        "percentageChange": -0.39,
+        "fiiAuc": 158540.19,
+        "fiiNetInvestment": -620.73,
+        "fiiPercentageChange": -0.39,
+        "diiAuc": 121438.52,
+        "diiNetInvestment": -145.32,
+        "diiPercentageChange": -0.12,
+        "stocks": [
+          {
+            "stockName": "Nikki Glob.Fin.",
+            "ticker": "531272",
+            "price": 21.34,
+            "mcap": 7.3,
+            "fiiShares": 3714.6251,
+            "fiiValue": 79270.1,
+            "diiShares": 2845.3261,
+            "diiValue": 60719.26
+          },
+          {
+            "stockName": "Cont. Securities",
+            "ticker": "538868",
+            "price": 22.08,
+            "mcap": 70.13,
+            "fiiShares": 3590.1313,
+            "fiiValue": 79270.1,
+            "diiShares": 2749.9665,
+            "diiValue": 60719.26
+          }
+        ]
+      },
+      {
+        "sectorName": "Healthcare",
+        "auc": 107771.62,
+        "netInvestment": -151.09,
+        "percentageChange": -0.14,
+        "fiiAuc": 107771.62,
+        "fiiNetInvestment": -151.09,
+        "fiiPercentageChange": -0.14,
+        "diiAuc": 84811,
+        "diiNetInvestment": 73.62,
+        "diiPercentageChange": 0.09,
+        "stocks": [
+          {
+            "stockName": "Gujarat Kidney",
+            "ticker": "GKSL",
+            "price": 187.11,
+            "mcap": 1475.22,
+            "fiiShares": 230.392,
+            "fiiValue": 43108.65,
+            "diiShares": 181.3073,
+            "diiValue": 33924.4
+          },
+          {
+            "stockName": "Yatharth Hospit.",
+            "ticker": "YATHARTH",
+            "price": 990.71,
+            "mcap": 9545.94,
+            "fiiShares": 65.2693,
+            "fiiValue": 64662.97,
+            "diiShares": 51.3638,
+            "diiValue": 50886.6
+          }
+        ]
+      },
+      {
+        "sectorName": "Automobile & Auto Components",
+        "auc": 116759.2,
+        "netInvestment": 869.18,
+        "percentageChange": 0.75,
+        "fiiAuc": 116759.2,
+        "fiiNetInvestment": 869.18,
+        "fiiPercentageChange": 0.75,
+        "diiAuc": 69064.19,
+        "diiNetInvestment": -456.29,
+        "diiPercentageChange": -0.66,
+        "stocks": [
+          {
+            "stockName": "Ashika Credit",
+            "ticker": "ASHIKA",
+            "price": 401.69,
+            "mcap": 2961.49,
+            "fiiShares": 290.6699,
+            "fiiValue": 116759.2,
+            "diiShares": 171.9341,
+            "diiValue": 69064.19
+          }
+        ]
+      },
+      {
+        "sectorName": "Power",
+        "auc": 77982.6,
+        "netInvestment": -46.82,
+        "percentageChange": -0.06,
+        "fiiAuc": 77982.6,
+        "fiiNetInvestment": -46.82,
+        "fiiPercentageChange": -0.06,
+        "diiAuc": 54787.16,
+        "diiNetInvestment": -114.9,
+        "diiPercentageChange": -0.21,
+        "stocks": [
+          {
+            "stockName": "JOJO",
+            "ticker": "531910",
+            "price": 119.93,
+            "mcap": 1654.08,
+            "fiiShares": 650.2343,
+            "fiiValue": 77982.6,
+            "diiShares": 456.8261,
+            "diiValue": 54787.16
+          }
+        ]
+      },
+      {
+        "sectorName": "Telecommunication",
+        "auc": 68975.51,
+        "netInvestment": 445.45,
+        "percentageChange": 0.65,
+        "fiiAuc": 68975.51,
+        "fiiNetInvestment": 445.45,
+        "fiiPercentageChange": 0.65,
+        "diiAuc": 50998.4,
+        "diiNetInvestment": -62.17,
+        "diiPercentageChange": -0.12,
+        "stocks": [
+          {
+            "stockName": "CitiPort Fin.",
+            "ticker": "531235",
+            "price": 41.57,
+            "mcap": 12.88,
+            "fiiShares": 1659.2617,
+            "fiiValue": 68975.51,
+            "diiShares": 1226.8078,
+            "diiValue": 50998.4
+          }
+        ]
+      },
+      {
+        "sectorName": "Capital Goods",
+        "auc": 58204.32,
+        "netInvestment": -629.52,
+        "percentageChange": -1.07,
+        "fiiAuc": 58204.32,
+        "fiiNetInvestment": -629.52,
+        "fiiPercentageChange": -1.07,
+        "diiAuc": 38233.96,
+        "diiNetInvestment": 222.73,
+        "diiPercentageChange": 0.59,
+        "stocks": [
+          {
+            "stockName": "Committed Cargo",
+            "ticker": "COMMITTED",
+            "price": 295.21,
+            "mcap": 341.69,
+            "fiiShares": 98.5812,
+            "fiiValue": 29102.16,
+            "diiShares": 64.7572,
+            "diiValue": 19116.98
+          },
+          {
+            "stockName": "ITCONS E-Soluti.",
+            "ticker": "543806",
+            "price": 231.1,
+            "mcap": 208.18,
+            "fiiShares": 125.9289,
+            "fiiValue": 29102.16,
+            "diiShares": 82.7217,
+            "diiValue": 19116.98
+          }
+        ]
+      },
+      {
+        "sectorName": "Metals & Mining",
+        "auc": 52403.59,
+        "netInvestment": 493.15,
+        "percentageChange": 0.95,
+        "fiiAuc": 52403.59,
+        "fiiNetInvestment": 493.15,
+        "fiiPercentageChange": 0.95,
+        "diiAuc": 34127.97,
+        "diiNetInvestment": -46.27,
+        "diiPercentageChange": -0.14,
+        "stocks": [
+          {
+            "stockName": "Enbee Trade",
+            "ticker": "512441",
+            "price": 0.25,
+            "mcap": 17.6,
+            "fiiShares": 209614.36,
+            "fiiValue": 52403.59,
+            "diiShares": 136511.88,
+            "diiValue": 34127.97
+          }
+        ]
+      },
+      {
+        "sectorName": "Chemicals",
+        "auc": 42611.42,
+        "netInvestment": 140.16,
+        "percentageChange": 0.33,
+        "fiiAuc": 42611.42,
+        "fiiNetInvestment": 140.16,
+        "fiiPercentageChange": 0.33,
+        "diiAuc": 28870.11,
+        "diiNetInvestment": -14.58,
+        "diiPercentageChange": -0.05,
+        "stocks": [
+          {
+            "stockName": "Mangal Credit",
+            "ticker": "MANCREDIT",
+            "price": 217.6,
+            "mcap": 459.43,
+            "fiiShares": 195.8245,
+            "fiiValue": 42611.42,
+            "diiShares": 132.6751,
+            "diiValue": 28870.11
+          }
+        ]
+      },
+      {
+        "sectorName": "Construction Materials",
+        "auc": 33113.6,
+        "netInvestment": -109.64,
+        "percentageChange": -0.33,
+        "fiiAuc": 33113.6,
+        "fiiNetInvestment": -109.64,
+        "fiiPercentageChange": -0.33,
+        "diiAuc": 25909.49,
+        "diiNetInvestment": -75.86,
+        "diiPercentageChange": -0.29,
+        "stocks": [
+          {
+            "stockName": "Gowra Leasing",
+            "ticker": "530709",
+            "price": 88.71,
+            "mcap": 68.73,
+            "fiiShares": 373.2792,
+            "fiiValue": 33113.6,
+            "diiShares": 292.0696,
+            "diiValue": 25909.49
+          }
+        ]
+      },
+      {
+        "sectorName": "Consumer Services",
+        "auc": 30016.48,
+        "netInvestment": 565.46,
+        "percentageChange": 1.92,
+        "fiiAuc": 30016.48,
+        "fiiNetInvestment": 565.46,
+        "fiiPercentageChange": 1.92,
+        "diiAuc": 20943.49,
+        "diiNetInvestment": -291.4,
+        "diiPercentageChange": -1.37,
+        "stocks": [
+          {
+            "stockName": "Travels & Rent.",
+            "ticker": "544242",
+            "price": 7.9,
+            "mcap": 16.87,
+            "fiiShares": 1519.8215,
+            "fiiValue": 12006.59,
+            "diiShares": 1060.4304,
+            "diiValue": 8377.4
+          },
+          {
+            "stockName": "Pansari Develop.",
+            "ticker": "PANSARI",
+            "price": 307.03,
+            "mcap": 535.67,
+            "fiiShares": 58.6584,
+            "fiiValue": 18009.89,
+            "diiShares": 40.9279,
+            "diiValue": 12566.09
+          }
+        ]
+      }
+    ],
+    "2026-10-15": [
+      {
+        "sectorName": "Financial Services",
+        "auc": 458466.11,
+        "netInvestment": 412.25,
+        "percentageChange": 0.09,
+        "fiiAuc": 458466.11,
+        "fiiNetInvestment": 412.25,
+        "fiiPercentageChange": 0.09,
+        "diiAuc": 276489.46,
+        "diiNetInvestment": -480.38,
+        "diiPercentageChange": -0.17,
+        "stocks": [
+          {
+            "stockName": "U. Y. Fincorp",
+            "ticker": "UYFINCORP",
+            "price": 25.11,
+            "mcap": 477.74,
+            "fiiShares": 4564.5771,
+            "fiiValue": 114616.53,
+            "diiShares": 2752.7826,
+            "diiValue": 69122.37
+          },
+          {
+            "stockName": "F Mec Intl. Fin.",
+            "ticker": "539552",
+            "price": 10.49,
+            "mcap": 51.3,
+            "fiiShares": 6555.7598,
+            "fiiValue": 68769.92,
+            "diiShares": 3953.6149,
+            "diiValue": 41473.42
+          },
+          {
+            "stockName": "GDL Leasing",
+            "ticker": "530855",
+            "price": 82.48,
+            "mcap": 41.33,
+            "fiiShares": 833.7769,
+            "fiiValue": 68769.92,
+            "diiShares": 502.83,
+            "diiValue": 41473.42
+          },
+          {
+            "stockName": "Akme Fintrade",
+            "ticker": "AFIL",
+            "price": 8.01,
+            "mcap": 352.12,
+            "fiiShares": 11447.3433,
+            "fiiValue": 91693.22,
+            "diiShares": 6903.6067,
+            "diiValue": 55297.89
+          },
+          {
+            "stockName": "Manba Finance",
+            "ticker": "MANBA",
+            "price": 145.82,
+            "mcap": 732.6,
+            "fiiShares": 786.0138,
+            "fiiValue": 114616.53,
+            "diiShares": 474.0253,
+            "diiValue": 69122.37
+          }
+        ]
+      },
+      {
+        "sectorName": "Information Technology",
+        "auc": 331082.55,
+        "netInvestment": 12488.87,
+        "percentageChange": 3.92,
+        "fiiAuc": 331082.55,
+        "fiiNetInvestment": 12488.87,
+        "fiiPercentageChange": 3.92,
+        "diiAuc": 192604.86,
+        "diiNetInvestment": -3974.41,
+        "diiPercentageChange": -2.02,
+        "stocks": [
+          {
+            "stockName": "eMudhra",
+            "ticker": "EMUDHRA",
+            "price": 477.88,
+            "mcap": 3957.38,
+            "fiiShares": 277.1261,
+            "fiiValue": 132433.02,
+            "diiShares": 161.2161,
+            "diiValue": 77041.95
+          },
+          {
+            "stockName": "Maxposure",
+            "ticker": "MAXPOSURE",
+            "price": 34.97,
+            "mcap": 79.52,
+            "fiiShares": 1420.1424,
+            "fiiValue": 49662.38,
+            "diiShares": 826.1576,
+            "diiValue": 28890.73
+          },
+          {
+            "stockName": "Brightcom Group",
+            "ticker": "BCG",
+            "price": 9.46,
+            "mcap": 1908.29,
+            "fiiShares": 8749.5391,
+            "fiiValue": 82770.64,
+            "diiShares": 5089.981,
+            "diiValue": 48151.22
+          },
+          {
+            "stockName": "Zaggle Prepaid",
+            "ticker": "ZAGGLE",
+            "price": 176.24,
+            "mcap": 2369.67,
+            "fiiShares": 375.7178,
+            "fiiValue": 66216.51,
+            "diiShares": 218.5711,
+            "diiValue": 38520.97
+          }
+        ]
+      },
+      {
+        "sectorName": "Oil, Gas & Consumable Fuels",
+        "auc": 225505.78,
+        "netInvestment": -1019.36,
+        "percentageChange": -0.45,
+        "fiiAuc": 225505.78,
+        "fiiNetInvestment": -1019.36,
+        "fiiPercentageChange": -0.45,
+        "diiAuc": 143048.62,
+        "diiNetInvestment": 972.16,
+        "diiPercentageChange": 0.68,
+        "stocks": [
+          {
+            "stockName": "Asian Energy",
+            "ticker": "ASIANENE",
+            "price": 453.05,
+            "mcap": 2222.23,
+            "fiiShares": 497.7503,
+            "fiiValue": 225505.78,
+            "diiShares": 315.7458,
+            "diiValue": 143048.62
+          }
+        ]
+      },
+      {
+        "sectorName": "FMCG",
+        "auc": 157921.88,
+        "netInvestment": -618.31,
+        "percentageChange": -0.39,
+        "fiiAuc": 157921.88,
+        "fiiNetInvestment": -618.31,
+        "fiiPercentageChange": -0.39,
+        "diiAuc": 121614.59,
+        "diiNetInvestment": 176.07,
+        "diiPercentageChange": 0.14,
+        "stocks": [
+          {
+            "stockName": "Nikki Glob.Fin.",
+            "ticker": "531272",
+            "price": 21.34,
+            "mcap": 7.3,
+            "fiiShares": 3700.1378,
+            "fiiValue": 78960.94,
+            "diiShares": 2849.4517,
+            "diiValue": 60807.3
+          },
+          {
+            "stockName": "Cont. Securities",
+            "ticker": "538868",
+            "price": 22.08,
+            "mcap": 70.13,
+            "fiiShares": 3576.1295,
+            "fiiValue": 78960.94,
+            "diiShares": 2753.9538,
+            "diiValue": 60807.3
+          }
+        ]
+      },
+      {
+        "sectorName": "Healthcare",
+        "auc": 107620.74,
+        "netInvestment": -150.88,
+        "percentageChange": -0.14,
+        "fiiAuc": 107620.74,
+        "fiiNetInvestment": -150.88,
+        "fiiPercentageChange": -0.14,
+        "diiAuc": 85177.56,
+        "diiNetInvestment": 366.56,
+        "diiPercentageChange": 0.43,
+        "stocks": [
+          {
+            "stockName": "Gujarat Kidney",
+            "ticker": "GKSL",
+            "price": 187.11,
+            "mcap": 1475.22,
+            "fiiShares": 230.0695,
+            "fiiValue": 43048.3,
+            "diiShares": 182.0909,
+            "diiValue": 34071.02
+          },
+          {
+            "stockName": "Yatharth Hospit.",
+            "ticker": "YATHARTH",
+            "price": 990.71,
+            "mcap": 9545.94,
+            "fiiShares": 65.1779,
+            "fiiValue": 64572.44,
+            "diiShares": 51.5858,
+            "diiValue": 51106.54
+          }
+        ]
+      },
+      {
+        "sectorName": "Automobile & Auto Components",
+        "auc": 117634.89,
+        "netInvestment": 875.69,
+        "percentageChange": 0.75,
+        "fiiAuc": 117634.89,
+        "fiiNetInvestment": 875.69,
+        "fiiPercentageChange": 0.75,
+        "diiAuc": 68598.99,
+        "diiNetInvestment": -465.2,
+        "diiPercentageChange": -0.67,
+        "stocks": [
+          {
+            "stockName": "Ashika Credit",
+            "ticker": "ASHIKA",
+            "price": 401.69,
+            "mcap": 2961.49,
+            "fiiShares": 292.8499,
+            "fiiValue": 117634.89,
+            "diiShares": 170.7759,
+            "diiValue": 68598.99
+          }
+        ]
+      },
+      {
+        "sectorName": "Power",
+        "auc": 77935.81,
+        "netInvestment": -46.79,
+        "percentageChange": -0.06,
+        "fiiAuc": 77935.81,
+        "fiiNetInvestment": -46.79,
+        "fiiPercentageChange": -0.06,
+        "diiAuc": 55034.58,
+        "diiNetInvestment": 247.42,
+        "diiPercentageChange": 0.45,
+        "stocks": [
+          {
+            "stockName": "JOJO",
+            "ticker": "531910",
+            "price": 119.93,
+            "mcap": 1654.08,
+            "fiiShares": 649.8442,
+            "fiiValue": 77935.81,
+            "diiShares": 458.8892,
+            "diiValue": 55034.58
+          }
+        ]
+      },
+      {
+        "sectorName": "Telecommunication",
+        "auc": 69423.85,
+        "netInvestment": 448.34,
+        "percentageChange": 0.65,
+        "fiiAuc": 69423.85,
+        "fiiNetInvestment": 448.34,
+        "fiiPercentageChange": 0.65,
+        "diiAuc": 51002.35,
+        "diiNetInvestment": 3.95,
+        "diiPercentageChange": 0.01,
+        "stocks": [
+          {
+            "stockName": "CitiPort Fin.",
+            "ticker": "531235",
+            "price": 41.57,
+            "mcap": 12.88,
+            "fiiShares": 1670.0469,
+            "fiiValue": 69423.85,
+            "diiShares": 1226.9028,
+            "diiValue": 51002.35
+          }
+        ]
+      },
+      {
+        "sectorName": "Capital Goods",
+        "auc": 57581.53,
+        "netInvestment": -622.79,
+        "percentageChange": -1.07,
+        "fiiAuc": 57581.53,
+        "fiiNetInvestment": -622.79,
+        "fiiPercentageChange": -1.07,
+        "diiAuc": 38345.67,
+        "diiNetInvestment": 111.71,
+        "diiPercentageChange": 0.29,
+        "stocks": [
+          {
+            "stockName": "Committed Cargo",
+            "ticker": "COMMITTED",
+            "price": 295.21,
+            "mcap": 341.69,
+            "fiiShares": 97.5264,
+            "fiiValue": 28790.77,
+            "diiShares": 64.9464,
+            "diiValue": 19172.84
+          },
+          {
+            "stockName": "ITCONS E-Soluti.",
+            "ticker": "543806",
+            "price": 231.1,
+            "mcap": 208.18,
+            "fiiShares": 124.5814,
+            "fiiValue": 28790.77,
+            "diiShares": 82.9634,
+            "diiValue": 19172.84
+          }
+        ]
+      },
+      {
+        "sectorName": "Metals & Mining",
+        "auc": 52901.42,
+        "netInvestment": 497.83,
+        "percentageChange": 0.95,
+        "fiiAuc": 52901.42,
+        "fiiNetInvestment": 497.83,
+        "fiiPercentageChange": 0.95,
+        "diiAuc": 33905.69,
+        "diiNetInvestment": -222.28,
+        "diiPercentageChange": -0.65,
+        "stocks": [
+          {
+            "stockName": "Enbee Trade",
+            "ticker": "512441",
+            "price": 0.25,
+            "mcap": 17.6,
+            "fiiShares": 211605.68,
+            "fiiValue": 52901.42,
+            "diiShares": 135622.76,
+            "diiValue": 33905.69
+          }
+        ]
+      },
+      {
+        "sectorName": "Chemicals",
+        "auc": 42752.04,
+        "netInvestment": 140.62,
+        "percentageChange": 0.33,
+        "fiiAuc": 42752.04,
+        "fiiNetInvestment": 140.62,
+        "fiiPercentageChange": 0.33,
+        "diiAuc": 28686.28,
+        "diiNetInvestment": -183.83,
+        "diiPercentageChange": -0.64,
+        "stocks": [
+          {
+            "stockName": "Mangal Credit",
+            "ticker": "MANCREDIT",
+            "price": 217.6,
+            "mcap": 459.43,
+            "fiiShares": 196.4708,
+            "fiiValue": 42752.04,
+            "diiShares": 131.8303,
+            "diiValue": 28686.28
+          }
+        ]
+      },
+      {
+        "sectorName": "Construction Materials",
+        "auc": 33004.33,
+        "netInvestment": -109.27,
+        "percentageChange": -0.33,
+        "fiiAuc": 33004.33,
+        "fiiNetInvestment": -109.27,
+        "fiiPercentageChange": -0.33,
+        "diiAuc": 25873.33,
+        "diiNetInvestment": -36.16,
+        "diiPercentageChange": -0.14,
+        "stocks": [
+          {
+            "stockName": "Gowra Leasing",
+            "ticker": "530709",
+            "price": 88.71,
+            "mcap": 68.73,
+            "fiiShares": 372.0475,
+            "fiiValue": 33004.33,
+            "diiShares": 291.6619,
+            "diiValue": 25873.33
+          }
+        ]
+      },
+      {
+        "sectorName": "Consumer Services",
+        "auc": 30592.8,
+        "netInvestment": 576.32,
+        "percentageChange": 1.92,
+        "fiiAuc": 30592.8,
+        "fiiNetInvestment": 576.32,
+        "fiiPercentageChange": 1.92,
+        "diiAuc": 20772.15,
+        "diiNetInvestment": -171.34,
+        "diiPercentageChange": -0.82,
+        "stocks": [
+          {
+            "stockName": "Travels & Rent.",
+            "ticker": "544242",
+            "price": 7.9,
+            "mcap": 16.87,
+            "fiiShares": 1549.0025,
+            "fiiValue": 12237.12,
+            "diiShares": 1051.7544,
+            "diiValue": 8308.86
+          },
+          {
+            "stockName": "Pansari Develop.",
+            "ticker": "PANSARI",
+            "price": 307.03,
+            "mcap": 535.67,
+            "fiiShares": 59.7846,
+            "fiiValue": 18355.68,
+            "diiShares": 40.5931,
+            "diiValue": 12463.29
+          }
+        ]
+      }
+    ],
+    "2026-10-31": [
+      {
+        "sectorName": "Financial Services",
+        "auc": 458878.73,
+        "netInvestment": 412.62,
+        "percentageChange": 0.09,
+        "fiiAuc": 458878.73,
+        "fiiNetInvestment": 412.62,
+        "fiiPercentageChange": 0.09,
+        "diiAuc": 276036.74,
+        "diiNetInvestment": -452.72,
+        "diiPercentageChange": -0.16,
+        "stocks": [
+          {
+            "stockName": "U. Y. Fincorp",
+            "ticker": "UYFINCORP",
+            "price": 25.11,
+            "mcap": 477.74,
+            "fiiShares": 4568.685,
+            "fiiValue": 114719.68,
+            "diiShares": 2748.2752,
+            "diiValue": 69009.19
+          },
+          {
+            "stockName": "F Mec Intl. Fin.",
+            "ticker": "539552",
+            "price": 10.49,
+            "mcap": 51.3,
+            "fiiShares": 6561.6597,
+            "fiiValue": 68831.81,
+            "diiShares": 3947.1411,
+            "diiValue": 41405.51
+          },
+          {
+            "stockName": "GDL Leasing",
+            "ticker": "530855",
+            "price": 82.48,
+            "mcap": 41.33,
+            "fiiShares": 834.5273,
+            "fiiValue": 68831.81,
+            "diiShares": 502.0067,
+            "diiValue": 41405.51
+          },
+          {
+            "stockName": "Akme Fintrade",
+            "ticker": "AFIL",
+            "price": 8.01,
+            "mcap": 352.12,
+            "fiiShares": 11457.6467,
+            "fiiValue": 91775.75,
+            "diiShares": 6892.3034,
+            "diiValue": 55207.35
+          },
+          {
+            "stockName": "Manba Finance",
+            "ticker": "MANBA",
+            "price": 145.82,
+            "mcap": 732.6,
+            "fiiShares": 786.7212,
+            "fiiValue": 114719.68,
+            "diiShares": 473.2491,
+            "diiValue": 69009.19
+          }
+        ]
+      },
+      {
+        "sectorName": "Information Technology",
+        "auc": 344060.99,
+        "netInvestment": 12978.44,
+        "percentageChange": 3.92,
+        "fiiAuc": 344060.99,
+        "fiiNetInvestment": 12978.44,
+        "fiiPercentageChange": 3.92,
+        "diiAuc": 189025.14,
+        "diiNetInvestment": -3579.72,
+        "diiPercentageChange": -1.86,
+        "stocks": [
+          {
+            "stockName": "eMudhra",
+            "ticker": "EMUDHRA",
+            "price": 477.88,
+            "mcap": 3957.38,
+            "fiiShares": 287.9894,
+            "fiiValue": 137624.39,
+            "diiShares": 158.2197,
+            "diiValue": 75610.05
+          },
+          {
+            "stockName": "Maxposure",
+            "ticker": "MAXPOSURE",
+            "price": 34.97,
+            "mcap": 79.52,
+            "fiiShares": 1475.8121,
+            "fiiValue": 51609.15,
+            "diiShares": 810.8027,
+            "diiValue": 28353.77
+          },
+          {
+            "stockName": "Brightcom Group",
+            "ticker": "BCG",
+            "price": 9.46,
+            "mcap": 1908.29,
+            "fiiShares": 9092.5211,
+            "fiiValue": 86015.25,
+            "diiShares": 4995.3784,
+            "diiValue": 47256.28
+          },
+          {
+            "stockName": "Zaggle Prepaid",
+            "ticker": "ZAGGLE",
+            "price": 176.24,
+            "mcap": 2369.67,
+            "fiiShares": 390.446,
+            "fiiValue": 68812.2,
+            "diiShares": 214.5088,
+            "diiValue": 37805.03
+          }
+        ]
+      },
+      {
+        "sectorName": "Oil, Gas & Consumable Fuels",
+        "auc": 224491,
+        "netInvestment": -1014.78,
+        "percentageChange": -0.45,
+        "fiiAuc": 224491,
+        "fiiNetInvestment": -1014.78,
+        "fiiPercentageChange": -0.45,
+        "diiAuc": 143954.27,
+        "diiNetInvestment": 905.65,
+        "diiPercentageChange": 0.63,
+        "stocks": [
+          {
+            "stockName": "Asian Energy",
+            "ticker": "ASIANENE",
+            "price": 453.05,
+            "mcap": 2222.23,
+            "fiiShares": 495.5104,
+            "fiiValue": 224491,
+            "diiShares": 317.7448,
+            "diiValue": 143954.27
+          }
+        ]
+      },
+      {
+        "sectorName": "FMCG",
+        "auc": 157305.98,
+        "netInvestment": -615.9,
+        "percentageChange": -0.39,
+        "fiiAuc": 157305.98,
+        "fiiNetInvestment": -615.9,
+        "fiiPercentageChange": -0.39,
+        "diiAuc": 121857.99,
+        "diiNetInvestment": 243.4,
+        "diiPercentageChange": 0.2,
+        "stocks": [
+          {
+            "stockName": "Nikki Glob.Fin.",
+            "ticker": "531272",
+            "price": 21.34,
+            "mcap": 7.3,
+            "fiiShares": 3685.7071,
+            "fiiValue": 78652.99,
+            "diiShares": 2855.1542,
+            "diiValue": 60928.99
+          },
+          {
+            "stockName": "Cont. Securities",
+            "ticker": "538868",
+            "price": 22.08,
+            "mcap": 70.13,
+            "fiiShares": 3562.1825,
+            "fiiValue": 78652.99,
+            "diiShares": 2759.4651,
+            "diiValue": 60928.99
+          }
+        ]
+      },
+      {
+        "sectorName": "Healthcare",
+        "auc": 107470.07,
+        "netInvestment": -150.67,
+        "percentageChange": -0.14,
+        "fiiAuc": 107470.07,
+        "fiiNetInvestment": -150.67,
+        "fiiPercentageChange": -0.14,
+        "diiAuc": 84951.8,
+        "diiNetInvestment": -225.76,
+        "diiPercentageChange": -0.27,
+        "stocks": [
+          {
+            "stockName": "Gujarat Kidney",
+            "ticker": "GKSL",
+            "price": 187.11,
+            "mcap": 1475.22,
+            "fiiShares": 229.7474,
+            "fiiValue": 42988.03,
+            "diiShares": 181.6083,
+            "diiValue": 33980.72
+          },
+          {
+            "stockName": "Yatharth Hospit.",
+            "ticker": "YATHARTH",
+            "price": 990.71,
+            "mcap": 9545.94,
+            "fiiShares": 65.0867,
+            "fiiValue": 64482.04,
+            "diiShares": 51.449,
+            "diiValue": 50971.08
+          }
+        ]
+      },
+      {
+        "sectorName": "Automobile & Auto Components",
+        "auc": 118517.15,
+        "netInvestment": 882.26,
+        "percentageChange": 0.75,
+        "fiiAuc": 118517.15,
+        "fiiNetInvestment": 882.26,
+        "fiiPercentageChange": 0.75,
+        "diiAuc": 68473.72,
+        "diiNetInvestment": -125.27,
+        "diiPercentageChange": -0.18,
+        "stocks": [
+          {
+            "stockName": "Ashika Credit",
+            "ticker": "ASHIKA",
+            "price": 401.69,
+            "mcap": 2961.49,
+            "fiiShares": 295.0463,
+            "fiiValue": 118517.15,
+            "diiShares": 170.4641,
+            "diiValue": 68473.72
+          }
+        ]
+      },
+      {
+        "sectorName": "Power",
+        "auc": 77889.05,
+        "netInvestment": -46.76,
+        "percentageChange": -0.06,
+        "fiiAuc": 77889.05,
+        "fiiNetInvestment": -46.76,
+        "fiiPercentageChange": -0.06,
+        "diiAuc": 54776.99,
+        "diiNetInvestment": -257.59,
+        "diiPercentageChange": -0.47,
+        "stocks": [
+          {
+            "stockName": "JOJO",
+            "ticker": "531910",
+            "price": 119.93,
+            "mcap": 1654.08,
+            "fiiShares": 649.4543,
+            "fiiValue": 77889.05,
+            "diiShares": 456.7413,
+            "diiValue": 54776.99
+          }
+        ]
+      },
+      {
+        "sectorName": "Telecommunication",
+        "auc": 69875.11,
+        "netInvestment": 451.26,
+        "percentageChange": 0.65,
+        "fiiAuc": 69875.11,
+        "fiiNetInvestment": 451.26,
+        "fiiPercentageChange": 0.65,
+        "diiAuc": 50785.99,
+        "diiNetInvestment": -216.36,
+        "diiPercentageChange": -0.42,
+        "stocks": [
+          {
+            "stockName": "CitiPort Fin.",
+            "ticker": "531235",
+            "price": 41.57,
+            "mcap": 12.88,
+            "fiiShares": 1680.9023,
+            "fiiValue": 69875.11,
+            "diiShares": 1221.6981,
+            "diiValue": 50785.99
+          }
+        ]
+      },
+      {
+        "sectorName": "Capital Goods",
+        "auc": 56965.41,
+        "netInvestment": -616.12,
+        "percentageChange": -1.07,
+        "fiiAuc": 56965.41,
+        "fiiNetInvestment": -616.12,
+        "fiiPercentageChange": -1.07,
+        "diiAuc": 38533.51,
+        "diiNetInvestment": 187.84,
+        "diiPercentageChange": 0.49,
+        "stocks": [
+          {
+            "stockName": "Committed Cargo",
+            "ticker": "COMMITTED",
+            "price": 295.21,
+            "mcap": 341.69,
+            "fiiShares": 96.4828,
+            "fiiValue": 28482.7,
+            "diiShares": 65.2646,
+            "diiValue": 19266.75
+          },
+          {
+            "stockName": "ITCONS E-Soluti.",
+            "ticker": "543806",
+            "price": 231.1,
+            "mcap": 208.18,
+            "fiiShares": 123.2484,
+            "fiiValue": 28482.7,
+            "diiShares": 83.3698,
+            "diiValue": 19266.75
+          }
+        ]
+      },
+      {
+        "sectorName": "Metals & Mining",
+        "auc": 53403.98,
+        "netInvestment": 502.56,
+        "percentageChange": 0.95,
+        "fiiAuc": 53403.98,
+        "fiiNetInvestment": 502.56,
+        "fiiPercentageChange": 0.95,
+        "diiAuc": 33838.37,
+        "diiNetInvestment": -67.32,
+        "diiPercentageChange": -0.2,
+        "stocks": [
+          {
+            "stockName": "Enbee Trade",
+            "ticker": "512441",
+            "price": 0.25,
+            "mcap": 17.6,
+            "fiiShares": 213615.92,
+            "fiiValue": 53403.98,
+            "diiShares": 135353.48,
+            "diiValue": 33838.37
+          }
+        ]
+      },
+      {
+        "sectorName": "Chemicals",
+        "auc": 42893.12,
+        "netInvestment": 141.08,
+        "percentageChange": 0.33,
+        "fiiAuc": 42893.12,
+        "fiiNetInvestment": 141.08,
+        "fiiPercentageChange": 0.33,
+        "diiAuc": 28702.23,
+        "diiNetInvestment": 15.95,
+        "diiPercentageChange": 0.06,
+        "stocks": [
+          {
+            "stockName": "Mangal Credit",
+            "ticker": "MANCREDIT",
+            "price": 217.6,
+            "mcap": 459.43,
+            "fiiShares": 197.1191,
+            "fiiValue": 42893.12,
+            "diiShares": 131.9036,
+            "diiValue": 28702.23
+          }
+        ]
+      },
+      {
+        "sectorName": "Construction Materials",
+        "auc": 32895.42,
+        "netInvestment": -108.91,
+        "percentageChange": -0.33,
+        "fiiAuc": 32895.42,
+        "fiiNetInvestment": -108.91,
+        "fiiPercentageChange": -0.33,
+        "diiAuc": 25817.54,
+        "diiNetInvestment": -55.79,
+        "diiPercentageChange": -0.22,
+        "stocks": [
+          {
+            "stockName": "Gowra Leasing",
+            "ticker": "530709",
+            "price": 88.71,
+            "mcap": 68.73,
+            "fiiShares": 370.8197,
+            "fiiValue": 32895.42,
+            "diiShares": 291.033,
+            "diiValue": 25817.54
+          }
+        ]
+      },
+      {
+        "sectorName": "Consumer Services",
+        "auc": 31180.18,
+        "netInvestment": 587.38,
+        "percentageChange": 1.92,
+        "fiiAuc": 31180.18,
+        "fiiNetInvestment": 587.38,
+        "fiiPercentageChange": 1.92,
+        "diiAuc": 20496.96,
+        "diiNetInvestment": -275.19,
+        "diiPercentageChange": -1.32,
+        "stocks": [
+          {
+            "stockName": "Travels & Rent.",
+            "ticker": "544242",
+            "price": 7.9,
+            "mcap": 16.87,
+            "fiiShares": 1578.743,
+            "fiiValue": 12472.07,
+            "diiShares": 1037.8203,
+            "diiValue": 8198.78
+          },
+          {
+            "stockName": "Pansari Develop.",
+            "ticker": "PANSARI",
+            "price": 307.03,
+            "mcap": 535.67,
+            "fiiShares": 60.9325,
+            "fiiValue": 18708.11,
+            "diiShares": 40.0553,
+            "diiValue": 12298.18
+          }
+        ]
+      }
+    ],
+    "2026-11-15": [
+      {
+        "sectorName": "Financial Services",
+        "auc": 459291.72,
+        "netInvestment": 412.99,
+        "percentageChange": 0.09,
+        "fiiAuc": 459291.72,
+        "fiiNetInvestment": 412.99,
+        "fiiPercentageChange": 0.09,
+        "diiAuc": 276991.32,
+        "diiNetInvestment": 954.58,
+        "diiPercentageChange": 0.35,
+        "stocks": [
+          {
+            "stockName": "U. Y. Fincorp",
+            "ticker": "UYFINCORP",
+            "price": 25.11,
+            "mcap": 477.74,
+            "fiiShares": 4572.7969,
+            "fiiValue": 114822.93,
+            "diiShares": 2757.779,
+            "diiValue": 69247.83
+          },
+          {
+            "stockName": "F Mec Intl. Fin.",
+            "ticker": "539552",
+            "price": 10.49,
+            "mcap": 51.3,
+            "fiiShares": 6567.5653,
+            "fiiValue": 68893.76,
+            "diiShares": 3960.7912,
+            "diiValue": 41548.7
+          },
+          {
+            "stockName": "GDL Leasing",
+            "ticker": "530855",
+            "price": 82.48,
+            "mcap": 41.33,
+            "fiiShares": 835.2784,
+            "fiiValue": 68893.76,
+            "diiShares": 503.7427,
+            "diiValue": 41548.7
+          },
+          {
+            "stockName": "Akme Fintrade",
+            "ticker": "AFIL",
+            "price": 8.01,
+            "mcap": 352.12,
+            "fiiShares": 11467.9576,
+            "fiiValue": 91858.34,
+            "diiShares": 6916.1373,
+            "diiValue": 55398.26
+          },
+          {
+            "stockName": "Manba Finance",
+            "ticker": "MANBA",
+            "price": 145.82,
+            "mcap": 732.6,
+            "fiiShares": 787.4292,
+            "fiiValue": 114822.93,
+            "diiShares": 474.8857,
+            "diiValue": 69247.83
+          }
+        ]
+      },
+      {
+        "sectorName": "Information Technology",
+        "auc": 357548.18,
+        "netInvestment": 13487.19,
+        "percentageChange": 3.92,
+        "fiiAuc": 357548.18,
+        "fiiNetInvestment": 13487.19,
+        "fiiPercentageChange": 3.92,
+        "diiAuc": 185439.64,
+        "diiNetInvestment": -3585.5,
+        "diiPercentageChange": -1.9,
+        "stocks": [
+          {
+            "stockName": "eMudhra",
+            "ticker": "EMUDHRA",
+            "price": 477.88,
+            "mcap": 3957.38,
+            "fiiShares": 299.2786,
+            "fiiValue": 143019.27,
+            "diiShares": 155.2186,
+            "diiValue": 74175.86
+          },
+          {
+            "stockName": "Maxposure",
+            "ticker": "MAXPOSURE",
+            "price": 34.97,
+            "mcap": 79.52,
+            "fiiShares": 1533.664,
+            "fiiValue": 53632.23,
+            "diiShares": 795.4232,
+            "diiValue": 27815.95
+          },
+          {
+            "stockName": "Brightcom Group",
+            "ticker": "BCG",
+            "price": 9.46,
+            "mcap": 1908.29,
+            "fiiShares": 9448.9482,
+            "fiiValue": 89387.05,
+            "diiShares": 4900.6247,
+            "diiValue": 46359.91
+          },
+          {
+            "stockName": "Zaggle Prepaid",
+            "ticker": "ZAGGLE",
+            "price": 176.24,
+            "mcap": 2369.67,
+            "fiiShares": 405.7515,
+            "fiiValue": 71509.64,
+            "diiShares": 210.4399,
+            "diiValue": 37087.93
+          }
+        ]
+      },
+      {
+        "sectorName": "Oil, Gas & Consumable Fuels",
+        "auc": 223480.79,
+        "netInvestment": -1010.21,
+        "percentageChange": -0.45,
+        "fiiAuc": 223480.79,
+        "fiiNetInvestment": -1010.21,
+        "fiiPercentageChange": -0.45,
+        "diiAuc": 144245.64,
+        "diiNetInvestment": 291.37,
+        "diiPercentageChange": 0.2,
+        "stocks": [
+          {
+            "stockName": "Asian Energy",
+            "ticker": "ASIANENE",
+            "price": 453.05,
+            "mcap": 2222.23,
+            "fiiShares": 493.2806,
+            "fiiValue": 223480.79,
+            "diiShares": 318.3879,
+            "diiValue": 144245.64
+          }
+        ]
+      },
+      {
+        "sectorName": "FMCG",
+        "auc": 156692.49,
+        "netInvestment": -613.49,
+        "percentageChange": -0.39,
+        "fiiAuc": 156692.49,
+        "fiiNetInvestment": -613.49,
+        "fiiPercentageChange": -0.39,
+        "diiAuc": 122086.17,
+        "diiNetInvestment": 228.18,
+        "diiPercentageChange": 0.19,
+        "stocks": [
+          {
+            "stockName": "Nikki Glob.Fin.",
+            "ticker": "531272",
+            "price": 21.34,
+            "mcap": 7.3,
+            "fiiShares": 3671.3327,
+            "fiiValue": 78346.24,
+            "diiShares": 2860.5005,
+            "diiValue": 61043.08
+          },
+          {
+            "stockName": "Cont. Securities",
+            "ticker": "538868",
+            "price": 22.08,
+            "mcap": 70.13,
+            "fiiShares": 3548.2899,
+            "fiiValue": 78346.24,
+            "diiShares": 2764.6322,
+            "diiValue": 61043.08
+          }
+        ]
+      },
+      {
+        "sectorName": "Healthcare",
+        "auc": 107319.61,
+        "netInvestment": -150.46,
+        "percentageChange": -0.14,
+        "fiiAuc": 107319.61,
+        "fiiNetInvestment": -150.46,
+        "fiiPercentageChange": -0.14,
+        "diiAuc": 84730.94,
+        "diiNetInvestment": -220.86,
+        "diiPercentageChange": -0.26,
+        "stocks": [
+          {
+            "stockName": "Gujarat Kidney",
+            "ticker": "GKSL",
+            "price": 187.11,
+            "mcap": 1475.22,
+            "fiiShares": 229.4257,
+            "fiiValue": 42927.84,
+            "diiShares": 181.1361,
+            "diiValue": 33892.38
+          },
+          {
+            "stockName": "Yatharth Hospit.",
+            "ticker": "YATHARTH",
+            "price": 990.71,
+            "mcap": 9545.94,
+            "fiiShares": 64.9956,
+            "fiiValue": 64391.77,
+            "diiShares": 51.3153,
+            "diiValue": 50838.56
+          }
+        ]
+      },
+      {
+        "sectorName": "Automobile & Auto Components",
+        "auc": 119406.03,
+        "netInvestment": 888.88,
+        "percentageChange": 0.75,
+        "fiiAuc": 119406.03,
+        "fiiNetInvestment": 888.88,
+        "fiiPercentageChange": 0.75,
+        "diiAuc": 68529.11,
+        "diiNetInvestment": 55.39,
+        "diiPercentageChange": 0.08,
+        "stocks": [
+          {
+            "stockName": "Ashika Credit",
+            "ticker": "ASHIKA",
+            "price": 401.69,
+            "mcap": 2961.49,
+            "fiiShares": 297.2592,
+            "fiiValue": 119406.03,
+            "diiShares": 170.602,
+            "diiValue": 68529.11
+          }
+        ]
+      },
+      {
+        "sectorName": "Power",
+        "auc": 77842.32,
+        "netInvestment": -46.73,
+        "percentageChange": -0.06,
+        "fiiAuc": 77842.32,
+        "fiiNetInvestment": -46.73,
+        "fiiPercentageChange": -0.06,
+        "diiAuc": 54826.97,
+        "diiNetInvestment": 49.98,
+        "diiPercentageChange": 0.09,
+        "stocks": [
+          {
+            "stockName": "JOJO",
+            "ticker": "531910",
+            "price": 119.93,
+            "mcap": 1654.08,
+            "fiiShares": 649.0646,
+            "fiiValue": 77842.32,
+            "diiShares": 457.1581,
+            "diiValue": 54826.97
+          }
+        ]
+      },
+      {
+        "sectorName": "Telecommunication",
+        "auc": 70329.3,
+        "netInvestment": 454.19,
+        "percentageChange": 0.65,
+        "fiiAuc": 70329.3,
+        "fiiNetInvestment": 454.19,
+        "fiiPercentageChange": 0.65,
+        "diiAuc": 50715.19,
+        "diiNetInvestment": -70.8,
+        "diiPercentageChange": -0.14,
+        "stocks": [
+          {
+            "stockName": "CitiPort Fin.",
+            "ticker": "531235",
+            "price": 41.57,
+            "mcap": 12.88,
+            "fiiShares": 1691.8282,
+            "fiiValue": 70329.3,
+            "diiShares": 1219.9949,
+            "diiValue": 50715.19
+          }
+        ]
+      },
+      {
+        "sectorName": "Capital Goods",
+        "auc": 56355.88,
+        "netInvestment": -609.53,
+        "percentageChange": -1.07,
+        "fiiAuc": 56355.88,
+        "fiiNetInvestment": -609.53,
+        "fiiPercentageChange": -1.07,
+        "diiAuc": 38832.42,
+        "diiNetInvestment": 298.91,
+        "diiPercentageChange": 0.78,
+        "stocks": [
+          {
+            "stockName": "Committed Cargo",
+            "ticker": "COMMITTED",
+            "price": 295.21,
+            "mcap": 341.69,
+            "fiiShares": 95.4505,
+            "fiiValue": 28177.94,
+            "diiShares": 65.7708,
+            "diiValue": 19416.21
+          },
+          {
+            "stockName": "ITCONS E-Soluti.",
+            "ticker": "543806",
+            "price": 231.1,
+            "mcap": 208.18,
+            "fiiShares": 121.9296,
+            "fiiValue": 28177.94,
+            "diiShares": 84.0165,
+            "diiValue": 19416.21
+          }
+        ]
+      },
+      {
+        "sectorName": "Metals & Mining",
+        "auc": 53911.32,
+        "netInvestment": 507.34,
+        "percentageChange": 0.95,
+        "fiiAuc": 53911.32,
+        "fiiNetInvestment": 507.34,
+        "fiiPercentageChange": 0.95,
+        "diiAuc": 33836.94,
+        "diiNetInvestment": -1.43,
+        "diiPercentageChange": 0,
+        "stocks": [
+          {
+            "stockName": "Enbee Trade",
+            "ticker": "512441",
+            "price": 0.25,
+            "mcap": 17.6,
+            "fiiShares": 215645.28,
+            "fiiValue": 53911.32,
+            "diiShares": 135347.76,
+            "diiValue": 33836.94
+          }
+        ]
+      },
+      {
+        "sectorName": "Chemicals",
+        "auc": 43034.67,
+        "netInvestment": 141.55,
+        "percentageChange": 0.33,
+        "fiiAuc": 43034.67,
+        "fiiNetInvestment": 141.55,
+        "fiiPercentageChange": 0.33,
+        "diiAuc": 28674.34,
+        "diiNetInvestment": -27.89,
+        "diiPercentageChange": -0.1,
+        "stocks": [
+          {
+            "stockName": "Mangal Credit",
+            "ticker": "MANCREDIT",
+            "price": 217.6,
+            "mcap": 459.43,
+            "fiiShares": 197.7696,
+            "fiiValue": 43034.67,
+            "diiShares": 131.7755,
+            "diiValue": 28674.34
+          }
+        ]
+      },
+      {
+        "sectorName": "Construction Materials",
+        "auc": 32786.87,
+        "netInvestment": -108.55,
+        "percentageChange": -0.33,
+        "fiiAuc": 32786.87,
+        "fiiNetInvestment": -108.55,
+        "fiiPercentageChange": -0.33,
+        "diiAuc": 25814.61,
+        "diiNetInvestment": -2.93,
+        "diiPercentageChange": -0.01,
+        "stocks": [
+          {
+            "stockName": "Gowra Leasing",
+            "ticker": "530709",
+            "price": 88.71,
+            "mcap": 68.73,
+            "fiiShares": 369.5961,
+            "fiiValue": 32786.87,
+            "diiShares": 291,
+            "diiValue": 25814.61
+          }
+        ]
+      },
+      {
+        "sectorName": "Consumer Services",
+        "auc": 31778.84,
+        "netInvestment": 598.66,
+        "percentageChange": 1.92,
+        "fiiAuc": 31778.84,
+        "fiiNetInvestment": 598.66,
+        "fiiPercentageChange": 1.92,
+        "diiAuc": 20396.66,
+        "diiNetInvestment": -100.3,
+        "diiPercentageChange": -0.49,
+        "stocks": [
+          {
+            "stockName": "Travels & Rent.",
+            "ticker": "544242",
+            "price": 7.9,
+            "mcap": 16.87,
+            "fiiShares": 1609.0557,
+            "fiiValue": 12711.54,
+            "diiShares": 1032.7418,
+            "diiValue": 8158.66
+          },
+          {
+            "stockName": "Pansari Develop.",
+            "ticker": "PANSARI",
+            "price": 307.03,
+            "mcap": 535.67,
+            "fiiShares": 62.1024,
+            "fiiValue": 19067.3,
+            "diiShares": 39.8593,
+            "diiValue": 12238
+          }
+        ]
+      }
+    ],
+    "2026-11-30": [
+      {
+        "sectorName": "Financial Services",
+        "auc": 452999.42,
+        "netInvestment": -6292.3,
+        "percentageChange": -1.37,
+        "fiiAuc": 452999.42,
+        "fiiNetInvestment": -6292.3,
+        "fiiPercentageChange": -1.37,
+        "diiAuc": 279773.11,
+        "diiNetInvestment": 2781.79,
+        "diiPercentageChange": 1,
+        "stocks": [
+          {
+            "stockName": "U. Y. Fincorp",
+            "ticker": "UYFINCORP",
+            "price": 23.84,
+            "mcap": 453.52,
+            "fiiShares": 4750.4136,
+            "fiiValue": 113249.86,
+            "diiShares": 2933.8624,
+            "diiValue": 69943.28
+          },
+          {
+            "stockName": "F Mec Intl. Fin.",
+            "ticker": "539552",
+            "price": 10.01,
+            "mcap": 48.95,
+            "fiiShares": 6788.2028,
+            "fiiValue": 67949.91,
+            "diiShares": 4192.4046,
+            "diiValue": 41965.97
+          },
+          {
+            "stockName": "GDL Leasing",
+            "ticker": "530855",
+            "price": 81.28,
+            "mcap": 40.72,
+            "fiiShares": 835.9979,
+            "fiiValue": 67949.91,
+            "diiShares": 516.3136,
+            "diiValue": 41965.97
+          },
+          {
+            "stockName": "Akme Fintrade",
+            "ticker": "AFIL",
+            "price": 7.75,
+            "mcap": 340.89,
+            "fiiShares": 11690.3071,
+            "fiiValue": 90599.88,
+            "diiShares": 7219.951,
+            "diiValue": 55954.62
+          },
+          {
+            "stockName": "Manba Finance",
+            "ticker": "MANBA",
+            "price": 142.62,
+            "mcap": 716.5,
+            "fiiShares": 794.0672,
+            "fiiValue": 113249.86,
+            "diiShares": 490.4171,
+            "diiValue": 69943.28
+          }
+        ]
+      },
+      {
+        "sectorName": "Information Technology",
+        "auc": 352971.56,
+        "netInvestment": -4576.62,
+        "percentageChange": -1.28,
+        "fiiAuc": 352971.56,
+        "fiiNetInvestment": -4576.62,
+        "fiiPercentageChange": -1.28,
+        "diiAuc": 185791.8,
+        "diiNetInvestment": 352.16,
+        "diiPercentageChange": 0.19,
+        "stocks": [
+          {
+            "stockName": "eMudhra",
+            "ticker": "EMUDHRA",
+            "price": 453.96,
+            "mcap": 3759.36,
+            "fiiShares": 311.0156,
+            "fiiValue": 141188.63,
+            "diiShares": 163.7076,
+            "diiValue": 74316.72
+          },
+          {
+            "stockName": "Maxposure",
+            "ticker": "MAXPOSURE",
+            "price": 33.22,
+            "mcap": 75.54,
+            "fiiShares": 1593.7908,
+            "fiiValue": 52945.73,
+            "diiShares": 838.9154,
+            "diiValue": 27868.77
+          },
+          {
+            "stockName": "Brightcom Group",
+            "ticker": "BCG",
+            "price": 8.89,
+            "mcap": 1794.83,
+            "fiiShares": 9926.0844,
+            "fiiValue": 88242.89,
+            "diiShares": 5224.7413,
+            "diiValue": 46447.95
+          },
+          {
+            "stockName": "Zaggle Prepaid",
+            "ticker": "ZAGGLE",
+            "price": 162.54,
+            "mcap": 2185.59,
+            "fiiShares": 434.3196,
+            "fiiValue": 70594.31,
+            "diiShares": 228.6106,
+            "diiValue": 37158.36
+          }
+        ]
+      },
+      {
+        "sectorName": "Oil, Gas & Consumable Fuels",
+        "auc": 223503.14,
+        "netInvestment": 22.35,
+        "percentageChange": 0.01,
+        "fiiAuc": 223503.14,
+        "fiiNetInvestment": 22.35,
+        "fiiPercentageChange": 0.01,
+        "diiAuc": 143557.84,
+        "diiNetInvestment": -687.8,
+        "diiPercentageChange": -0.48,
+        "stocks": [
+          {
+            "stockName": "Asian Energy",
+            "ticker": "ASIANENE",
+            "price": 439.39,
+            "mcap": 2155.18,
+            "fiiShares": 508.6669,
+            "fiiValue": 223503.14,
+            "diiShares": 326.7208,
+            "diiValue": 143557.84
+          }
+        ]
+      },
+      {
+        "sectorName": "FMCG",
+        "auc": 154780.84,
+        "netInvestment": -1911.65,
+        "percentageChange": -1.22,
+        "fiiAuc": 154780.84,
+        "fiiNetInvestment": -1911.65,
+        "fiiPercentageChange": -1.22,
+        "diiAuc": 123188.3,
+        "diiNetInvestment": 1102.13,
+        "diiPercentageChange": 0.9,
+        "stocks": [
+          {
+            "stockName": "Nikki Glob.Fin.",
+            "ticker": "531272",
+            "price": 20.73,
+            "mcap": 7.09,
+            "fiiShares": 3733.2571,
+            "fiiValue": 77390.42,
+            "diiShares": 2971.2566,
+            "diiValue": 61594.15
+          },
+          {
+            "stockName": "Cont. Securities",
+            "ticker": "538868",
+            "price": 21.59,
+            "mcap": 68.54,
+            "fiiShares": 3584.5493,
+            "fiiValue": 77390.42,
+            "diiShares": 2852.9018,
+            "diiValue": 61594.15
+          }
+        ]
+      },
+      {
+        "sectorName": "Healthcare",
+        "auc": 107137.17,
+        "netInvestment": -182.44,
+        "percentageChange": -0.17,
+        "fiiAuc": 107137.17,
+        "fiiNetInvestment": -182.44,
+        "fiiPercentageChange": -0.17,
+        "diiAuc": 85013.86,
+        "diiNetInvestment": 282.92,
+        "diiPercentageChange": 0.33,
+        "stocks": [
+          {
+            "stockName": "Gujarat Kidney",
+            "ticker": "GKSL",
+            "price": 189.73,
+            "mcap": 1495.87,
+            "fiiShares": 225.8729,
+            "fiiValue": 42854.87,
+            "diiShares": 179.2312,
+            "diiValue": 34005.54
+          },
+          {
+            "stockName": "Yatharth Hospit.",
+            "ticker": "YATHARTH",
+            "price": 970.4,
+            "mcap": 9350.18,
+            "fiiShares": 66.2431,
+            "fiiValue": 64282.3,
+            "diiShares": 52.5642,
+            "diiValue": 51008.32
+          }
+        ]
+      },
+      {
+        "sectorName": "Automobile & Auto Components",
+        "auc": 119095.57,
+        "netInvestment": -310.46,
+        "percentageChange": -0.26,
+        "fiiAuc": 119095.57,
+        "fiiNetInvestment": -310.46,
+        "fiiPercentageChange": -0.26,
+        "diiAuc": 68919.1,
+        "diiNetInvestment": 389.99,
+        "diiPercentageChange": 0.57,
+        "stocks": [
+          {
+            "stockName": "Ashika Credit",
+            "ticker": "ASHIKA",
+            "price": 397.66,
+            "mcap": 2931.8,
+            "fiiShares": 299.4909,
+            "fiiValue": 119095.57,
+            "diiShares": 173.3116,
+            "diiValue": 68919.1
+          }
+        ]
+      },
+      {
+        "sectorName": "Power",
+        "auc": 77624.36,
+        "netInvestment": -217.96,
+        "percentageChange": -0.28,
+        "fiiAuc": 77624.36,
+        "fiiNetInvestment": -217.96,
+        "fiiPercentageChange": -0.28,
+        "diiAuc": 54985.18,
+        "diiNetInvestment": 158.21,
+        "diiPercentageChange": 0.29,
+        "stocks": [
+          {
+            "stockName": "JOJO",
+            "ticker": "531910",
+            "price": 119.66,
+            "mcap": 1650.42,
+            "fiiShares": 648.7077,
+            "fiiValue": 77624.36,
+            "diiShares": 459.5118,
+            "diiValue": 54985.18
+          }
+        ]
+      },
+      {
+        "sectorName": "Telecommunication",
+        "auc": 69970.62,
+        "netInvestment": -358.68,
+        "percentageChange": -0.51,
+        "fiiAuc": 69970.62,
+        "fiiNetInvestment": -358.68,
+        "fiiPercentageChange": -0.51,
+        "diiAuc": 50852.12,
+        "diiNetInvestment": 136.93,
+        "diiPercentageChange": 0.27,
+        "stocks": [
+          {
+            "stockName": "CitiPort Fin.",
+            "ticker": "531235",
+            "price": 41.09,
+            "mcap": 12.73,
+            "fiiShares": 1702.8625,
+            "fiiValue": 69970.62,
+            "diiShares": 1237.579,
+            "diiValue": 50852.12
+          }
+        ]
+      },
+      {
+        "sectorName": "Capital Goods",
+        "auc": 56000.84,
+        "netInvestment": -355.04,
+        "percentageChange": -0.63,
+        "fiiAuc": 56000.84,
+        "fiiNetInvestment": -355.04,
+        "fiiPercentageChange": -0.63,
+        "diiAuc": 38824.5,
+        "diiNetInvestment": -7.92,
+        "diiPercentageChange": -0.02,
+        "stocks": [
+          {
+            "stockName": "Committed Cargo",
+            "ticker": "COMMITTED",
+            "price": 296.52,
+            "mcap": 343.21,
+            "fiiShares": 94.4301,
+            "fiiValue": 28000.42,
+            "diiShares": 65.4669,
+            "diiValue": 19412.25
+          },
+          {
+            "stockName": "ITCONS E-Soluti.",
+            "ticker": "543806",
+            "price": 223.58,
+            "mcap": 201.4,
+            "fiiShares": 125.2367,
+            "fiiValue": 28000.42,
+            "diiShares": 86.8246,
+            "diiValue": 19412.25
+          }
+        ]
+      },
+      {
+        "sectorName": "Metals & Mining",
+        "auc": 53981.4,
+        "netInvestment": 70.08,
+        "percentageChange": 0.13,
+        "fiiAuc": 53981.4,
+        "fiiNetInvestment": 70.08,
+        "fiiPercentageChange": 0.13,
+        "diiAuc": 33687.73,
+        "diiNetInvestment": -149.21,
+        "diiPercentageChange": -0.44,
+        "stocks": [
+          {
+            "stockName": "Enbee Trade",
+            "ticker": "512441",
+            "price": 0.24,
+            "mcap": 16.75,
+            "fiiShares": 224922.5,
+            "fiiValue": 53981.4,
+            "diiShares": 140365.5417,
+            "diiValue": 33687.73
+          }
+        ]
+      },
+      {
+        "sectorName": "Chemicals",
+        "auc": 43047.58,
+        "netInvestment": 12.91,
+        "percentageChange": 0.03,
+        "fiiAuc": 43047.58,
+        "fiiNetInvestment": 12.91,
+        "fiiPercentageChange": 0.03,
+        "diiAuc": 28717.48,
+        "diiNetInvestment": 43.14,
+        "diiPercentageChange": 0.15,
+        "stocks": [
+          {
+            "stockName": "Mangal Credit",
+            "ticker": "MANCREDIT",
+            "price": 217.12,
+            "mcap": 458.41,
+            "fiiShares": 198.2663,
+            "fiiValue": 43047.58,
+            "diiShares": 132.2655,
+            "diiValue": 28717.48
+          }
+        ]
+      },
+      {
+        "sectorName": "Construction Materials",
+        "auc": 32603.26,
+        "netInvestment": -183.61,
+        "percentageChange": -0.56,
+        "fiiAuc": 32603.26,
+        "fiiNetInvestment": -183.61,
+        "fiiPercentageChange": -0.56,
+        "diiAuc": 25815.13,
+        "diiNetInvestment": 0.52,
+        "diiPercentageChange": 0,
+        "stocks": [
+          {
+            "stockName": "Gowra Leasing",
+            "ticker": "530709",
+            "price": 88.5,
+            "mcap": 68.56,
+            "fiiShares": 368.3984,
+            "fiiValue": 32603.26,
+            "diiShares": 291.6964,
+            "diiValue": 25815.13
+          }
+        ]
+      },
+      {
+        "sectorName": "Consumer Services",
+        "auc": 31826.51,
+        "netInvestment": 47.67,
+        "percentageChange": 0.15,
+        "fiiAuc": 31826.51,
+        "fiiNetInvestment": 47.67,
+        "fiiPercentageChange": 0.15,
+        "diiAuc": 20449.56,
+        "diiNetInvestment": 52.9,
+        "diiPercentageChange": 0.26,
+        "stocks": [
+          {
+            "stockName": "Travels & Rent.",
+            "ticker": "544242",
+            "price": 7.76,
+            "mcap": 16.57,
+            "fiiShares": 1640.5412,
+            "fiiValue": 12730.6,
+            "diiShares": 1054.1005,
+            "diiValue": 8179.82
+          },
+          {
+            "stockName": "Pansari Develop.",
+            "ticker": "PANSARI",
+            "price": 301.7,
+            "mcap": 526.37,
+            "fiiShares": 63.2943,
+            "fiiValue": 19095.9,
+            "diiShares": 40.6687,
+            "diiValue": 12269.74
           }
         ]
       }

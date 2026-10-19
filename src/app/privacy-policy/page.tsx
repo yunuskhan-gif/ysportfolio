@@ -138,7 +138,7 @@ export default function PrivacyPolicyPage() {
             <p><strong>Grievance Officer:</strong> Client Services & Compliance Desk</p>
             <p><strong>Entity:</strong> YS PORTFOLIO (ARN 145084)</p>
             <p><strong>Address:</strong> Sewree, Mumbai, Maharashtra 400015, India</p>
-            <p><strong>Email:</strong> <a href="mailto:clientservices@yscapital.com" className="text-[#0047AB] underline">clientservices@yscapital.com</a></p>
+            <p><strong>Email:</strong> <a href="mailto:clientservices@ysportfolio.in" className="text-[#0047AB] underline">clientservices@ysportfolio.in</a></p>
             <p><strong>Phone:</strong> +91 22 4152 3000</p>
             <p><strong>Response Turnaround:</strong> Within 48 business hours</p>
           </div>

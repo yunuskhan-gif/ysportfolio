@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { BLOG_POSTS } from "@/lib/blog-data";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://yscapital.in";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.ysportfolio.in";
   const currentDate = new Date();
 
   const blogUrls: MetadataRoute.Sitemap = BLOG_POSTS.map((post) => ({

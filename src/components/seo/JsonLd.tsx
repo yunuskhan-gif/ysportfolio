@@ -1,22 +1,22 @@
 import React from "react";
 
 export default function JsonLd() {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://yscapital.in";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.ysportfolio.in";
 
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "FinancialService",
     "@id": `${baseUrl}/#organization`,
-    name: "YS PORTFOLIO",
-    alternateName: ["YS Digital Portfolio", "Y S Capital Wealth Management", "YS Wealth"],
-    legalName: "YS PORTFOLIO",
+    name: "YS Portfolio",
+    alternateName: ["YS PORTFOLIO", "YS Digital Portfolio", "YS Wealth", "ysportfolio.in"],
+    legalName: "YS Portfolio",
     url: baseUrl,
     logo: `${baseUrl}/ys_logo.png`,
     image: `${baseUrl}/showcase_dashboard.png`,
     description:
       "India's leading integrated distributor of financial products — Mutual Funds, Direct Equities, Fixed Deposits, Insurance, Bonds, PMS, AIFs, and Digital Wealth Management.",
     telephone: "+91-22-4152-3000",
-    email: "clientservices@yscapital.com",
+    email: "clientservices@ysportfolio.in",
     address: {
       "@type": "PostalAddress",
       streetAddress: "Sewree",
@@ -183,7 +183,8 @@ export default function JsonLd() {
     "@type": "WebSite",
     "@id": `${baseUrl}/#website`,
     url: baseUrl,
-    name: "YS PORTFOLIO | Institutional Wealth Intelligence",
+    name: "YS Portfolio",
+    alternateName: ["YS PORTFOLIO", "YS Digital Portfolio", "ysportfolio.in"],
     publisher: {
       "@id": `${baseUrl}/#organization`,
     },

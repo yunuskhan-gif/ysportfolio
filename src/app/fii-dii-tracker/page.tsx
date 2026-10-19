@@ -33,6 +33,7 @@ import {
 } from "recharts";
 import toast from "react-hot-toast";
 import StockScreenerDialog from "@/components/shared/StockScreenerDialog";
+import FIIDIISection from "@/components/dashboard/FIIDIISection";
 
 type StockRow = {
   stockName: string;
@@ -80,7 +81,7 @@ export default function FiiDiiTracker() {
   const [user, setUser] = useState<{ id: string; username: string } | null>(null);
 
   // App states
-  const [activeTab, setActiveTab] = useState<"report" | "trends" | "scheduler">("report");
+  const [activeTab, setActiveTab] = useState<"live" | "report" | "trends" | "scheduler">("live");
   const [fortnights, setFortnights] = useState<string[]>([]);
   const [selectedFortnight, setSelectedFortnight] = useState<string>("");
   const [reportSectors, setReportSectors] = useState<SectorRow[]>([]);
@@ -515,6 +516,16 @@ export default function FiiDiiTracker() {
       {/* Tabs Selector */}
       <div className="flex border-b border-zinc-800">
         <button
+          onClick={() => setActiveTab("live")}
+          className={`px-5 py-3 text-sm font-semibold tracking-wide border-b-2 cursor-pointer transition-all ${
+            activeTab === "live"
+              ? "border-primary text-white bg-primary/5"
+              : "border-transparent text-zinc-400 hover:text-zinc-200"
+          }`}
+        >
+          Daily Cash Market (Live)
+        </button>
+        <button
           onClick={() => setActiveTab("report")}
           className={`px-5 py-3 text-sm font-semibold tracking-wide border-b-2 cursor-pointer transition-all ${
             activeTab === "report"
@@ -547,6 +558,12 @@ export default function FiiDiiTracker() {
       </div>
 
       {/* Tab Contents */}
+      {activeTab === "live" && (
+        <div className="bg-zinc-950/30 border border-zinc-800/40 rounded-2xl p-6 backdrop-blur-md">
+          <FIIDIISection />
+        </div>
+      )}
+
       {activeTab === "report" && (
         <div className="bg-zinc-950/30 border border-zinc-800/40 rounded-2xl p-6 backdrop-blur-md space-y-4">
           {/* Controls */}
