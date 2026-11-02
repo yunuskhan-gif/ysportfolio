@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
-
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -39,19 +38,21 @@ export function NavMain({
         <SidebarMenu>
           {items.map((item) => {
             const isActive = pathname === item.url;
+            const tourId = `tour-nav-${item.url.replace(/\//g, "") || "home"}`;
 
             return (
-              <SidebarMenuItem key={item.title}>
+              <SidebarMenuItem key={item.title} data-tour-id={tourId}>
                 <SidebarMenuButton
                   asChild
                   tooltip={item.title}
                   className={cn(
                     "w-full transition-all",
-                    isActive ? "bg-primary text-primary-foreground duration-200 ease-linear hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground" : "",
+                    isActive
+                      ? "bg-primary text-primary-foreground duration-200 ease-linear hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground"
+                      : "",
                     "group-data-[collapsible=icon]:ml-1"
                   )}
                 >
-
                   <Link
                     href={item.url}
                     onClick={() => {
@@ -61,31 +62,32 @@ export function NavMain({
                     }}
                   >
                     {item.icon && <item.icon className="transition-all" />}
-
-
                     <span>{item.title}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             );
           })}
-          {actionItems.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton
-                tooltip={item.title}
-                className={cn("w-full transition-all group-data-[collapsible=icon]:ml-1")}
-                onClick={() => {
-                  item.onClick();
-                  if (isMobile) {
-                    setOpenMobile(false);
-                  }
-                }}
-              >
-                {item.icon && <item.icon className="transition-all" />}
-                <span>{item.title}</span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
+          {actionItems.map((item) => {
+            const tourId = `tour-action-${item.title.toLowerCase().replace(/\s+/g, "-")}`;
+            return (
+              <SidebarMenuItem key={item.title} data-tour-id={tourId}>
+                <SidebarMenuButton
+                  tooltip={item.title}
+                  className={cn("w-full transition-all group-data-[collapsible=icon]:ml-1")}
+                  onClick={() => {
+                    item.onClick();
+                    if (isMobile) {
+                      setOpenMobile(false);
+                    }
+                  }}
+                >
+                  {item.icon && <item.icon className="transition-all" />}
+                  <span>{item.title}</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            );
+          })}
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>

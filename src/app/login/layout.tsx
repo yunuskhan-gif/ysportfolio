@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   title: "Client & Partner Portal Login",
@@ -27,5 +28,10 @@ export const metadata: Metadata = {
 };
 
 export default function LoginLayout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+  return (
+    <>
+      <Script src="https://accounts.google.com/gsi/client" strategy="lazyOnload" />
+      {children}
+    </>
+  );
 }

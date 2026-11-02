@@ -16,6 +16,7 @@ import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import ExcelUploadDialog from "@/components/portfolio/ExcelUploadDialog";
 import AddStockDialog from "@/components/portfolio/AddStockDialog";
 import UserProfileMenu from "@/components/shared/UserProfileMenu";
+import UserOnboardingGuide from "@/components/onboarding/UserOnboardingGuide";
 import MarketTickerRibbon from "@/components/home/MarketTickerRibbon";
 import { fetchMotilalHoldings, HOLDINGS_QUERY_KEY } from "@/lib/portfolio-api";
 import { MOTILAL_SYNC_EVENT } from "@/lib/motilal-storage";
@@ -41,6 +42,9 @@ export default function NextAppShell({ children }: { children: React.ReactNode }
     if (pathname.includes("/ai-insights")) return "AI Portfolio Insights & Rebalancing";
     if (pathname.includes("/cashbook")) return "Double-Entry Cash Book";
     if (pathname.includes("/dashboard")) return "Executive Wealth Dashboard";
+    if (pathname.includes("/chat")) return "Community Chat";
+    if (pathname.includes("/crude-oil")) return "Crude Oil & Commodities";
+    if (pathname.includes("/profile")) return "Investor Profile & KYC";
     if (pathname.includes("/search")) return "Market Search";
     if (pathname.includes("/settings")) return "Settings";
     if (pathname.includes("/history")) return "Portfolio History";
@@ -156,6 +160,7 @@ export default function NextAppShell({ children }: { children: React.ReactNode }
           onStockAdded={handleDataUploaded}
         />
         <CommandMenu open={isCommandOpen} setOpen={setIsCommandOpen} />
+        <UserOnboardingGuide />
       </SidebarInset>
     </SidebarProvider>
   );

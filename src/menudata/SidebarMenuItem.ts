@@ -1,10 +1,25 @@
-import { Home, Wallet, KeyRound, History as HistoryIcon, Search, Book, PieChart, Settings, BrainCircuit, Landmark, Coins, TrendingUp, Users } from "lucide-react";
+import { Home, Wallet, History as HistoryIcon, Search, Book, PieChart, Settings, BrainCircuit, Landmark, Coins, TrendingUp, Users, MessageSquare, Flame, UserCheck } from "lucide-react";
 
 export const items = [
     {
       title: "Dashboard",
       url: "/dashboard",
       icon: Home,
+    },
+    {
+      title: "My Profile",
+      url: "/profile",
+      icon: UserCheck,
+    },
+    {
+      title: "Crude Oil",
+      url: "/crude-oil",
+      icon: Flame,
+    },
+    {
+      title: "Community Chat",
+      url: "/chat",
+      icon: MessageSquare,
     },
     {
       title: "Stocks Fund",
@@ -26,7 +41,6 @@ export const items = [
       url: "/other-investments",
       icon: Coins,
     },
-
     {
       title: "FII / DII Flow",
       url: "/fii-dii-tracker",

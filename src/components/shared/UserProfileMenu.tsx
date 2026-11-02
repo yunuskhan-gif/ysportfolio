@@ -4,18 +4,14 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   User,
-  Shield,
   ShieldCheck,
   LogOut,
   Users,
   Settings,
   ChevronDown,
   Sparkles,
+  UserCheck,
 } from "lucide-react";
-import {
-  Avatar,
-  AvatarFallback,
-} from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,17 +30,29 @@ interface UserProfileMenuProps {
 
 export default function UserProfileMenu({ compact = false }: UserProfileMenuProps) {
   const [currentUser, setCurrentUser] = useState<string | null>(null);
+  const [fullName, setFullName] = useState<string>("");
+  const [avatarUrl, setAvatarUrl] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     async function fetchUser() {
       try {
-        const res = await fetch("/api/auth/me");
+        const res = await fetch("/api/profile");
         if (res.ok) {
           const data = await res.json();
-          setCurrentUser(data.user || "main");
+          if (data.profile) {
+            setCurrentUser(data.profile.username || "main");
+            setFullName(data.profile.fullName || "");
+            setAvatarUrl(data.profile.avatarUrl || "");
+          }
         } else {
-          setCurrentUser(null);
+          const authRes = await fetch("/api/auth/me");
+          if (authRes.ok) {
+            const authData = await authRes.json();
+            setCurrentUser(authData.user || "main");
+          } else {
+            setCurrentUser(null);
+          }
         }
       } catch (err) {
         setCurrentUser(null);
@@ -78,7 +86,7 @@ export default function UserProfileMenu({ compact = false }: UserProfileMenuProp
         size="sm"
         className="h-8 border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold text-xs rounded-full gap-1.5"
       >
-        <Link href="/">
+        <Link href="/login">
           <User className="h-3.5 w-3.5" />
           <span>Login</span>
         </Link>
@@ -87,8 +95,8 @@ export default function UserProfileMenu({ compact = false }: UserProfileMenuProp
   }
 
   const isAdmin = currentUser === "main";
-  const initials = currentUser.substring(0, 2).toUpperCase();
-  const roleLabel = isAdmin ? "Primary Admin" : currentUser === "demo" ? "Demo Account" : "Standard User";
+  const displayName = fullName || (isAdmin ? "Admin" : currentUser.split("@")[0]);
+  const roleLabel = isAdmin ? "Primary Admin" : currentUser === "demo" ? "Demo Account" : "Verified Investor";
 
   return (
     <DropdownMenu>
@@ -96,14 +104,25 @@ export default function UserProfileMenu({ compact = false }: UserProfileMenuProp
         <Button
           variant="ghost"
           size="sm"
-          className={`h-9 border border-zinc-800 bg-zinc-900/80 hover:bg-zinc-800/90 text-zinc-200 rounded-full transition-all gap-2 cursor-pointer focus:ring-1 focus:ring-red-500/50 ${
+          className={`h-9 border border-zinc-800 bg-zinc-900/80 hover:bg-zinc-800/90 text-zinc-200 rounded-full transition-all gap-2 cursor-pointer focus:ring-1 focus:ring-blue-500/50 ${
             compact ? "px-1.5 sm:px-2.5" : "px-2.5"
           }`}
         >
-          {isAdmin ? <ShieldCheck className="h-4 w-4 text-emerald-400" /> : <User className="h-4 w-4 text-zinc-400" />}
+          {avatarUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={avatarUrl}
+              alt="DP"
+              className="h-6 w-6 rounded-full object-cover border border-white/20"
+            />
+          ) : isAdmin ? (
+            <ShieldCheck className="h-4 w-4 text-emerald-400" />
+          ) : (
+            <User className="h-4 w-4 text-zinc-400" />
+          )}
 
-          <span className="hidden sm:inline text-xs font-bold text-zinc-100">
-            {isAdmin ? "Admin" : "User"}
+          <span className="hidden sm:inline text-xs font-bold text-zinc-100 max-w-[110px] truncate">
+            {displayName}
           </span>
 
           <ChevronDown className="h-3.5 w-3.5 text-zinc-400 opacity-70" />
@@ -113,29 +132,46 @@ export default function UserProfileMenu({ compact = false }: UserProfileMenuProp
       <DropdownMenuContent align="end" className="w-64 bg-zinc-950 border-zinc-800 text-zinc-200 p-2 shadow-2xl rounded-2xl">
         <DropdownMenuLabel className="font-normal p-2 pb-3 border-b border-zinc-900">
           <div className="flex items-center gap-3">
-            {isAdmin ? <ShieldCheck className="h-5 w-5 text-emerald-400" /> : <User className="h-5 w-5 text-zinc-400" />}
+            {avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={avatarUrl}
+                alt="DP"
+                className="h-9 w-9 rounded-full object-cover border border-blue-500/40 shrink-0"
+              />
+            ) : isAdmin ? (
+              <ShieldCheck className="h-5 w-5 text-emerald-400 shrink-0" />
+            ) : (
+              <User className="h-5 w-5 text-zinc-400 shrink-0" />
+            )}
             <div className="space-y-1 min-w-0 flex-1">
               <div className="flex items-center justify-between gap-1">
-                <p className="text-sm font-black text-white truncate">{isAdmin ? "Admin" : "User"}</p>
+                <p className="text-sm font-black text-white truncate">{displayName}</p>
                 {isAdmin ? (
                   <Badge variant="outline" className="bg-red-500/10 border-red-500/30 text-red-400 text-[9px] font-mono shrink-0">
                     Admin
                   </Badge>
                 ) : (
                   <Badge variant="outline" className="bg-blue-500/10 border-blue-500/30 text-blue-400 text-[9px] font-mono shrink-0">
-                    User
+                    KYC
                   </Badge>
                 )}
               </div>
-              <p className="text-[10px] text-zinc-400 flex items-center gap-1 font-mono">
-                {isAdmin ? <ShieldCheck className="h-3 w-3 text-emerald-400" /> : <User className="h-3 w-3 text-zinc-400" />}
-                {roleLabel}
+              <p className="text-[10px] text-zinc-400 flex items-center gap-1 font-mono truncate">
+                {currentUser}
               </p>
             </div>
           </div>
         </DropdownMenuLabel>
 
         <DropdownMenuGroup className="py-1">
+          <DropdownMenuItem asChild className="cursor-pointer rounded-xl hover:bg-zinc-900 focus:bg-zinc-900">
+            <Link href="/profile" className="flex items-center gap-2.5 py-2 text-xs font-semibold text-zinc-200">
+              <UserCheck className="h-4 w-4 text-blue-400" />
+              <span>My Profile & KYC</span>
+            </Link>
+          </DropdownMenuItem>
+
           {isAdmin && (
             <DropdownMenuItem asChild className="cursor-pointer rounded-xl hover:bg-zinc-900 focus:bg-zinc-900">
               <Link href="/users" className="flex items-center gap-2.5 py-2 text-xs font-semibold text-zinc-200">

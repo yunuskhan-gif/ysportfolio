@@ -15,6 +15,30 @@ const UserSchema = new Schema(
       type: String,
       required: true,
     },
+    fullName: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+    panNumber: {
+      type: String,
+      default: "",
+      trim: true,
+      uppercase: true,
+    },
+    dob: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+    avatarUrl: {
+      type: String,
+      default: "",
+    },
+    profileCompleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
@@ -35,6 +59,11 @@ export interface UserRecord {
   id: string;
   username: string;
   password?: string;
+  fullName?: string;
+  panNumber?: string;
+  dob?: string;
+  avatarUrl?: string;
+  profileCompleted?: boolean;
   createdAt: string;
   updatedAt?: string;
 }
@@ -47,12 +76,16 @@ export async function getAllUsers(): Promise<UserRecord[]> {
   usersMap.set("main", {
     id: "main",
     username: "main",
+    fullName: "Primary Admin",
+    profileCompleted: true,
     createdAt: new Date().toISOString(),
   });
   usersMap.set("demo", {
     id: "demo",
     username: "demo",
     password: "demo123",
+    fullName: "Demo Investor",
+    profileCompleted: true,
     createdAt: new Date().toISOString(),
   });
 
@@ -67,6 +100,11 @@ export async function getAllUsers(): Promise<UserRecord[]> {
           id: doc._id.toString(),
           username: doc.username,
           password: doc.password,
+          fullName: doc.fullName || "",
+          panNumber: doc.panNumber || "",
+          dob: doc.dob || "",
+          avatarUrl: doc.avatarUrl || "",
+          profileCompleted: Boolean(doc.profileCompleted),
           createdAt: doc.createdAt ? new Date(doc.createdAt).toISOString() : new Date().toISOString(),
         });
       });
@@ -87,7 +125,23 @@ export async function getAllUsers(): Promise<UserRecord[]> {
               id: u.id || u._id || uname,
               username: u.username,
               password: u.password,
+              fullName: u.fullName || "",
+              panNumber: u.panNumber || "",
+              dob: u.dob || "",
+              avatarUrl: u.avatarUrl || "",
+              profileCompleted: Boolean(u.profileCompleted),
               createdAt: u.createdAt || new Date().toISOString(),
+            });
+          } else {
+            // Merge profile fields if present in file DB
+            const existing = usersMap.get(uname)!;
+            usersMap.set(uname, {
+              ...existing,
+              fullName: existing.fullName || u.fullName || "",
+              panNumber: existing.panNumber || u.panNumber || "",
+              dob: existing.dob || u.dob || "",
+              avatarUrl: existing.avatarUrl || u.avatarUrl || "",
+              profileCompleted: existing.profileCompleted || Boolean(u.profileCompleted),
             });
           }
         }
@@ -103,13 +157,26 @@ export async function getAllUsers(): Promise<UserRecord[]> {
 // Find user by username
 export async function findUserByUsername(username: string): Promise<UserRecord | null> {
   const normalized = username.trim().toLowerCase();
-  
-  // Default main user match
+
+  // Check file DB first for main/demo custom overrides if any
+  let fileOverride: any = null;
+  try {
+    const db = getDB();
+    if (db.appUsers && db.appUsers[normalized]) {
+      fileOverride = db.appUsers[normalized];
+    }
+  } catch {}
+
   if (normalized === "main") {
     return {
       id: "main",
       username: "main",
       password: process.env.APP_PASSWORD || "",
+      fullName: fileOverride?.fullName || "Primary Admin",
+      panNumber: fileOverride?.panNumber || "",
+      dob: fileOverride?.dob || "",
+      avatarUrl: fileOverride?.avatarUrl || "",
+      profileCompleted: true,
       createdAt: new Date().toISOString(),
     };
   }
@@ -119,6 +186,11 @@ export async function findUserByUsername(username: string): Promise<UserRecord |
       id: "demo",
       username: "demo",
       password: "demo123",
+      fullName: fileOverride?.fullName || "Demo Investor",
+      panNumber: fileOverride?.panNumber || "",
+      dob: fileOverride?.dob || "",
+      avatarUrl: fileOverride?.avatarUrl || "",
+      profileCompleted: true,
       createdAt: new Date().toISOString(),
     };
   }
@@ -134,42 +206,50 @@ export async function findUserByUsername(username: string): Promise<UserRecord |
           id: (doc as any)._id.toString(),
           username: (doc as any).username,
           password: (doc as any).password,
+          fullName: (doc as any).fullName || fileOverride?.fullName || "",
+          panNumber: (doc as any).panNumber || fileOverride?.panNumber || "",
+          dob: (doc as any).dob || fileOverride?.dob || "",
+          avatarUrl: (doc as any).avatarUrl || fileOverride?.avatarUrl || "",
+          profileCompleted: Boolean((doc as any).profileCompleted || fileOverride?.profileCompleted),
           createdAt: (doc as any).createdAt ? new Date((doc as any).createdAt).toISOString() : new Date().toISOString(),
         };
       }
     } catch (err) {
-      console.warn("MongoDB user query failed, checking file DB", err);
+      console.warn("MongoDB query failed in findUserByUsername", err);
     }
   }
 
   // Check JSON DB
-  try {
-    const db = getDB();
-    if (db.appUsers && db.appUsers[normalized]) {
-      const u = db.appUsers[normalized];
-      return {
-        id: u.id || normalized,
-        username: u.username,
-        password: u.password,
-        createdAt: u.createdAt || new Date().toISOString(),
-      };
-    }
-  } catch (err) {
-    console.warn("File DB user query failed", err);
+  if (fileOverride) {
+    return {
+      id: fileOverride.id || normalized,
+      username: fileOverride.username,
+      password: fileOverride.password,
+      fullName: fileOverride.fullName || "",
+      panNumber: fileOverride.panNumber || "",
+      dob: fileOverride.dob || "",
+      avatarUrl: fileOverride.avatarUrl || "",
+      profileCompleted: Boolean(fileOverride.profileCompleted),
+      createdAt: fileOverride.createdAt || new Date().toISOString(),
+    };
   }
 
   return null;
 }
 
 // Create new user
-export async function createNewUser(username: string, password: string): Promise<UserRecord> {
+export async function createNewUser(
+  username: string,
+  password: string,
+  fullName: string = "",
+  dob: string = ""
+): Promise<UserRecord> {
   const normalized = username.trim().toLowerCase();
-  
+
   if (normalized === "main" || normalized === "demo") {
     throw new Error(`Username '${normalized}' is reserved by system.`);
   }
 
-  // Check existing
   const existing = await findUserByUsername(normalized);
   if (existing) {
     throw new Error(`User with username '${username}' already exists.`);
@@ -178,7 +258,6 @@ export async function createNewUser(username: string, password: string): Promise
   const now = new Date().toISOString();
   let createdId = normalized;
 
-  // Save to MongoDB
   if (process.env.MONGODB_URI) {
     try {
       await connectToDatabase();
@@ -186,6 +265,9 @@ export async function createNewUser(username: string, password: string): Promise
       const newDoc = await UserModel.create({
         username: normalized,
         password,
+        fullName: fullName.trim(),
+        dob: dob.trim(),
+        profileCompleted: false,
       });
       createdId = newDoc._id.toString();
     } catch (err: any) {
@@ -193,7 +275,6 @@ export async function createNewUser(username: string, password: string): Promise
     }
   }
 
-  // Save to JSON DB as well
   try {
     const db = getDB();
     if (!db.appUsers) db.appUsers = {};
@@ -201,6 +282,11 @@ export async function createNewUser(username: string, password: string): Promise
       id: createdId,
       username: normalized,
       password,
+      fullName: fullName.trim(),
+      panNumber: "",
+      dob: dob.trim(),
+      avatarUrl: "",
+      profileCompleted: false,
       createdAt: now,
     };
     saveDB(db);
@@ -212,8 +298,66 @@ export async function createNewUser(username: string, password: string): Promise
     id: createdId,
     username: normalized,
     password,
+    fullName: fullName.trim(),
+    dob: dob.trim(),
+    profileCompleted: false,
     createdAt: now,
   };
+}
+
+// Update user profile (PAN, DOB, Avatar DP, Full Name)
+export async function updateUserProfile(
+  username: string,
+  data: {
+    fullName?: string;
+    panNumber?: string;
+    dob?: string;
+    avatarUrl?: string;
+  }
+): Promise<UserRecord | null> {
+  const normalized = username.trim().toLowerCase();
+
+  const updateFields: Record<string, any> = {
+    profileCompleted: true,
+  };
+  if (data.fullName !== undefined) updateFields.fullName = data.fullName.trim();
+  if (data.panNumber !== undefined) updateFields.panNumber = data.panNumber.trim().toUpperCase();
+  if (data.dob !== undefined) updateFields.dob = data.dob.trim();
+  if (data.avatarUrl !== undefined) updateFields.avatarUrl = data.avatarUrl;
+
+  if (process.env.MONGODB_URI) {
+    try {
+      await connectToDatabase();
+      const UserModel = getUserModel();
+      await UserModel.updateOne(
+        { username: normalized },
+        { $set: updateFields },
+        { upsert: false }
+      );
+    } catch (err) {
+      console.warn("MongoDB update profile failed", err);
+    }
+  }
+
+  try {
+    const db = getDB();
+    if (!db.appUsers) db.appUsers = {};
+    const current = db.appUsers[normalized] || {
+      id: normalized,
+      username: normalized,
+      createdAt: new Date().toISOString(),
+    };
+    db.appUsers[normalized] = {
+      ...current,
+      ...updateFields,
+      updatedAt: new Date().toISOString(),
+    };
+    saveDB(db);
+  } catch (err) {
+    console.warn("File DB update profile failed", err);
+  }
+
+  return findUserByUsername(normalized);
 }
 
 // Update user password
