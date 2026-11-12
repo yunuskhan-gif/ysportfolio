@@ -39,6 +39,10 @@ const UserSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    lastSeen: {
+      type: String,
+      default: "",
+    },
   },
   {
     timestamps: true,
@@ -64,8 +68,110 @@ export interface UserRecord {
   dob?: string;
   avatarUrl?: string;
   profileCompleted?: boolean;
+  lastSeen?: string;
   createdAt: string;
   updatedAt?: string;
+}
+
+// Global in-memory presence store for instant online/offline tracking
+const globalPresence = globalThis as unknown as {
+  __userPresenceMap?: Map<string, { lastSeenMs: number; isOffline: boolean }>;
+  __lastDbPresenceWrite?: Map<string, number>;
+};
+
+if (!globalPresence.__userPresenceMap) {
+  globalPresence.__userPresenceMap = new Map();
+}
+if (!globalPresence.__lastDbPresenceWrite) {
+  globalPresence.__lastDbPresenceWrite = new Map();
+}
+
+const ONLINE_THRESHOLD_MS = 40 * 1000; // 40 seconds
+
+export async function touchUserPresence(
+  username: string,
+  forceOffline: boolean = false
+): Promise<void> {
+  if (!username) return;
+  const normalized = username.trim().toLowerCase();
+  const nowMs = Date.now();
+  const nowIso = forceOffline ? "" : new Date(nowMs).toISOString();
+
+  globalPresence.__userPresenceMap!.set(normalized, {
+    lastSeenMs: nowMs,
+    isOffline: forceOffline,
+  });
+
+  // Throttle DB writes to once every 20 seconds per user (unless forceOffline)
+  const lastWrite = globalPresence.__lastDbPresenceWrite!.get(normalized) || 0;
+  if (!forceOffline && nowMs - lastWrite < 20 * 1000) {
+    return;
+  }
+  globalPresence.__lastDbPresenceWrite!.set(normalized, nowMs);
+
+  const persistedLastSeen = forceOffline
+    ? new Date(nowMs - ONLINE_THRESHOLD_MS - 5000).toISOString()
+    : nowIso;
+
+  if (process.env.MONGODB_URI) {
+    try {
+      await connectToDatabase();
+      const UserModel = getUserModel();
+      await UserModel.updateOne(
+        { username: normalized },
+        { $set: { lastSeen: persistedLastSeen } }
+      );
+    } catch {}
+  }
+
+  try {
+    const db = getDB();
+    if (!db.appUsers) db.appUsers = {};
+    if (db.appUsers[normalized]) {
+      db.appUsers[normalized].lastSeen = persistedLastSeen;
+      saveDB(db);
+    }
+  } catch {}
+}
+
+export function getUserOnlineStatus(
+  username: string,
+  dbLastSeen?: string
+): { isOnline: boolean; lastSeen: string } {
+  const normalized = username.trim().toLowerCase();
+  const mem = globalPresence.__userPresenceMap?.get(normalized);
+  const nowMs = Date.now();
+
+  if (mem) {
+    if (mem.isOffline) {
+      return {
+        isOnline: false,
+        lastSeen: new Date(mem.lastSeenMs).toISOString(),
+      };
+    }
+    if (nowMs - mem.lastSeenMs <= ONLINE_THRESHOLD_MS) {
+      return {
+        isOnline: true,
+        lastSeen: new Date(mem.lastSeenMs).toISOString(),
+      };
+    }
+    return {
+      isOnline: false,
+      lastSeen: new Date(mem.lastSeenMs).toISOString(),
+    };
+  }
+
+  if (dbLastSeen) {
+    const parsed = Date.parse(dbLastSeen);
+    if (!Number.isNaN(parsed)) {
+      return {
+        isOnline: nowMs - parsed <= ONLINE_THRESHOLD_MS,
+        lastSeen: dbLastSeen,
+      };
+    }
+  }
+
+  return { isOnline: false, lastSeen: "" };
 }
 
 // Unified helper to get all users (supports both MongoDB and JSON DB fallback)
@@ -105,6 +211,7 @@ export async function getAllUsers(): Promise<UserRecord[]> {
           dob: doc.dob || "",
           avatarUrl: doc.avatarUrl || "",
           profileCompleted: Boolean(doc.profileCompleted),
+          lastSeen: doc.lastSeen || "",
           createdAt: doc.createdAt ? new Date(doc.createdAt).toISOString() : new Date().toISOString(),
         });
       });
@@ -130,6 +237,7 @@ export async function getAllUsers(): Promise<UserRecord[]> {
               dob: u.dob || "",
               avatarUrl: u.avatarUrl || "",
               profileCompleted: Boolean(u.profileCompleted),
+              lastSeen: u.lastSeen || "",
               createdAt: u.createdAt || new Date().toISOString(),
             });
           } else {
@@ -142,6 +250,7 @@ export async function getAllUsers(): Promise<UserRecord[]> {
               dob: existing.dob || u.dob || "",
               avatarUrl: existing.avatarUrl || u.avatarUrl || "",
               profileCompleted: existing.profileCompleted || Boolean(u.profileCompleted),
+              lastSeen: existing.lastSeen || u.lastSeen || "",
             });
           }
         }

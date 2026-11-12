@@ -5,6 +5,7 @@ import { connectToDatabase } from "@/lib/mongodb";
 import * as OTPAuth from "otpauth";
 import { getHoldingModel } from "@/lib/models/Holding";
 import { getMotilalConfigModel } from "@/lib/models/MotilalConfig";
+import { isMutualFund } from "@/lib/utils";
 
 const DEFAULT_KEY = "default";
 
@@ -353,9 +354,23 @@ export async function POST(request: Request) {
     );
 
     if (body.persistHoldings) {
+      // Preserve existing Mutual Funds when syncing Motilal stock holdings
+      const existingDocs = await HoldingModel.find({}).lean();
+      const existingMFs = existingDocs
+        .filter((doc: any) => isMutualFund(doc.symbol))
+        .map((doc: any) => ({
+          symbol: doc.symbol,
+          name: doc.name,
+          qty: doc.qty,
+          avgPrice: doc.avgPrice,
+          app: doc.app || "Manual",
+          sourceUrl: doc.sourceUrl || "",
+        }));
+
       await HoldingModel.deleteMany({});
-      if (holdings.length > 0) {
-        await HoldingModel.insertMany(holdings);
+      const combinedHoldings = [...existingMFs, ...holdings];
+      if (combinedHoldings.length > 0) {
+        await HoldingModel.insertMany(combinedHoldings);
       }
     }
 

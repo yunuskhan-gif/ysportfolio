@@ -423,12 +423,9 @@ const Portfolio = ({ filterType = "all" }: PortfolioProps = {}) => {
 
   const replaceHoldingsMutation = useMutation({
     mutationFn: replaceHoldings,
-    onSuccess: async (_, variables) => {
+    onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: HOLDINGS_QUERY_KEY });
       setSelectedIds([]);
-      toast.success(
-        variables.length === 0 ? "All holdings deleted." : "Selected holdings deleted."
-      );
     },
     onError: (error) => {
       toast.error(error instanceof Error ? error.message : "Failed to update holdings.");
@@ -603,10 +600,15 @@ const Portfolio = ({ filterType = "all" }: PortfolioProps = {}) => {
       return;
     }
 
-    const remainingHoldings = holdings.filter((holding) => !holding.id || !selectedIds.includes(holding.id));
+    // Keep all holdings from rawHoldings that are NOT in selectedIds
+    // (Preserves Mutual Funds when deleting Stocks, and vice-versa)
+    const remainingHoldings = rawHoldings.filter(
+      (holding) => !holding.id || !selectedIds.includes(holding.id)
+    );
     await replaceHoldingsMutation.mutateAsync(
       remainingHoldings.map(({ id, ...holding }) => holding)
     );
+    toast.success("Selected holdings deleted.");
   };
 
   const handleDeleteAll = async () => {
@@ -615,7 +617,26 @@ const Portfolio = ({ filterType = "all" }: PortfolioProps = {}) => {
       return;
     }
 
-    await replaceHoldingsMutation.mutateAsync([]);
+    // Only delete holdings matching the current view (Stocks or Mutual Funds), preserving the other category
+    let remainingHoldings: StockHolding[] = [];
+    if (filterType === "stock") {
+      remainingHoldings = rawHoldings.filter((h) => isMutualFund(h.symbol));
+    } else if (filterType === "mf") {
+      remainingHoldings = rawHoldings.filter((h) => !isMutualFund(h.symbol));
+    } else {
+      remainingHoldings = [];
+    }
+
+    await replaceHoldingsMutation.mutateAsync(
+      remainingHoldings.map(({ id, ...holding }) => holding)
+    );
+    toast.success(
+      filterType === "mf"
+        ? "All mutual funds deleted."
+        : filterType === "stock"
+        ? "All stocks deleted."
+        : "All holdings deleted."
+    );
   };
 
   const handleEditHolding = (holding: StockHolding) => {

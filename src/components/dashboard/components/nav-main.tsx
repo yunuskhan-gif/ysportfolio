@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -31,6 +32,34 @@ export function NavMain({
 }) {
   const pathname = usePathname();
   const { isMobile, setOpenMobile } = useSidebar();
+
+  useEffect(() => {
+    const pingPresence = () => {
+      fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "ping" }),
+      }).catch(() => {});
+    };
+
+    pingPresence();
+    const interval = setInterval(pingPresence, 20000);
+
+    const handleBeforeUnload = () => {
+      try {
+        const blob = new Blob([JSON.stringify({ action: "offline" })], {
+          type: "application/json",
+        });
+        navigator.sendBeacon("/api/chat", blob);
+      } catch {}
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
 
   return (
     <SidebarGroup>
